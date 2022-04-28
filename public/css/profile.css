@@ -1,0 +1,67 @@
+@font-face {
+  font-family: 'atwriter';
+  src: url('/fonts/atwriter.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+body{
+  font-family: 'atwriter';
+  display: grid;
+  grid-template-rows: 95% 5%;
+  margin: 0;
+  height: 100vh;
+  background-color:#ceecf8;
+  background: url("/imgs/we1.png") center/cover fixed;
+  backdrop-filter: blur(6px);
+}
+  .container {
+      
+    margin: 0 auto;
+    padding: 0px;
+    position:relative;    
+  }
+
+  .content{
+    height: 500px;
+  }
+  
+  #profile_name{
+    font-family:'atwriter';
+    font-size:40px;
+    margin-top: 50px;
+    margin-left: 65px;
+    margin-right: 65px;
+    color:rgb(139, 0, 105);
+    text-align:center;
+  }
+
+  input[type='submit'] {
+    position: center;
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1.2em;
+    background-color: rgb(139, 0, 105);
+    border: 3px solid #f2f2f8;
+    border-radius: 3px;
+    color: #f2f2f8;
+    cursor: pointer;
+  }
+
+  .center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  footer {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    background-color: rgb(217, 241, 250);
+    color: black;
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
+    font-size: 1.0em;
+  }
+
+

@@ -1,0 +1,92 @@
+@font-face {
+    font-family: 'atwriter';
+    src: url('/fonts/atwriter.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+  margin: 0;
+  font-family: "atwriter";
+  font-size: 17pt;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(5, vw100);
+  grid-template-rows: repeat(5, vh100);
+  align-items: end;
+  background: url("/imgs/we1.png") center/cover fixed;
+  backdrop-filter: blur(6px);
+}
+
+input{
+  font-family: "atwriter";
+}
+
+label{
+  font-size:medium;
+}
+
+#errorMsg {
+  color: red;
+}
+
+#formPanel { 
+  grid-row: 1 / span 2;
+  grid-column: 2 / span 3;
+}
+
+
+footer {
+  grid-row: 5 / 5;
+  grid-column: 1 / span 5;
+  background-color: rgb(217, 241, 250);
+  color: black;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.75em;
+}
+
+
+#loginForm {
+  color: white;
+  text-align: center;
+}
+
+
+#loginForm > input {
+  font-size: 1.1em;
+  display: block;
+  margin: 0 auto;
+  margin-top: 1em;
+  outline: none;
+  border: none;
+  text-align: center;
+  color: black;
+  padding: 0.4em;
+  background-color: whitesmoke;
+  border-radius: 3px;
+  border: 2px solid rgb(139, 0, 105);
+}
+
+#formTitle {
+  font-size:xx-large;
+  padding: 30px;
+  color: rgb(139, 0, 105);
+}
+
+::placeholder {color: rgb(139, 0, 105);}
+
+
+#loginForm > input[type="button"] {
+  background-color: rgb(139, 0, 105);
+  border: 3px solid #f2f2f8;
+  border-radius: 3px;
+  color: #f2f2f8;
+  cursor: pointer;
+}
+#loginForm > input[type="button"]:hover {
+  color: #212121;
+  background-color: #f2f2f8;
+  outline: none;
+}
+
