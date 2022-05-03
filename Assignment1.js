@@ -1,4 +1,3 @@
-
 const express = require("express");
 const session = require("express-session");
 const app = express();
@@ -24,18 +23,16 @@ app.use("/fonts", express.static("./public/fonts"));
 app.use("/html", express.static("./public/html"));
 app.use("/media", express.static("./public/media"));
 
-app.use(session(
-    {
-        secret: "extra text that no one will guess",
-        name: "wazaSessionID",
-        resave: false,
-        // create a unique identifier for that client
-        saveUninitialized: true
-    })
-);
+app.use(session({
+    secret: "extra text that no one will guess",
+    name: "wazaSessionID",
+    resave: false,
+    // create a unique identifier for that client
+    saveUninitialized: true
+}));
 
 
-app.get("/", function (req, res) {
+app.get("/", function(req, res) {
 
     if (req.session.loggedIn) {
         res.redirect("/profile");
@@ -50,7 +47,7 @@ app.get("/", function (req, res) {
 });
 
 const mysql = require("mysql2");
-const connection =  mysql.createConnection({
+const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
@@ -58,27 +55,42 @@ const connection =  mysql.createConnection({
 });
 
 const userTable = 'user';
-app.get("/profile", function (req, res) {
+app.get("/profile", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
 
         let profile = fs.readFileSync("./app/html/profile.html", "utf8");
         let profileDOM = new JSDOM(profile);
 
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function (error, results) {
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
             console.log(error);
             console.log(results);
             // great time to get the user's data and put it into the page!
-            profileDOM.window.document.getElementsByTagName("title")[0].innerHTML
-                = req.session.username + "'s Profile";
-            profileDOM.window.document.getElementById("profile_name").innerHTML
-                = "Welcome back " + req.session.username;
-                    
+            profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
+            profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome back " + req.session.username;
+
             res.set("Server", "Wazubi Engine");
             res.set("X-Powered-By", "Wazubi");
             res.send(profileDOM.serialize());
         });
- 
+
+
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+
+});
+
+app.get("/wordguess", function(req, res) {
+    // check for a session first!
+    if (req.session.loggedIn) {
+
+        let wordguess = fs.readFileSync("./app/html/wordguess.html", "utf8");
+        let wordguessDOM = new JSDOM(wordguess);
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(wordguessDOM.serialize());
 
     } else {
         // not logged in - no session and no access, redirect to home!
@@ -94,12 +106,12 @@ app.use(express.urlencoded({ extended: true }));
 //connection.connect();
 
 // Notice that this is a "POST"
-app.post("/login", function (req, res) {
+app.post("/login", function(req, res) {
     res.setHeader("Content-Type", "application/json");
 
     console.log("What was sent", req.body.username, req.body.password);
-    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
-        console.log(req,results);
+    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
+        console.log(req, results);
         if (error || !results || !results.length) {
             res.send({ status: "fail", msg: "User account not found." });
             console.log(error);
@@ -110,7 +122,7 @@ app.post("/login", function (req, res) {
             req.session.name = results[0].user_name;
             req.session.userID = results[0].id;
             req.session.username = results[0].first_name;
-            req.session.save(function (err) {
+            req.session.save(function(err) {
                 // session saved. For analytics, we could record this in a DB
             });
 
@@ -122,10 +134,10 @@ app.post("/login", function (req, res) {
     });
 });
 
-app.get("/logout", function (req, res) {
+app.get("/logout", function(req, res) {
 
     if (req.session) {
-        req.session.destroy(function (error) {
+        req.session.destroy(function(error) {
             if (error) {
                 res.status(400).send("Unable to log out")
             } else {
@@ -136,12 +148,12 @@ app.get("/logout", function (req, res) {
     }
 });
 
-app.get("/chat", function (req, res) {
+app.get("/chat", function(req, res) {
     if (req.session.loggedIn) {
 
         let profile = fs.readFileSync("./app/html/chat.html", "utf8");
         let profileDOM = new JSDOM(profile);
-        
+
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(profileDOM.serialize());
@@ -153,6 +165,6 @@ app.get("/chat", function (req, res) {
 
 // RUN SERVER
 let port = 8000;
-server.listen(port, function () {
+server.listen(port, function() {
     console.log("Listening on port " + port + "!");
 });
