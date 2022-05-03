@@ -6,6 +6,16 @@ const fs = require("fs");
 const { JSDOM } = require('jsdom');
 const { BlockList } = require("net");
 
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
+
+io.on("connection", socket => {
+    console.log("socket connection was succcessful");
+    socket.on('sendMessage', message => {
+        socket.broadcast.emit("readMessage", message);
+    });
+});
+
 // static path mappings
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/css"));
@@ -49,7 +59,6 @@ const connection =  mysql.createConnection({
 
 const userTable = 'user';
 app.get("/profile", function (req, res) {
-
     // check for a session first!
     if (req.session.loggedIn) {
 
@@ -127,9 +136,23 @@ app.get("/logout", function (req, res) {
     }
 });
 
+app.get("/chat", function (req, res) {
+    if (req.session.loggedIn) {
+
+        let profile = fs.readFileSync("./app/html/chat.html", "utf8");
+        let profileDOM = new JSDOM(profile);
+        
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(profileDOM.serialize());
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+});
 
 // RUN SERVER
 let port = 8000;
-app.listen(port, function () {
+server.listen(port, function () {
     console.log("Listening on port " + port + "!");
 });
