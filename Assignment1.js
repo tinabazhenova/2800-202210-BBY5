@@ -39,7 +39,15 @@ app.get("/", function (req, res) {
     }
 });
 
+const mysql = require("mysql2");
+const connection =  mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "mydb"
+});
 
+const userTable = 'user';
 app.get("/profile", function (req, res) {
 
     // check for a session first!
@@ -48,15 +56,19 @@ app.get("/profile", function (req, res) {
         let profile = fs.readFileSync("./app/html/profile.html", "utf8");
         let profileDOM = new JSDOM(profile);
 
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function (error, results) {
+            console.log(error);
+            console.log(results);
             // great time to get the user's data and put it into the page!
             profileDOM.window.document.getElementsByTagName("title")[0].innerHTML
-                = req.session.name + "'s Profile";
+                = req.session.username + "'s Profile";
             profileDOM.window.document.getElementById("profile_name").innerHTML
-                = "Welcome back " + req.session.name;
-            
+                = "Welcome back " + req.session.username;
+                    
             res.set("Server", "Wazubi Engine");
             res.set("X-Powered-By", "Wazubi");
             res.send(profileDOM.serialize());
+        });
  
 
     } else {
@@ -70,17 +82,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
+//connection.connect();
+
 // Notice that this is a "POST"
 app.post("/login", function (req, res) {
     res.setHeader("Content-Type", "application/json");
 
-    console.log("What was sent", req.body.email, req.body.password);
-
-        if (req.body.email == "test@bcit.ca" && req.body.password == "abc123") {
+    console.log("What was sent", req.body.username, req.body.password);
+    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
+        console.log(req,results);
+        if (error || !results || !results.length) {
+            res.send({ status: "fail", msg: "User account not found." });
+            console.log(error);
+        } else {
             // user authenticated, create a session
             req.session.loggedIn = true;
-            req.session.email = "test@BlockList.ca";
-            req.session.name = "Test";
+            req.session.lastname = results[0].last_name;
+            req.session.name = results[0].user_name;
+            req.session.userID = results[0].id;
+            req.session.username = results[0].first_name;
             req.session.save(function (err) {
                 // session saved. For analytics, we could record this in a DB
             });
@@ -88,13 +108,10 @@ app.post("/login", function (req, res) {
             // all we are doing as a server is telling the client that they
             // are logged in, it is up to them to switch to the profile page
             res.send({ status: "success", msg: "Logged in." });
-        } else {
-            // server couldn't find that, so use AJAX response and inform
-            // the user. when we get success, we will do a complete page
-            // change. Ask why we would do this in lecture/lab :)
-            res.send({ status: "fail", msg: "User account not found." });
         }
+
     });
+});
 
 app.get("/logout", function (req, res) {
 

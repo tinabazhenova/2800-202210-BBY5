@@ -61,11 +61,10 @@ ready(function () {
     // POST TO THE SERVER
     document.querySelector("#submit").addEventListener("click", function (e) {
         e.preventDefault();
-        let email = document.getElementById("email");
+        let username = document.getElementById("username");
         let password = document.getElementById("password");
-        let queryString = "email=" + email.value + "&password=" + password.value;
-        //console.log("data that we will send", email.value, password.value);
-        const vars = { "email": email, "password": password }
+        let queryString = "username=" + username.value + "&password=" + password.value;
+        const vars = { "username": username, "password": password }
         ajaxPOST("/login", function (data) {
 
             if (data) {

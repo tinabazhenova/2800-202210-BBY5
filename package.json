@@ -1,0 +1,20 @@
+{
+  "name": "bby-5",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Assignment1.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tinabazhenova/BBY-5.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tinabazhenova/BBY-5/issues"
+  },
+  "homepage": "https://github.com/tinabazhenova/BBY-5#readme"
+}
