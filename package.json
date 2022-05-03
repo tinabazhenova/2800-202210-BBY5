@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name": "bby-5",
   "version": "1.0.0",
   "description": "",
@@ -17,13 +16,12 @@
   "bugs": {
     "url": "https://github.com/tinabazhenova/BBY-5/issues"
   },
-  "homepage": "https://github.com/tinabazhenova/BBY-5#readme"
-=======
+  "homepage": "https://github.com/tinabazhenova/BBY-5#readme",
   "dependencies": {
     "express": "^4.18.1",
     "express-session": "^1.17.2",
     "jsdom": "^19.0.0",
-    "socket.io": "^4.5.0"
+    "socket.io": "^4.5.0",
+	"mysql2": "^2.3.3"
   }
->>>>>>> 869064c8b2302d863d0105078ca9c384db393d60
 }
