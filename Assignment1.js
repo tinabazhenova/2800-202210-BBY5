@@ -82,6 +82,29 @@ app.get("/profile", function(req, res) {
 
 });
 
+function wrap(filename) {
+    let template = fs.readFileSync("./app/html/template.html", "utf8");
+    let lol = fs.readFileSync(filename, "utf8");
+    let dom = new JSDOM(template);
+    dom.window.document.getElementById("templateContent").innerHTML = lol;
+    return dom;
+}
+
+app.get("/lol", function(req, res) {
+    if (req.session.loggedIn) {
+
+        let dom = wrap("./app/html/lol.html");
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(dom.serialize());
+
+
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+});
+
 app.get("/main", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
