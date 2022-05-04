@@ -90,7 +90,7 @@ function wrap(filename) {
     return dom;
 }
 
-app.get("/lol", function(req, res) {
+app.get("/wordguess", function(req, res) {
     if (req.session.loggedIn) {
 
         let dom = wrap("./app/html/lol.html");
@@ -131,22 +131,22 @@ app.get("/main", function(req, res) {
 
 });
 
-app.get("/wordguess", function(req, res) {
-    // check for a session first!
-    if (req.session.loggedIn) {
+// app.get("/wordguess", function(req, res) {
+//     // check for a session first!
+//     if (req.session.loggedIn) {
 
-        let wordguess = fs.readFileSync("./app/html/wordguess.html", "utf8");
-        let wordguessDOM = new JSDOM(wordguess);
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
-        res.send(wordguessDOM.serialize());
+//         let wordguess = fs.readFileSync("./app/html/wordguess.html", "utf8");
+//         let wordguessDOM = new JSDOM(wordguess);
+//         res.set("Server", "Wazubi Engine");
+//         res.set("X-Powered-By", "Wazubi");
+//         res.send(wordguessDOM.serialize());
 
-    } else {
-        // not logged in - no session and no access, redirect to home!
-        res.redirect("/");
-    }
+//     } else {
+//         // not logged in - no session and no access, redirect to home!
+//         res.redirect("/");
+//     }
 
-});
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
