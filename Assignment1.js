@@ -2,8 +2,12 @@ const express = require("express");
 const session = require("express-session");
 const app = express();
 const fs = require("fs");
-const { JSDOM } = require('jsdom');
-const { BlockList } = require("net");
+const {
+    JSDOM
+} = require('jsdom');
+const {
+    BlockList
+} = require("net");
 
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
@@ -32,7 +36,7 @@ app.use(session({
 }));
 
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
 
     if (req.session.loggedIn) {
         res.redirect("/profile");
@@ -55,14 +59,14 @@ const connection = mysql.createConnection({
 });
 
 const userTable = 'user';
-app.get("/profile", function(req, res) {
+app.get("/profile", function (req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
 
         let profile = fs.readFileSync("./app/html/profile.html", "utf8");
         let profileDOM = new JSDOM(profile);
 
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function (error, results) {
             console.log(error);
             console.log(results);
             // great time to get the user's data and put it into the page!
@@ -82,7 +86,7 @@ app.get("/profile", function(req, res) {
 
 });
 
-app.get("/wordguess", function(req, res) {
+app.get("/wordguess", function (req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
 
@@ -100,20 +104,25 @@ app.get("/wordguess", function(req, res) {
 });
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+    extended: true
+}));
 
 
 //connection.connect();
 
 // Notice that this is a "POST"
-app.post("/login", function(req, res) {
+app.post("/login", function (req, res) {
     res.setHeader("Content-Type", "application/json");
 
     console.log("What was sent", req.body.username, req.body.password);
-    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
+    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
         console.log(req, results);
         if (error || !results || !results.length) {
-            res.send({ status: "fail", msg: "User account not found." });
+            res.send({
+                status: "fail",
+                msg: "User account not found."
+            });
             console.log(error);
         } else {
             // user authenticated, create a session
@@ -122,22 +131,25 @@ app.post("/login", function(req, res) {
             req.session.name = results[0].user_name;
             req.session.userID = results[0].id;
             req.session.username = results[0].first_name;
-            req.session.save(function(err) {
+            req.session.save(function (err) {
                 // session saved. For analytics, we could record this in a DB
             });
 
             // all we are doing as a server is telling the client that they
             // are logged in, it is up to them to switch to the profile page
-            res.send({ status: "success", msg: "Logged in." });
+            res.send({
+                status: "success",
+                msg: "Logged in."
+            });
         }
 
     });
 });
 
-app.get("/logout", function(req, res) {
+app.get("/logout", function (req, res) {
 
     if (req.session) {
-        req.session.destroy(function(error) {
+        req.session.destroy(function (error) {
             if (error) {
                 res.status(400).send("Unable to log out")
             } else {
@@ -148,7 +160,7 @@ app.get("/logout", function(req, res) {
     }
 });
 
-app.get("/chat", function(req, res) {
+app.get("/chat", function (req, res) {
     if (req.session.loggedIn) {
 
         let profile = fs.readFileSync("./app/html/chat.html", "utf8");
@@ -163,8 +175,25 @@ app.get("/chat", function(req, res) {
     }
 });
 
+app.get("/main", function (req, res) {
+    // check for a session first!
+    if (req.session.loggedIn) {
+
+        let mainPage = fs.readFileSync("./app/html/main.html", "utf8");
+        let mainDOM = new JSDOM(mainPage);
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(mainDOM.serialize());
+
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+
+});
+
 // RUN SERVER
 let port = 8000;
-server.listen(port, function() {
+server.listen(port, function () {
     console.log("Listening on port " + port + "!");
 });
