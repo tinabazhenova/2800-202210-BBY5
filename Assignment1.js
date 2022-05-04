@@ -82,6 +82,32 @@ app.get("/profile", function(req, res) {
 
 });
 
+app.get("/main", function(req, res) {
+    // check for a session first!
+    if (req.session.loggedIn) {
+
+        let main = fs.readFileSync("./app/html/main.html", "utf8");
+        let mainDOM = new JSDOM(main);
+
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
+            console.log(error);
+            console.log(results);
+            // great time to get the user's data and put it into the page!
+            mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
+
+            res.set("Server", "Wazubi Engine");
+            res.set("X-Powered-By", "Wazubi");
+            res.send(mainDOM.serialize());
+        });
+
+
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+
+});
+
 app.get("/wordguess", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
