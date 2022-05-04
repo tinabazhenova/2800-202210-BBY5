@@ -1,0 +1,31 @@
+.parent {
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-rows: 2fr 1fr 1.5fr 1fr 1.5fr 1fr 1.5fr 2fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.div1 {
+    grid-area: 1 / 1 / 2 / 4;
+}
+
+.div2 {
+    grid-area: 3 / 2 / 4 / 3;
+    background-color: #E56E18;
+}
+
+.div3 {
+    grid-area: 5 / 2 / 6 / 3;
+    background-color: #E56E18;
+}
+
+.div4 {
+    grid-area: 7 / 2 / 8 / 3;
+    background-color: #E56E18;
+}
+
+button {
+    background-color: #FFB703;
+    color: white;
+}
