@@ -55,32 +55,7 @@ const connection = mysql.createConnection({
 });
 
 const userTable = 'user';
-app.get("/profile", function(req, res) {
-    // check for a session first!
-    if (req.session.loggedIn) {
 
-        let profile = fs.readFileSync("./app/html/profile.html", "utf8");
-        let profileDOM = new JSDOM(profile);
-
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
-            console.log(error);
-            console.log(results);
-            // great time to get the user's data and put it into the page!
-            profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
-            profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome back " + req.session.username;
-
-            res.set("Server", "Wazubi Engine");
-            res.set("X-Powered-By", "Wazubi");
-            res.send(profileDOM.serialize());
-        });
-
-
-    } else {
-        // not logged in - no session and no access, redirect to home!
-        res.redirect("/");
-    }
-
-});
 
 function wrap(filename) {
     let template = fs.readFileSync("./app/html/template.html", "utf8");
@@ -131,6 +106,33 @@ app.get("/main", function(req, res) {
 
 });
 
+app.get("/admin", function(req, res) {
+    // check for a session first!
+    if (req.session.loggedIn && req.session.isAdmin) {
+
+        let main = fs.readFileSync("./app/html/admin.html", "utf8");
+        let mainDOM = new JSDOM(main);
+
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
+            console.log(error);
+            console.log(results);
+            // great time to get the user's data and put it into the page!
+            mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
+
+            res.set("Server", "Wazubi Engine");
+            res.set("X-Powered-By", "Wazubi");
+            res.send(mainDOM.serialize());
+        });
+
+
+    } else {
+        // not admin - no session and no access, redirect to home!
+        res.redirect("/");
+        //res.send({ status: "fail", msg: "Access is denied." });
+    }
+
+});
+
 // app.get("/wordguess", function(req, res) {
 //     // check for a session first!
 //     if (req.session.loggedIn) {
@@ -171,6 +173,7 @@ app.post("/login", function(req, res) {
             req.session.name = results[0].user_name;
             req.session.userID = results[0].id;
             req.session.username = results[0].first_name;
+            req.session.isAdmin = results[0].is_admin;
             req.session.save(function(err) {
                 // session saved. For analytics, we could record this in a DB
             });
@@ -181,6 +184,66 @@ app.post("/login", function(req, res) {
         }
 
     });
+});
+
+// Notice that this is a "POST"
+app.post("/loginAsAdmin", function(req, res) {
+    res.setHeader("Content-Type", "application/json");
+
+    console.log("What was sent", req.body.username, req.body.password);
+    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
+        console.log(req, results);
+        if (error || !results || !results.length) {
+            res.send({ status: "fail", msg: "User account not found." });
+            console.log(error);
+        } else if (!results[0].is_admin) {
+            res.send({ status: "fail", msg: "User is not admin." });
+            console.log(error);
+        } else {
+            // user authenticated, create a session
+            req.session.loggedIn = true;
+            req.session.lastname = results[0].last_name;
+            req.session.name = results[0].user_name;
+            req.session.userID = results[0].id;
+            req.session.username = results[0].first_name;
+            req.session.isAdmin = results[0].is_admin;
+            req.session.save(function(err) {
+                // session saved. For analytics, we could record this in a DB
+            });
+
+            // all we are doing as a server is telling the client that they
+            // are logged in, it is up to them to switch to the profile page
+            res.send({ status: "success", msg: "Logged in." });
+        }
+
+    });
+});
+
+app.get("/profile", function(req, res) {
+    // check for a session first!
+    if (req.session.loggedIn) {
+
+        let profile = fs.readFileSync("./app/html/profile.html", "utf8");
+        let profileDOM = new JSDOM(profile);
+
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
+            console.log(error);
+            console.log(results);
+            // great time to get the user's data and put it into the page!
+            profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
+            profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome back " + req.session.username;
+
+            res.set("Server", "Wazubi Engine");
+            res.set("X-Powered-By", "Wazubi");
+            res.send(profileDOM.serialize());
+        });
+
+
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+
 });
 
 app.get("/logout", function(req, res) {

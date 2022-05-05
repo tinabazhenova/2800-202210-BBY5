@@ -73,10 +73,30 @@ ready(function () {
                 if (dataParsed.status == "fail") {
                     document.getElementById("errorMsg").innerHTML = dataParsed.msg;
                 } else {
-                    window.location.replace("/profile");
+                    window.location.replace("/main");
                 }
             }
-            //document.getElementById("errorMsg").innerHTML = dataParsed.msg;
+
+        }, queryString);
+    });
+
+    document.querySelector("#admin-submit").addEventListener("click", function (e) {
+        e.preventDefault();
+        let username = document.getElementById("username");
+        let password = document.getElementById("password");
+        let queryString = "username=" + username.value + "&password=" + password.value;
+        const vars = { "username": username, "password": password }
+        ajaxPOST("/loginAsAdmin", function (data) {
+
+            if (data) {
+                let dataParsed = JSON.parse(data);
+                console.log(dataParsed);
+                if (dataParsed.status == "fail") {
+                    document.getElementById("errorMsg").innerHTML = dataParsed.msg;
+                } else {
+                    window.location.replace("/admin");
+                }
+            }
 
         }, queryString);
     });
