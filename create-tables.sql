@@ -8,6 +8,7 @@ CREATE TABLE user (
   first_name VARCHAR(50),
   last_name VARCHAR(50),
   password VARCHAR(50),
+  is_admin TINYINT(1),
   PRIMARY KEY (ID)
 );
 

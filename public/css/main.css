@@ -1,31 +1,101 @@
+@font-face {
+    font-family: 'atwriter';
+    src: url('/fonts/atwriter.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+  margin: 0;
+  font-family: "atwriter";
+  font-size: 17pt;
+  /* height: 100vh; */
+  /* display: grid;
+  grid-template-columns: repeat(5, vw100);
+  grid-template-rows: repeat(5, vh100); */
+  /* align-items: center; */
+  background: url("/imgs/we1.png") center/cover fixed;
+  backdrop-filter: blur(6px);
+}
+
 .parent {
     display: grid;
+    height: 100vh;
     grid-template-columns: 1fr 4fr 1fr;
-    grid-template-rows: 2fr 1fr 1.5fr 1fr 1.5fr 1fr 1.5fr 2fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
 }
 
 .div1 {
     grid-area: 1 / 1 / 2 / 4;
+    text-align: center;
+    justify-content: center;    
 }
+
+.div1 p {
+    margin: 0;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2em;
+  }
 
 .div2 {
     grid-area: 3 / 2 / 4 / 3;
-    background-color: #E56E18;
+    /* background-color: #E56E18; */
+    text-align: center;
 }
 
 .div3 {
     grid-area: 5 / 2 / 6 / 3;
-    background-color: #E56E18;
+    /* background-color: #E56E18; */
+    text-align: center;
 }
 
 .div4 {
     grid-area: 7 / 2 / 8 / 3;
-    background-color: #E56E18;
+    /* background-color: #E56E18; */
+    text-align: center;
+}
+
+.div5 {
+    grid-area: 9 / 2 / 10 / 3;
+    /* background-color: #E56E18; */
+    text-align: center;
 }
 
 button {
-    background-color: #FFB703;
-    color: white;
+    /* background-color: #FFB703;
+    color: white; */
+    background-color: rgb(224, 103, 3);
+    border: 3px solid #f2f2f8;
+    border-radius: 3px;
+    color: #f2f2f8;
+    cursor: pointer;
+    padding: 12px;
+    font-size: 1em;
+    font-family: 'atwriter';
+}
+
+input[type='submit'] {
+    position: center;
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: rgb(224, 103, 3);
+    border: 3px solid #f2f2f8;
+    border-radius: 3px;
+    color: #f2f2f8;
+    cursor: pointer;
+}
+
+footer {
+    /* grid-area: 11 / 1 / 12 / 4; */
+    background-color: rgb(217, 241, 250);
+    color: black;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.75em;
 }
