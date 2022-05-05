@@ -8,10 +8,22 @@ const { BlockList } = require("net");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
+let users = [];
+
 io.on("connection", socket => {
     console.log("socket connection was succcessful");
-    socket.on('sendMessage', message => {
-        socket.broadcast.emit("readMessage", message);
+    socket.on("joinServer", username => {
+        const user = {
+            username,
+            id: socket.id
+        };
+        users.push(user);
+    });
+    socket.on("joinRoom", code => {
+        socket.join(code);
+    });
+    socket.on("sendMessage", (message, room) => {
+        socket.to(room).emit("readMessage", message);
     });
 });
 
@@ -150,7 +162,6 @@ app.get("/logout", function(req, res) {
 
 app.get("/chat", function(req, res) {
     if (req.session.loggedIn) {
-
         let profile = fs.readFileSync("./app/html/chat.html", "utf8");
         let profileDOM = new JSDOM(profile);
 
