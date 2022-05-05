@@ -47,6 +47,7 @@ app.get("/", function(req, res) {
 });
 
 const mysql = require("mysql2");
+const { runInNewContext } = require("vm");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -57,18 +58,23 @@ const connection = mysql.createConnection({
 const userTable = 'user';
 
 
-function wrap(filename) {
+function wrap(filename, session) {
     let template = fs.readFileSync("./app/html/template.html", "utf8");
-    let lol = fs.readFileSync(filename, "utf8");
     let dom = new JSDOM(template);
-    dom.window.document.getElementById("templateContent").innerHTML = lol;
+    dom.window.document.getElementById("templateContent").innerHTML = fs.readFileSync(filename, "utf8");
+    if (session.username == null) {
+        dom.window.document.getElementById("name").innerHTML = "Guest";
+    } else {
+        dom.window.document.getElementById("name").innerHTML = session.username;
+    }
+
     return dom;
 }
 
 app.get("/wordguess", function(req, res) {
     if (req.session.loggedIn) {
 
-        let dom = wrap("./app/html/lol.html");
+        let dom = wrap("./app/html/lol.html", req.session);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(dom.serialize());
@@ -83,22 +89,10 @@ app.get("/wordguess", function(req, res) {
 app.get("/main", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
-
-        let main = fs.readFileSync("./app/html/main.html", "utf8");
-        let mainDOM = new JSDOM(main);
-
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
-            console.log(error);
-            console.log(results);
-            // great time to get the user's data and put it into the page!
-            mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
-
-            res.set("Server", "Wazubi Engine");
-            res.set("X-Powered-By", "Wazubi");
-            res.send(mainDOM.serialize());
-        });
-
-
+        let mainDOM = wrap("./app/html/main.html", req.session);
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(mainDOM.serialize());
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
@@ -243,7 +237,11 @@ app.get("/profile", function(req, res) {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
+});
 
+app.post("/guest_login", function(req, res) {
+    req.session.loggedIn = true;
+    res.send({});
 });
 
 app.get("/logout", function(req, res) {
