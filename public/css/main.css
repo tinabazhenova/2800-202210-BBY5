@@ -1,3 +1,9 @@
+:root {
+    --color1:#E56E18;
+    --color2: #FFB703;
+    --color3: white;
+}
+
 .parent {
     display: grid;
     grid-template-columns: 1fr 4fr 1fr;
@@ -13,14 +19,14 @@
 
 .div2 {
     grid-area: 3 / 2 / 4 / 3;
-    background-color: #E56E18;
+    background-color: var(--color1);
     text-align: center;
     align-items: center;
 }
 
 .div3 {
     grid-area: 5 / 2 / 6 / 3;
-    background-color: #E56E18;
+    background-color: var(--color1);
     text-align: center;
     align-content: center;
     
@@ -29,12 +35,12 @@
 .div4 {
     grid-area: 7 / 2 / 8 / 3;
     height:100%;
-    background-color: #E56E18;
+    background-color: var(--color1);
     text-align: center;
     align-items: center; 
 }
 
 button {
-    background-color:#FFB703;
+    background-color: var(--color2);
     color:white;
 }

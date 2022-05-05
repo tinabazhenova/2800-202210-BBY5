@@ -51,6 +51,7 @@ app.get("/", function (req, res) {
 });
 
 const mysql = require("mysql2");
+const { runInNewContext } = require("vm");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -86,22 +87,64 @@ app.get("/profile", function (req, res) {
 
 });
 
-app.get("/wordguess", function (req, res) {
-    // check for a session first!
+function wrap(filename, session) {
+    let template = fs.readFileSync("./app/html/template.html", "utf8");
+    let dom = new JSDOM(template);
+    dom.window.document.getElementById("templateContent").innerHTML = fs.readFileSync(filename, "utf8");
+    if (session.username == null) {
+        dom.window.document.getElementById("name").innerHTML = "Guest";
+    } else {
+        dom.window.document.getElementById("name").innerHTML = session.username;
+    }
+
+    return dom;
+}
+
+app.get("/wordguess", function(req, res) {
     if (req.session.loggedIn) {
 
-        let wordguess = fs.readFileSync("./app/html/wordguess.html", "utf8");
-        let wordguessDOM = new JSDOM(wordguess);
+        let dom = wrap("./app/html/lol.html", req.session);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
-        res.send(wordguessDOM.serialize());
+        res.send(dom.serialize());
 
+
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+});
+
+app.get("/main", function(req, res) {
+    // check for a session first!
+    if (req.session.loggedIn) {
+        let mainDOM = wrap("./app/html/main.html", req.session);
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(mainDOM.serialize());
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
 
 });
+
+// app.get("/wordguess", function(req, res) {
+//     // check for a session first!
+//     if (req.session.loggedIn) {
+
+//         let wordguess = fs.readFileSync("./app/html/wordguess.html", "utf8");
+//         let wordguessDOM = new JSDOM(wordguess);
+//         res.set("Server", "Wazubi Engine");
+//         res.set("X-Powered-By", "Wazubi");
+//         res.send(wordguessDOM.serialize());
+
+//     } else {
+//         // not logged in - no session and no access, redirect to home!
+//         res.redirect("/");
+//     }
+
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({
@@ -146,7 +189,13 @@ app.post("/login", function (req, res) {
     });
 });
 
-app.get("/logout", function (req, res) {
+app.post("/guest_login", function(req, res) {
+    req.session.loggedIn = true;
+    res.send({});
+
+});
+
+app.get("/logout", function(req, res) {
 
     if (req.session) {
         req.session.destroy(function (error) {
