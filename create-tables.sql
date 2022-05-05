@@ -11,41 +11,18 @@ CREATE TABLE user (
   xscore int,
   yscore int,
   zscore int,
+  bbscore int,
   PRIMARY KEY (ID)
 );
 
-CREATE TABLE genx (
-  ID int NOT NULL AUTO_INCREMENT,
+CREATE TABLE master (
+  word_ID int NOT NULL AUTO_INCREMENT,
   phrase VARCHAR(50) NOT NULL,
   meaning VARCHAR(200),
   history VARCHAR(500),
   xvalue int,
-  PRIMARY KEY (ID)
-);
-
-CREATE TABLE geny (
-  ID int NOT NULL AUTO_INCREMENT,
-  phrase VARCHAR(50) NOT NULL,
-  meaning VARCHAR(200),
-  history VARCHAR(500),
   yvalue int,
-  PRIMARY KEY (ID)
-);
-
-CREATE TABLE genz (
-  ID int NOT NULL AUTO_INCREMENT,
-  phrase VARCHAR(50) NOT NULL,
-  meaning VARCHAR(200),
-  history VARCHAR(500),
   zvalue int,
-  PRIMARY KEY (ID)
-);
-
-CREATE TABLE genbb (
-  ID int NOT NULL AUTO_INCREMENT,
-  phrase VARCHAR(50) NOT NULL,
-  meaning VARCHAR(200),
-  history VARCHAR(500),
   bbvalue int,
-  PRIMARY KEY (ID)
+  PRIMARY KEY (word_ID)
 );

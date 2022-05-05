@@ -192,6 +192,50 @@ app.get("/main", function (req, res) {
 
 });
 
+app.get("/wordmatch", function (req, res) {
+    // check for a session first!
+    if (req.session.loggedIn) {
+
+        let matchPage = fs.readFileSync("./app/html/wordmatch.html", "utf8");
+        let mainDOM = new JSDOM(matchPage);
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(mainDOM.serialize());
+
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+
+});
+
+app.get("/wordmatch", function (req, res) {
+    const connection = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "",
+        database: "mydb"
+    });
+
+    connection.execute(
+        "SELECT phrase FROM master ORDER BY Rand();",
+        //"TABLESAMPLE (10 PERCENT)" if we want to speed up the search with larger db, does not round up though
+        function (error, results, fields) {
+            console.log("results: ", results);
+
+            if (error) {
+                console.log(error);
+            }
+            let wordMatchStart = results[0].phrase;
+
+            // It displays the phrase that i want in the console log, i just need this to appear in the right place on the page now.
+            // maybe add a displayPhrase() function?
+
+            // res.send(wordMatchStart);
+            connection.end();         
+        });
+})
+
 // RUN SERVER
 let port = 8000;
 server.listen(port, function () {
