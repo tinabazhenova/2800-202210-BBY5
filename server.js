@@ -47,6 +47,7 @@ app.get("/", function(req, res) {
 });
 
 const mysql = require("mysql2");
+const { runInNewContext } = require("vm");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -86,7 +87,12 @@ function wrap(filename, session) {
     let template = fs.readFileSync("./app/html/template.html", "utf8");
     let dom = new JSDOM(template);
     dom.window.document.getElementById("templateContent").innerHTML = fs.readFileSync(filename, "utf8");
-    dom.window.document.getElementById("name").innerHTML = session.username;
+    if (session.username == null) {
+        dom.window.document.getElementById("name").innerHTML = "Guest";
+    } else {
+        dom.window.document.getElementById("name").innerHTML = session.username;
+    }
+
     return dom;
 }
 
@@ -169,6 +175,12 @@ app.post("/login", function(req, res) {
         }
 
     });
+});
+
+app.post("/guest_login", function(req, res) {
+    req.session.loggedIn = true;
+    res.send({});
+
 });
 
 app.get("/logout", function(req, res) {
