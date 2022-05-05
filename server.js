@@ -35,11 +35,10 @@ app.use(session({
 app.get("/", function(req, res) {
 
     if (req.session.loggedIn) {
-        res.redirect("/profile");
+        res.redirect("/main");
     } else {
 
         let doc = fs.readFileSync("./app/html/index.html", "utf8");
-
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(doc);
@@ -180,6 +179,10 @@ app.post("/login", function(req, res) {
     });
 });
 
+app.post("/guest_login", function(req, res) {
+    req.session.loggedIn = true;
+    res.send({});
+});
 // Notice that this is a "POST"
 app.post("/loginAsAdmin", function(req, res) {
     res.setHeader("Content-Type", "application/json");
@@ -237,11 +240,7 @@ app.get("/profile", function(req, res) {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
-});
 
-app.post("/guest_login", function(req, res) {
-    req.session.loggedIn = true;
-    res.send({});
 });
 
 app.get("/logout", function(req, res) {
