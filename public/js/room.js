@@ -3,7 +3,9 @@ const socket = io();
 const form = document.getElementById("chat-form");
 
 let code = sessionStorage.getItem("code")
-socket.emit("joinRoom", code);
+let game = sessionStorage.getItem("game");
+socket.emit("joinRoom", code, game);
+document.getElementById("roomInfo").innerHTML = game + " " + code;
 
 socket.on("readMessage", message => {
   displayMessage(message);

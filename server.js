@@ -12,7 +12,7 @@ let rooms = [];
 
 io.on("connection", socket => {
     console.log(socket.id + " socket connection successful");
-    socket.on("joinRoom", code => {
+    socket.on("joinRoom", (code, game) => {
         if (rooms.some(r => r.code == code)) {
             console.log(socket.id + " joined room " + code);
             socket.join(code);
@@ -20,7 +20,8 @@ io.on("connection", socket => {
             console.log("room " + code + " created");
             rooms.push({
                 "code" : code,
-                "users" : [socket.id]
+                "users" : [socket.id],
+                "game" : game
             });
             console.log(socket.id + " joined room " + code);
             socket.join(code);
@@ -90,13 +91,10 @@ function wrap(filename, session) {
 
 app.get("/wordguess", function(req, res) {
     if (req.session.loggedIn) {
-
         let dom = wrap("./app/html/wordguess.html", req.session);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(dom.serialize());
-
-
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
@@ -287,22 +285,15 @@ app.get("/createLobby", (req, res) => {
 app.post("/joinLobby", (req, res) => {
     if (req.session.loggedIn) {
         let code = req.body.code;
-        if (rooms.some(r => r.code == code)) {
-            res.send({ found: true })
+        let gameType = "";
+        if (rooms.some(r => {
+                gameType = r.game;
+                return r.code == code
+            })) {
+            res.send({ found: true, game: gameType })
         } else {
             res.send({ found: false })
         }
-    } else {
-        res.redirect("/");
-    }
-});
-
-app.get("/room", function(req, res) {
-    if (req.session.loggedIn) {
-        let doc = fs.readFileSync("./app/html/room.html", "utf8");
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
-        res.send(doc);
     } else {
         res.redirect("/");
     }

@@ -37,8 +37,19 @@ body {
     backdrop-filter: blur(6px);
 }
 
+button {
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color1);
+    /* border: 3px solid var(--color2); */
+    border-radius: 20%;
+    width: 30%;
+    color: var(--color2);
+    cursor: pointer;
+}
+
 input[type='submit'] {
-    position: center;
     font-family: 'atwriter';
     padding: 12px;
     font-size: 1em;
@@ -57,9 +68,9 @@ input[type='submit'] {
     height: 100%;
 }
 
-#name {
+/* #name {
     color: --color5;
-}
+} */
 
 #templateContent {
     flex-grow: 1;

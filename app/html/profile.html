@@ -6,28 +6,17 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="/css/modal.css" rel="stylesheet"/>
   <link href="/imgs/favicon.ico" rel="icon" type="image/x-icon">
   <title>Profile</title>
 </head>
 
 <body>
-  <div id="roomModalBackground">
-    <div id="roomModalContainer">
-      <form id="findLobbyForm">
-        <label>Enter the code here: </label>
-        <input type="text" id="code-input">
-        <span id="error"></span>
-        <input type="submit" id="btn-joinRoom" value="Join">  
-      </form>
-    </div>
-  </div>
   <div class="container">
         <div id="profile_name">
           <h1 class="title">Welcome Back Username</h1>
         </div>
-        <button id="btn-openJoinRoomModal">Join a Room</button>
-        <button id="btn-createRoom">Create a Room</button>
+        <!-- <button id="btn-openJoinRoomModal">Join a Room</button>
+        <button id="btn-createRoom">Create a Room</button> -->
         <div class="center">
           <form action="/logout" method="get">
             <input type="submit" value="LOGOUT">
@@ -35,14 +24,12 @@
         </div>
   </div>
   <footer id="footer">
-    GEN WE PROJECT &copy BCIT 2022
+    GEN WE PROJECT &amp;copy BCIT 2022
   </footer>
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
-
-  <script src="/js/lobby.js"></script>
 </body>
 
 </html>

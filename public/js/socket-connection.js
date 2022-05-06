@@ -11,8 +11,8 @@ async function createLobby(game) {
     });
     let parsed = await response.json();
     sessionStorage.setItem("code", parsed.code);
-    window.location.href = "/room";
-    //socket.emit("createRoom", parsed.code);
+    sessionStorage.setItem("game", game);
+    window.location.href = "/" + game;
   } catch (error) {
     console.log(error);
   }
@@ -29,8 +29,10 @@ async function joinLobby(code) {
       body: JSON.stringify(code)
     });
     let parsed = await response.json();
+    let game = parsed.game;
+    sessionStorage.setItem("game", game);
     if (parsed.found) {
-      window.location.href = "/room";
+      window.location.href = "/" + game;
     } else {
       document.getElementById("error").innerHTML = "Room not found"
     }
@@ -39,11 +41,11 @@ async function joinLobby(code) {
   }
 }
 
-document.getElementById("btn-createRoom").addEventListener("click", e => {
-  createLobby("Default");
+document.getElementById("btn-wordguess").addEventListener("click", e => {
+  createLobby("wordguess");
 });
 
-document.getElementById("btn-openJoinRoomModal").addEventListener("click", e => {
+document.getElementById("btn-openModal").addEventListener("click", e => {
   modal.style.display = "block";
 });
 
