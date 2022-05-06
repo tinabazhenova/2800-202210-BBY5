@@ -1,26 +1,20 @@
-<head>
-    <title>Assignment1</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/css/main.css" rel="stylesheet" />
-    <link href="/imgs/favicon.ico" rel="icon" type="image/x-icon" />
-</head>
-<div id="content">
-    <div id="profile_name">
-        <h1 class="title"></h1>
-    </div>
-</div>
+<link href="/css/main.css" rel="stylesheet" />
+
 <div id="menu">
-    <ul>
-        <li>
-            <form action="/app/html/wordguess.html" method="get">
-                <input type="submit" value="wordguess">
-            </form>
-        </li>
-    </ul>
+    <form action="/wordguess" method="get">
+        <input type="submit" value="wordguess">
+    </form>
+
+    <form action="/wordmatch" method="get">
+        <input type="submit" value="wordmatch">
+    </form>
+
+    <form action="/crossword" method="get">
+        <input type="submit" value="crossword">
+    </form>
 </div>
 <div id="logout">
     <form action="/logout" method="get">
-      <input type="submit" value="LOGOUT">
+        <input type="submit" value="LOGOUT">
     </form>
 </div>

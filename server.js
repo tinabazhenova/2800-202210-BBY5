@@ -73,7 +73,7 @@ function wrap(filename, session) {
 app.get("/wordguess", function(req, res) {
     if (req.session.loggedIn) {
 
-        let dom = wrap("./app/html/lol.html", req.session);
+        let dom = wrap("./app/html/wordguess.html", req.session);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(dom.serialize());
