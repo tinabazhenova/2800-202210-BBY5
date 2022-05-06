@@ -5,88 +5,108 @@
     font-style: normal;
 }
 
+:root {
+    --color1: #E56E18;
+    --color2: #f2f2f8;
+    --color3: rgb(217, 241, 250);
+    --color4: rgb(139, 0, 105);
+    --color5: black;
+}
+
 body {
-  margin: 0;
-  font-family: "atwriter";
-  font-size: 17pt;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: repeat(5, vw100);
-  grid-template-rows: repeat(5, vh100);
-  align-items: end;
-  background: url("/imgs/we1.png") center/cover fixed;
-  backdrop-filter: blur(6px);
+    margin: 0;
+    font-family: "atwriter";
+    font-size: 17pt;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(5, vw100);
+    grid-template-rows: repeat(5, vh100);
+    align-items: end;
+    background: url("/imgs/we1.png") center/cover fixed;
+    backdrop-filter: blur(6px);
 }
 
-input{
-  font-family: "atwriter";
+input {
+    font-family: "atwriter";
 }
 
-label{
-  font-size:medium;
+label {
+    font-size: medium;
 }
 
 #errorMsg {
-  color: red;
+    color: red;
 }
 
-#formPanel { 
-  grid-row: 1 / span 2;
-  grid-column: 2 / span 3;
+#formPanel {
+    grid-row: 2;
+    grid-column: 3;
+    background-color: none;
+    opacity: 0.8;
 }
-
 
 footer {
-  grid-row: 5 / 5;
-  grid-column: 1 / span 5;
-  background-color: rgb(217, 241, 250);
-  color: black;
-  text-align: center;
-  padding: 10px;
-  font-size: 0.75em;
+    grid-row: 5 / 5;
+    grid-column: 1 / span 5;
+    background-color: var(--color3);
+    color: var(--color5);
+    text-align: center;
+    padding: 10px;
+    font-size: 0.75em;
 }
 
+ul {
+    text-align: center;
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color4);
+}
 
 #loginForm {
-  color: white;
-  text-align: center;
+    color: white;
+    text-align: center;
 }
 
-
-#loginForm > input {
-  font-size: 1.1em;
-  display: block;
-  margin: 0 auto;
-  margin-top: 1em;
-  outline: none;
-  border: none;
-  text-align: center;
-  color: black;
-  padding: 0.4em;
-  background-color: whitesmoke;
-  border-radius: 3px;
-  border: 2px solid rgb(139, 0, 105);
+#loginForm>input {
+    font-size: 1.1em;
+    display: block;
+    margin: 0 auto;
+    margin-top: 1em;
+    outline: none;
+    border: none;
+    text-align: center;
+    color: black;
+    padding: 0.4em;
+    background-color: whitesmoke;
+    border-radius: 3px;
+    border: 2px solid var(--color1);
 }
 
 #formTitle {
-  font-size:xx-large;
-  padding: 30px;
-  color: rgb(139, 0, 105);
+    font-size: xx-large;
+    padding: 30px;
+    color: var(--color4);
 }
 
-::placeholder {color: rgb(139, 0, 105);}
-
-
-#loginForm > input[type="button"] {
-  background-color: rgb(139, 0, 105);
-  border: 3px solid #f2f2f8;
-  border-radius: 3px;
-  color: #f2f2f8;
-  cursor: pointer;
-}
-#loginForm > input[type="button"]:hover {
-  color: #212121;
-  background-color: #f2f2f8;
-  outline: none;
+::placeholder {
+    color: var(--color4);
 }
 
+#loginForm>input[type="button"] {
+    background-color: var(--color1);
+    border-radius: 3px;
+    color: #f2f2f8;
+    cursor: pointer;
+}
+
+#loginForm>input[type="button"]:hover {
+    color: #212121;
+    background-color: var(--color2);
+    outline: none;
+}

@@ -1,0 +1,88 @@
+@font-face {
+    font-family: 'atwriter';
+    src: url('/fonts/atwriter.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    --color1: rgb(224, 103, 3);
+    --color2: #f2f2f8;
+    --color3: rgb(217, 241, 250);
+    --color4: black;
+    --color5: rgb(139, 0, 105);
+}
+
+html,
+body {
+    height: 100%;
+    padding: 0%;
+    margin: 0%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0%;
+    margin: 0;
+    font-family: "atwriter";
+    font-size: 17pt;
+    height: 100vh;
+    /*display: grid;
+    grid-template-columns: repeat(5, vw100);
+    grid-template-rows: repeat(5, vh100);*/
+    align-items: center;
+    background: url("/imgs/we1.png") center/cover fixed;
+    backdrop-filter: blur(6px);
+}
+
+button {
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color1);
+    /* border: 3px solid var(--color2); */
+    border-radius: 20%;
+    width: 30%;
+    color: var(--color2);
+    cursor: pointer;
+}
+
+input[type='submit'] {
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color1);
+    /* border: 3px solid var(--color2); */
+    border-radius: 20%;
+    width: 30%;
+    color: var(--color2);
+    cursor: pointer;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/* #name {
+    color: --color5;
+} */
+
+#templateContent {
+    flex-grow: 1;
+    text-align: center;
+}
+
+footer {
+    grid-area: 11 / 1 / 12 / 4;
+    /* background-color: var(--color3); */
+    color: var(--color4);
+    text-align: center;
+    padding: 10px;
+    font-size: 0.75em;
+    width: 100%;
+}

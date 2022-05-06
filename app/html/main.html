@@ -1,0 +1,37 @@
+<div id="menu">
+    <div class="menuItem">
+        <button id="btn-wordguess">wordguess</button>
+    </div>
+
+    <div class="menuItem">
+        <button id="btn-wordmatch">wordmatch</button>
+    </div>
+
+    <div class="menuItem">
+        <button id="btn-crossword">crossword</button>
+    </div>
+
+    <div class="menuItem">
+        <button id="btn-openModal">Join a Room</button>
+    </div>
+
+    <div id="logout">
+        <form action="/logout" method="get">
+            <input type="submit" value="LOGOUT">
+        </form>
+    </div>
+</div>
+
+<div id="roomModalBackground">
+    <div id="roomModalContainer">
+        <form id="findLobbyForm">
+            <label>Enter the code here: </label>
+            <input type="text" id="code-input">
+            <span id="error"></span>
+            <input type="submit" id="btn-joinRoom" value="Join">
+        </form>
+    </div>
+</div>
+
+
+<script src="/js/socket-connection.js"></script>

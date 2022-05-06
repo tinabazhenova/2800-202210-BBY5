@@ -1,0 +1,17 @@
+:root {
+    --color5: rgb(139, 0, 105);
+    --color6: #2ACF01;
+}
+
+#menu {
+    padding: 10%;
+}
+
+#menu form {
+    padding: 1%;
+}
+
+#logout input {
+    width: 10%;
+    background-color: var(--color6);
+}
