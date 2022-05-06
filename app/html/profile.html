@@ -12,22 +12,22 @@
 </head>
 
 <body>
-  <div id="roomModal">
-    <p>Enter the code here: </p>
-    <input type="text" id="roomCode">
-    <button id="joinRoom">Join</button>
+  <div id="roomModalBackground">
+    <div id="roomModalContainer">
+      <form id="findLobbyForm">
+        <label>Enter the code here: </label>
+        <input type="text" id="code-input">
+        <span id="error"></span>
+        <input type="submit" id="btn-joinRoom" value="Join">  
+      </form>
+    </div>
   </div>
   <div class="container">
         <div id="profile_name">
           <h1 class="title">Welcome Back Username</h1>
         </div>
-        <button id="displayModal">Join a Room</button>
-        <!-- <div class="content">
-          <form action="/chat" method="get">
-            <input type="text" id="roomCode">
-            <input type="submit" value="JOIN">
-          </form>
-        </div> -->
+        <button id="btn-openJoinRoomModal">Join a Room</button>
+        <button id="btn-createRoom">Create a Room</button>
         <div class="center">
           <form action="/logout" method="get">
             <input type="submit" value="LOGOUT">
@@ -41,23 +41,8 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
-  <script>
-    let button1 = document.getElementById("displayModal");
-    let button2 = document.getElementById("joinRoom");
-    let modal = document.getElementById("roomModal");
-    button1.onclick = () => {
-      modal.style.display = "block";
-    };
-    window.onclick = (event) => {
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
-    }
-    button2.onclick = () => {
-      sessionStorage.setItem("code", document.getElementById("roomCode").value);
-      window.location.href = "/chat";
-    };
-  </script>
+
+  <script src="/js/lobby.js"></script>
 </body>
 
 </html>

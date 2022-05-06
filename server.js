@@ -8,19 +8,23 @@ const { BlockList } = require("net");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
-let users = [];
+let rooms = [];
 
 io.on("connection", socket => {
-    console.log("socket connection was succcessful");
-    socket.on("joinServer", username => {
-        const user = {
-            username,
-            id: socket.id
-        };
-        users.push(user);
-    });
+    console.log(socket.id + " socket connection successful");
     socket.on("joinRoom", code => {
-        socket.join(code);
+        if (rooms.some(r => r.code == code)) {
+            console.log(socket.id + " joined room " + code);
+            socket.join(code);
+        } else {
+            console.log("room " + code + " created");
+            rooms.push({
+                "code" : code,
+                "users" : [socket.id]
+            });
+            console.log(socket.id + " joined room " + code);
+            socket.join(code);
+        }
     });
     socket.on("sendMessage", (message, room) => {
         socket.to(room).emit("readMessage", message);
@@ -58,7 +62,9 @@ app.get("/", function(req, res) {
 });
 
 const mysql = require("mysql2");
+//???
 const { runInNewContext } = require("vm");
+const { redirect } = require("express/lib/response");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -269,16 +275,35 @@ app.get("/logout", function(req, res) {
     }
 });
 
-app.get("/chat", function(req, res) {
+app.get("/createLobby", (req, res) => {
     if (req.session.loggedIn) {
-        let profile = fs.readFileSync("./app/html/chat.html", "utf8");
-        let profileDOM = new JSDOM(profile);
+        res.setHeader("Content-Type", "application/json");
+        res.send({ code: Math.floor((Math.random() * 1000)) });
+    } else {
+        res.redirect("/");
+    }
+});
 
+app.post("/joinLobby", (req, res) => {
+    if (req.session.loggedIn) {
+        let code = req.body.code;
+        if (rooms.some(r => r.code == code)) {
+            res.send({ found: true })
+        } else {
+            res.send({ found: false })
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
+app.get("/room", function(req, res) {
+    if (req.session.loggedIn) {
+        let doc = fs.readFileSync("./app/html/room.html", "utf8");
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
-        res.send(profileDOM.serialize());
+        res.send(doc);
     } else {
-        // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
 });
