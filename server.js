@@ -63,17 +63,16 @@ app.get("/", function(req, res) {
 });
 
 const mysql = require("mysql2");
-//???
 const { runInNewContext } = require("vm");
 const { redirect } = require("express/lib/response");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "mydb"
+    database: "COMP2800"
 });
 
-const userTable = 'user';
+const userTable = 'BBY-5-user';
 
 
 function wrap(filename, session) {
@@ -141,23 +140,6 @@ app.get("/admin", function(req, res) {
     }
 
 });
-
-// app.get("/wordguess", function(req, res) {
-//     // check for a session first!
-//     if (req.session.loggedIn) {
-
-//         let wordguess = fs.readFileSync("./app/html/wordguess.html", "utf8");
-//         let wordguessDOM = new JSDOM(wordguess);
-//         res.set("Server", "Wazubi Engine");
-//         res.set("X-Powered-By", "Wazubi");
-//         res.send(wordguessDOM.serialize());
-
-//     } else {
-//         // not logged in - no session and no access, redirect to home!
-//         res.redirect("/");
-//     }
-
-// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
