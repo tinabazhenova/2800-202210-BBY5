@@ -72,7 +72,7 @@ const connection = mysql.createConnection({
     database: "COMP2800"
 });
 
-const userTable = 'BBY-5-user';
+const userTable = 'BBY_5_user';
 
 
 function wrap(filename, session) {
