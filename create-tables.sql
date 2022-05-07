@@ -2,7 +2,7 @@
 -- interpreted by the database)
 
 
-CREATE TABLE user (
+CREATE TABLE BBY_5_user (
   ID int NOT NULL AUTO_INCREMENT,
   user_name VARCHAR(50),
   first_name VARCHAR(50),
