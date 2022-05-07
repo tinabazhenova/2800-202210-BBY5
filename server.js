@@ -247,9 +247,28 @@ app.get("/wordmatch", function (req, res) {
 
         let matchPage = fs.readFileSync("./app/html/wordmatch.html", "utf8");
         let mainDOM = new JSDOM(matchPage);
+
+        connection.execute(
+            "SELECT phrase FROM master ORDER BY Rand();",
+            //"TABLESAMPLE (10 PERCENT)" if we want to speed up the search with larger db, does not round up though
+            function (error, results, fields) {
+                console.log("results: ", results);
+    
+                if (error) {
+                    console.log(error);
+                }
+                let wordMatchStart = results[0].phrase;
+                connection.end();         
+            });
+          
+        let display = "getElementById('div3')"
+        div3.innerHTML += results[0].phrase;
+        
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(mainDOM.serialize());
+            // res.send(wordMatchStart);
+
 
     } else {
         // not logged in - no session and no access, redirect to home!
@@ -257,33 +276,6 @@ app.get("/wordmatch", function (req, res) {
     }
 
 });
-
-app.get("/wordmatch", function (req, res) {
-    const connection = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "mydb"
-    });
-
-    connection.execute(
-        "SELECT phrase FROM master ORDER BY Rand();",
-        //"TABLESAMPLE (10 PERCENT)" if we want to speed up the search with larger db, does not round up though
-        function (error, results, fields) {
-            console.log("results: ", results);
-
-            if (error) {
-                console.log(error);
-            }
-            let wordMatchStart = results[0].phrase;
-
-            // It displays the phrase that i want in the console log, i just need this to appear in the right place on the page now.
-            // maybe add a displayPhrase() function?
-
-            // res.send(wordMatchStart);
-            connection.end();         
-        });
-})
 
 // RUN SERVER
 let port = 8000;
