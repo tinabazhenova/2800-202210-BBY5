@@ -1,0 +1,8 @@
+:root {
+    --color: black;
+}
+
+#rectangle {
+    width: 5%;
+    height: 5%;
+}
