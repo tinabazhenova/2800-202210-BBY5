@@ -1,5 +1,6 @@
 ready(function() {
     let rec = document.querySelector(".rectangle");
+    rec.innerHTML = "A";
     for (let i = 0; i < 24; ++i) {
         const clone = rec.cloneNode(true);
         document.querySelector(".wordguess_grid").appendChild(clone);
