@@ -13,13 +13,11 @@ ready(function() {
     let position = 0;
 
     window.addEventListener('keydown', function(event) {
-        letters[position].innerHTML = event.key;
-        if (position < 24) {
+        if (position < 25) {
+            letters[position].innerHTML = event.key;
             position++;
         }
     })
-
-
 })
 
 function ready(callback) {
