@@ -11,11 +11,27 @@ ready(function() {
     }
 
     let position = 0;
+    let word = 0;
 
     window.addEventListener('keydown', function(event) {
-        if (position < 25) {
-            letters[position].innerHTML = event.key;
-            position++;
+        if (position < 5) {
+            if (event.keyCode >= 65 && event.keyCode <= 90) {
+                letters[word * 5 + position].innerHTML = event.key;
+                position++;
+            } else {
+                this.alert('Enter the letter from A- Z');
+            }
+        } else {
+            if (event.keyCode == 13) {
+                if (word < 4) {
+                    ++word;
+                    position = 0;
+                } else {
+                    this.alert('Game over');
+                }
+            } else {
+                this.alert('Please hit enter');
+            }
         }
     })
 })
