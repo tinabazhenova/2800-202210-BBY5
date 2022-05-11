@@ -1,10 +1,24 @@
 ready(function() {
+    //alert('LOL');
     let rec = document.querySelector(".rectangle");
-    rec.innerHTML = "A";
-    for (let i = 0; i < 24; ++i) {
-        const clone = rec.cloneNode(true);
-        document.querySelector(".wordguess_grid").appendChild(clone);
+    let letters = [rec];
+
+    //rec.innerHTML = "A";
+    for (let i = 1; i < 25; ++i) {
+        letters[i] = rec.cloneNode(true);
+        document.querySelector(".wordguess_grid").appendChild(letters[i]);
+
     }
+
+    let position = 0;
+
+    window.addEventListener('keydown', function(event) {
+        letters[position].innerHTML = event.key;
+        if (position < 24) {
+            position++;
+        }
+    })
+
 
 })
 
