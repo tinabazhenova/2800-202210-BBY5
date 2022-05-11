@@ -18,6 +18,10 @@ ready(function() {
             if (event.keyCode >= 65 && event.keyCode <= 90) {
                 letters[word * 5 + position].innerHTML = event.key;
                 position++;
+
+            } else if (event.keyCode == 8 && position != 0) {
+                position--;
+                letters[word * 5 + position].innerHTML = '';
             } else {
                 this.alert('Enter the letter from A- Z');
             }
