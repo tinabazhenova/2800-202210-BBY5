@@ -5,51 +5,104 @@
     font-style: normal;
 }
 
-body {
-  margin: 0;
-  font-family: "atwriter";
-  font-size: 17pt;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: repeat(5, vw100);
-  grid-template-rows: repeat(5, vh100);
-  align-items: end;
-  background: url("/imgs/we1.png") center/cover fixed;
-  backdrop-filter: blur(6px);
+@media screen and (max-width: 1150px) {
+    body {
+        margin: 0;
+        font-family: "atwriter";
+        font-size: 17pt;
+        height: 100vh;
+        display: grid;
+        grid-template-columns: repeat(5, vw100);
+        grid-template-rows: repeat(5, vh100);
+        align-items: end;
+        background: url("/imgs/we1.png") center/cover fixed;
+        backdrop-filter: blur(6px);
+    }
+
+    #title {
+        grid-row: 1 / span 1;
+        grid-column: 3 / span 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    #logout {
+        grid-row: 3 / span 1;
+        grid-column: 3 / span 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    footer {
+        grid-row: 5 / 5;
+        grid-column: 1 / span 5;
+        background-color: rgb(217, 241, 250);
+        color: black;
+        text-align: center;
+        padding: 10px;
+        font-size: 0.75em;
+    }
+
+    input[type='submit'] {
+        position: center;
+        font-family: 'atwriter';
+        padding: 12px;
+        font-size: 1em;
+        background-color: rgb(224, 103, 3);
+        border: 3px solid #f2f2f8;
+        border-radius: 3px;
+        color: #f2f2f8;
+        cursor: pointer;
+    }
 }
 
-#title{
-    grid-row: 1 / span 1;
-    grid-column: 3 / span 1;
-    text-align: center;
-    justify-content: center; 
-}
+@media screen and (max-width: 750px) {
+    body {
+        margin: 0;
+        font-family: "atwriter";
+        font-size: 14pt;
+        height: 100vh;
+        display: grid;
+        grid-template-columns: repeat(5, vw100);
+        grid-template-rows: repeat(5, vh100);
+        align-items: end;
+        background: url("/imgs/we1.png") center/cover fixed;
+        backdrop-filter: blur(6px);
+    }
 
-#logout{
-    grid-row: 3 / span 1;
-    grid-column: 3 / span 1;
-    text-align: center;
-    justify-content: center; 
-}
+    #title {
+        grid-row: 1 / span 1;
+        grid-column: 3 / span 1;
+        text-align: center;
+        justify-content: center;
+    }
 
-footer {
-    grid-row: 5 / 5;
-    grid-column: 1 / span 5;
-    background-color: rgb(217, 241, 250);
-    color: black;
-    text-align: center;
-    padding: 10px;
-    font-size: 0.75em;
-}
+    #logout {
+        grid-row: 3 / span 1;
+        grid-column: 3 / span 1;
+        text-align: center;
+        justify-content: center;
+    }
 
-input[type='submit'] {
-    position: center;
-    font-family: 'atwriter';
-    padding: 12px;
-    font-size: 1em;
-    background-color: rgb(224, 103, 3);
-    border: 3px solid #f2f2f8;
-    border-radius: 3px;
-    color: #f2f2f8;
-    cursor: pointer;
+    footer {
+        grid-row: 5 / 5;
+        grid-column: 1 / span 5;
+        background-color: rgb(217, 241, 250);
+        color: black;
+        text-align: center;
+        padding: 10px;
+        font-size: 0.75em;
+    }
+
+    input[type='submit'] {
+        position: center;
+        font-family: 'atwriter';
+        padding: 12px;
+        font-size: 1em;
+        background-color: rgb(224, 103, 3);
+        border: 3px solid #f2f2f8;
+        border-radius: 3px;
+        color: #f2f2f8;
+        cursor: pointer;
+    }
 }
