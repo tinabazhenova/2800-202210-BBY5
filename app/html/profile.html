@@ -12,24 +12,45 @@
 
 <body>
   <div class="container">
-        <div id="profile_name">
-          <h1 class="title">Welcome Back Username</h1>
-        </div>
-        <!-- <button id="btn-openJoinRoomModal">Join a Room</button>
-        <button id="btn-createRoom">Create a Room</button> -->
-        <div class="center">
-          <form action="/logout" method="get">
-            <input type="submit" value="LOGOUT">
-          </form>
-        </div>
+    <div id="profile_name">
+      <h1 class="title"></h1>
+    </div>
+    <div id="profile-picture">
+      <img id="picture_src" src="">
+    </div>
+      <form id="upload-images-form" enctype="multipart/form-data" action="/upload" method="POST">
+        <input id="image-upload" type="file" name="image" value="Upload Image" accept="image/png, image/gif, image/jpeg"
+          multiple="multiple" />
+        <input id="submit" type="submit" value="Submit" />
+      </form>
+    <div>
+      <table id="user_info">
+        <tbody>
+          <tr>
+            <th>username</th>
+            <th>password</th>
+          </tr>
+          <tr>
+            <th id="user_name">u</th>
+            <th id="password">p</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="center">
+      <form action="/logout" method="get">
+        <input type="submit" value="LOGOUT">
+      </form>
+    </div>
   </div>
   <footer id="footer">
-    GEN WE PROJECT &amp;copy BCIT 2022
+    GEN WE PROJECT &copy BCIT 2022
   </footer>
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
+  <script src="/js/editProfile.js"></script>
 </body>
 
 </html>
