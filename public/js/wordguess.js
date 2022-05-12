@@ -12,11 +12,11 @@ ready(function() {
 
     let position = 0;
     let word = 0;
-    let hardCodedWord = 'youth'.toUpperCase();
+    let hardCodedWord = 'alley'.toUpperCase();
     let tempEnteredWord = '';
 
     window.addEventListener('keydown', function(event) {
-        if (position < 5) {
+        if (position < 5 || event.keyCode == 8) {
             if (event.keyCode >= 65 && event.keyCode <= 90) { //checks if the user entered a letter
                 letters[word * 5 + position].innerHTML = event.key; // fill array in a line
                 tempEnteredWord += event.key.toUpperCase(); //records a letter into string
@@ -24,6 +24,7 @@ ready(function() {
 
             } else if (event.keyCode == 8 && position != 0) { // if user hits BS 
                 position--; // decrease position
+                tempEnteredWord = tempEnteredWord.substring(0, position);
                 letters[word * 5 + position].innerHTML = ''; //rewrite an indec in an array with empty char
             } else {
                 this.alert('Enter the letter from A- Z'); //the user entered the worng character
@@ -42,7 +43,6 @@ ready(function() {
                         }
                     }
                 }
-                alert('letters painted');
                 if (hardCodedWord == tempEnteredWord) {
                     console.log("tempEnteredWord: " + tempEnteredWord + ", hardCodedWord: " + hardCodedWord);
                     this.alert('Victory');
