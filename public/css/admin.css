@@ -6,30 +6,30 @@
 }
 
 body {
-  margin: 0;
-  font-family: "atwriter";
-  font-size: 17pt;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: repeat(5, vw100);
-  grid-template-rows: repeat(5, vh100);
-  align-items: end;
-  background: url("/imgs/we1.png") center/cover fixed;
-  backdrop-filter: blur(6px);
+    margin: 0;
+    font-family: "atwriter";
+    font-size: 17pt;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(5, vw100);
+    grid-template-rows: repeat(5, vh100);
+    align-items: end;
+    background: url("/imgs/we1.png") center/cover fixed;
+    backdrop-filter: blur(6px);
 }
 
-#title{
+#title {
     grid-row: 1 / span 1;
     grid-column: 3 / span 1;
     text-align: center;
-    justify-content: center; 
+    justify-content: center;
 }
 
-#logout{
+#logout {
     grid-row: 3 / span 1;
     grid-column: 3 / span 1;
     text-align: center;
-    justify-content: center; 
+    justify-content: center;
 }
 
 footer {
