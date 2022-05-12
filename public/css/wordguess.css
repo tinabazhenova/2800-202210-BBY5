@@ -9,9 +9,6 @@
     width: min-content;
     grid-gap: 20px;
     align-self: center;
-    /* margin-left: 40%;
-    margin-top: 10%;
-    margin-bottom: 10%; */
     margin-left: auto;
     margin-right: auto;
 }
@@ -22,4 +19,12 @@
     height: 50px;
     border: 5px solid var(--color);
     text-transform: capitalize;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.green {
+    background-color: green;
 }

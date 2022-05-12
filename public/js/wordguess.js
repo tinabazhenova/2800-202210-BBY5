@@ -31,6 +31,18 @@ ready(function() {
         } else {
             if (event.keyCode == 13) { //the user hit enter
                 console.log(tempEnteredWord);
+                for (let i = 0; i < 5; i++) {
+                    let temp = tempEnteredWord[i];
+                    for (let j = 0; j < 5; j++) {
+                        if (temp == hardCodedWord[j]) {
+                            if (i == j)
+                                letters[word * 5 + i].classList.add("green");
+                            else
+                                letters[word * 5 + i].classList.add("yellow");
+                        }
+                    }
+                }
+                alert('letters painted');
                 if (hardCodedWord == tempEnteredWord) {
                     console.log("tempEnteredWord: " + tempEnteredWord + ", hardCodedWord: " + hardCodedWord);
                     this.alert('Victory');
@@ -47,6 +59,8 @@ ready(function() {
             }
         }
     })
+
+
 })
 
 function ready(callback) {
