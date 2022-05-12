@@ -283,12 +283,14 @@ app.get("/profile", function (req, res) {
 });
 
 // we are changing stuff on the server!!!
-app.post('/update-user', function (req, res) {
+app.post('/update-username', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.connect();
-    console.log("update values", req.session.user, req.session.pass)
-    connection.query(`UPDATE ${userTable} SET user_name = ? AND password = ? WHERE ID = ?`,
-          [req.session.user, req.session.pass, req.session.userID],
+
+    console.log("username", req.body.user_name);
+    //connection.connect();
+    console.log("user ID", req.session.userID);
+    connection.query(`UPDATE ${userTable} SET user_name = ? WHERE ID = ?`,
+          [req.body.user_name, req.session.userID],
           function (error, results, fields) {
       if (error) {
           console.log(error);
@@ -297,7 +299,53 @@ app.post('/update-user', function (req, res) {
       res.send({ status: "success", msg: "Record updated." });
 
     });
-    connection.end();
+    //connection.end();
+});
+
+app.post('/update-password', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+
+    console.log("password", req.body.password);
+    //connection.connect();
+    console.log("user ID", req.session.userID);
+    connection.query(`UPDATE ${userTable} SET password = ? WHERE ID = ?`,
+          [req.body.password, req.session.userID],
+          function (error, results, fields) {
+      if (error) {
+          console.log(error);
+      }
+      //console.log('Rows returned are: ', results);
+      res.send({ status: "success", msg: "Record updated." });
+
+    });
+    //connection.end();
+});
+
+app.get('/get-username', function (req, res){
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT user_name FROM ${userTable} WHERE ID = ? `, [req.session.userID],
+    function (error, results, field){
+        if (error) {
+            console.log(error);
+        }
+        req.session.name = results[0].user_name;
+        res.send({ status: "success", username: results[0].user_name});   
+    }
+    )
+});
+
+app.get('/get-password', function (req, res){
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT password FROM ${userTable} WHERE ID = ? `, [req.session.userID],
+    function (error, results, field){
+        if (error) {
+            console.log(error);
+        }
+        req.session.pass = results[0].password;
+        
+        res.send({ status: "success", password: results[0].password});   
+    }
+    )
 });
 
 app.get("/logout", function(req, res) {

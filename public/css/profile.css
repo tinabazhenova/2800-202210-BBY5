@@ -6,6 +6,7 @@
 }
 body{
   font-family: 'atwriter';
+
   display: grid;
   grid-template-rows: 95% 5%;
   margin: 0;
@@ -15,7 +16,6 @@ body{
   backdrop-filter: blur(6px);
 }
   .container {
-      
     margin: 0 auto;
     padding: 0px;
     position:relative;    
@@ -74,6 +74,16 @@ body{
     justify-content: center;
     padding: 10px;
     font-size: 1.0em;
+  }
+
+  table, th, td {
+    border: 1px solid black;
+    margin: 30px;
+    background-color: rgb(186, 212, 212);
+  }
+
+  th, td {
+    padding: 10px ;
   }
 
 
