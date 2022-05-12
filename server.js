@@ -1,4 +1,4 @@
-var util= require('util');
+var util = require('util');
 var encoder = new util.TextEncoder('utf-8');
 const express = require("express");
 const session = require("express-session");
@@ -38,7 +38,7 @@ io.on("connection", socket => {
 });
 
 const storage = multer.diskStorage({
-    destination: function (req, file, callback) {
+    destination: function(req, file, callback) {
         callback(null, "./public/imgs/")
     },
     filename: function(req, file, callback) {
@@ -71,7 +71,7 @@ app.use(session({
 }));
 
 
-app.get("/", function (req, res) {
+app.get("/", function(req, res) {
 
     if (req.session.loggedIn) {
         res.redirect("/main");
@@ -111,7 +111,7 @@ function wrap(filename, session) {
     return dom;
 }
 
-app.get("/wordguess", function (req, res) {
+app.get("/wordguess", function(req, res) {
     if (req.session.loggedIn) {
         let dom = wrap("./app/html/wordguess.html", req.session);
         res.set("Server", "Wazubi Engine");
@@ -123,7 +123,7 @@ app.get("/wordguess", function (req, res) {
     }
 });
 
-app.get("/main", function (req, res) {
+app.get("/main", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
         let mainDOM = wrap("./app/html/main.html", req.session);
@@ -137,14 +137,14 @@ app.get("/main", function (req, res) {
 
 });
 
-app.get("/admin", function (req, res) {
+app.get("/admin", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn && req.session.isAdmin) {
 
         let main = fs.readFileSync("./app/html/admin.html", "utf8");
         let mainDOM = new JSDOM(main);
 
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function (error, results) {
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
             console.log(error);
             console.log(results);
             // great time to get the user's data and put it into the page!
@@ -171,11 +171,11 @@ app.use(express.urlencoded({ extended: true }));
 //connection.connect();
 
 // Notice that this is a "POST"
-app.post("/login", function (req, res) {
+app.post("/login", function(req, res) {
     res.setHeader("Content-Type", "application/json");
 
     console.log("What was sent", req.body.username, req.body.password);
-    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
+    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
         console.log(req, results);
         if (error || !results || !results.length) {
             res.send({ status: "fail", msg: "User account not found." });
@@ -190,7 +190,7 @@ app.post("/login", function (req, res) {
             req.session.isAdmin = results[0].is_admin;
             req.session.userImage = results[0].user_image;
             req.session.pass = results[0].password;
-            req.session.save(function (err) {
+            req.session.save(function(err) {
                 // session saved. For analytics, we could record this in a DB
             });
 
@@ -202,16 +202,16 @@ app.post("/login", function (req, res) {
     });
 });
 
-app.post("/guest_login", function (req, res) {
+app.post("/guest_login", function(req, res) {
     req.session.loggedIn = true;
     res.send({});
 });
 // Notice that this is a "POST"
-app.post("/loginAsAdmin", function (req, res) {
+app.post("/loginAsAdmin", function(req, res) {
     res.setHeader("Content-Type", "application/json");
 
     console.log("What was sent", req.body.username, req.body.password);
-    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
+    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
         console.log(req, results);
         if (error || !results || !results.length) {
             res.send({ status: "fail", msg: "User account not found." });
@@ -229,7 +229,7 @@ app.post("/loginAsAdmin", function (req, res) {
             req.session.isAdmin = results[0].is_admin;
             req.session.userImage = results[0].user_image;
             req.session.pass = results[0].password;
-            req.session.save(function (err) {
+            req.session.save(function(err) {
                 // session saved. For analytics, we could record this in a DB
             });
 
@@ -241,7 +241,7 @@ app.post("/loginAsAdmin", function (req, res) {
     });
 });
 
-app.post('/upload', upload.single("image"), function (req, res) {
+app.post('/upload', upload.single("image"), function(req, res) {
     if (!req.file) {
         console.log("No file upload");
     } else {
@@ -258,14 +258,14 @@ app.post('/upload', upload.single("image"), function (req, res) {
     }
 });
 
-app.get("/profile", function (req, res) {
+app.get("/profile", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
 
         let profile = fs.readFileSync("./app/html/profile.html", "utf8");
         let profileDOM = new JSDOM(profile);
         console.log(profileDOM.window.document.getElementById("profile_name").innerHTML);
-        
+
         profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
         profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
         profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
@@ -273,7 +273,7 @@ app.get("/profile", function (req, res) {
         profileDOM.window.document.getElementById("password").innerHTML = req.session.pass;
 
         console.log(req.session.username);
-        
+
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(profileDOM.serialize());
@@ -285,20 +285,19 @@ app.get("/profile", function (req, res) {
 });
 
 // we are changing stuff on the server!!!
-app.post('/update-user', function (req, res) {
+app.post('/update-user', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.connect();
     console.log("update values", req.session.user, req.session.pass)
-    connection.query(`UPDATE ${userTable} SET user_name = ? AND password = ? WHERE ID = ?`,
-          [req.session.user, req.session.pass, req.session.userID],
-          function (error, results, fields) {
-      if (error) {
-          console.log(error);
-      }
-      //console.log('Rows returned are: ', results);
-      res.send({ status: "success", msg: "Record updated." });
+    connection.query(`UPDATE ${userTable} SET user_name = ? AND password = ? WHERE ID = ?`, [req.session.user, req.session.pass, req.session.userID],
+        function(error, results, fields) {
+            if (error) {
+                console.log(error);
+            }
+            //console.log('Rows returned are: ', results);
+            res.send({ status: "success", msg: "Record updated." });
 
-    });
+        });
     connection.end();
 });
 
@@ -330,9 +329,9 @@ app.post("/joinLobby", (req, res) => {
         let code = req.body.code;
         let gameType = "";
         if (rooms.some(r => {
-            gameType = r.game;
-            return r.code == code
-        })) {
+                gameType = r.game;
+                return r.code == code
+            })) {
             res.send({ found: true, game: gameType })
         } else {
             res.send({ found: false })
@@ -343,7 +342,7 @@ app.post("/joinLobby", (req, res) => {
 });
 
 // RUN SERVER
-let port = 8000;
-server.listen(port, function () {
+let port = 8080;
+server.listen(port, function() {
     console.log("Listening on port " + port + "!");
 });
