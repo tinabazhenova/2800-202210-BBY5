@@ -6,35 +6,74 @@
 }
 
 body {
-    margin: 0;
-    font-family: "atwriter";
-    font-size: 17pt;
-    height: 100vh;
+  margin: 0;
+  font-family: "atwriter";
+  font-size: 17pt;
+  /* height: 100vh; */
+  align-items: end;
+  background: url("/imgs/we1.png") center/cover fixed;
+  backdrop-filter: blur(6px);
+  overflow: scroll;
+}
+
+#container{
     display: grid;
-    grid-template-columns: repeat(5, vw100);
-    grid-template-rows: repeat(5, vh100);
-    align-items: end;
-    background: url("/imgs/we1.png") center/cover fixed;
-    backdrop-filter: blur(6px);
+    grid-template-columns: 1 fr;
+    grid-template-rows: repeat(7, vh100);
 }
 
 #title {
     grid-row: 1 / span 1;
-    grid-column: 3 / span 1;
+    grid-column: 1 / span 1;
     text-align: center;
-    justify-content: center;
+    justify-content: center; 
+    padding-top: 100px;
 }
 
-#logout {
+
+
+#users_table{
+    text-align: center;
+    align-items: center;
+    grid-row: 2 / span 1; 
+    grid-column: 1 / span 1;
+    margin-left: auto;
+    margin-right: auto;  
+
+}
+
+
+#admins_table_add{
     grid-row: 3 / span 1;
-    grid-column: 3 / span 1;
+    grid-column: 1 / span 1;
+    text-align: center;
+    justify-content: center; 
+}
+
+#admins_table_edit{
+    grid-row: 4 / span 1;
+    grid-column: 1 / span 1;
+    text-align: center;
+    justify-content: center; 
+}
+
+#admins_table_delete{
+    grid-row: 5 / span 1;
+    grid-column: 1 / span 1;
     text-align: center;
     justify-content: center;
 }
 
+#logout{
+    grid-row: 6 / span 1;
+    grid-column: 1 / span 1;
+    text-align: center;
+    justify-content: center; 
+    padding: 10px;
+}
 footer {
-    grid-row: 5 / 5;
-    grid-column: 1 / span 5;
+    grid-row: 7 / span 1;
+    grid-column: 1 / span 1;
     background-color: rgb(217, 241, 250);
     color: black;
     text-align: center;
@@ -53,3 +92,13 @@ input[type='submit'] {
     color: #f2f2f8;
     cursor: pointer;
 }
+
+table, th, td {
+    border: 1px solid black;
+    margin: 30px;
+    background-color: rgb(186, 212, 212);
+  }
+
+  th, td {
+    padding: 10px ;
+  }

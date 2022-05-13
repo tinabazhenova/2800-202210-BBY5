@@ -173,6 +173,7 @@ app.get("/admin", function (req, res) {
             console.log(results);
             // great time to get the user's data and put it into the page!
             mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
+            mainDOM.window.document.getElementById("profile_name").innerHTML = "Welcome Admin " + req.session.username;
 
             res.set("Server", "Wazubi Engine");
             res.set("X-Powered-By", "Wazubi");
@@ -317,12 +318,14 @@ app.get("/profile", function (req, res) {
 });
 
 // we are changing stuff on the server!!!
-app.post('/update-user', function (req, res) {
+app.post('/update-username', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.connect();
-    console.log("update values", req.session.user, req.session.pass)
-    connection.query(`UPDATE ${userTable} SET user_name = ? AND password = ? WHERE ID = ?`,
-          [req.session.user, req.session.pass, req.session.userID],
+
+    console.log("username", req.body.user_name);
+    //connection.connect();
+    console.log("user ID", req.session.userID);
+    connection.query(`UPDATE ${userTable} SET user_name = ? WHERE ID = ?`,
+          [req.body.user_name, req.session.userID],
           function (error, results, fields) {
       if (error) {
           console.log(error);
@@ -331,7 +334,109 @@ app.post('/update-user', function (req, res) {
       res.send({ status: "success", msg: "Record updated." });
 
     });
-    connection.end();
+    //connection.end();
+});
+
+app.post('/update-password', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+
+    console.log("password", req.body.password);
+    //connection.connect();
+    console.log("user ID", req.session.userID);
+    connection.query(`UPDATE ${userTable} SET password = ? WHERE ID = ?`,
+          [req.body.password, req.session.userID],
+          function (error, results, fields) {
+      if (error) {
+          console.log(error);
+      }
+      //console.log('Rows returned are: ', results);
+      res.send({ status: "success", msg: "Record updated." });
+
+    });
+    //connection.end();
+});
+
+app.get('/get-username', function (req, res){
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT user_name FROM ${userTable} WHERE ID = ? `, [req.session.userID],
+    function (error, results, field){
+        if (error) {
+            console.log(error);
+        }
+        req.session.name = results[0].user_name;
+        res.send({ status: "success", username: results[0].user_name});   
+    }
+    )
+});
+
+app.get('/get-password', function (req, res){
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT password FROM ${userTable} WHERE ID = ? `, [req.session.userID],
+    function (error, results, field){
+        if (error) {
+            console.log(error);
+        }
+        req.session.pass = results[0].password;
+        
+        res.send({ status: "success", password: results[0].password});   
+    }
+    )
+});
+
+app.get('/get-users', function (req, res){
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT * FROM ${userTable} `,
+    function (error, results, field){
+        if (error) {
+            console.log(error);
+        }
+        // req.session.name = results[0].user_name;
+        res.send({ status: "success", rows: results});   
+    }
+    )
+});
+
+app.post('/add-user' , function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`INSERT INTO ${userTable} (user_name, first_name, last_name, password, is_admin) values (?, ?, ?, ?, ?)`,
+            [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin],
+            function (error, results, fields) {
+        if (error) {
+            console.log(error);
+        }
+        //console.log('Rows returned are: ', results);
+        res.send({ status: "success", msg: "Record added." });
+    }
+    )
+});
+
+app.post('/edit-user' , function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`UPDATE ${userTable} SET user_name = ?, first_name = ?, last_name = ?, password = ?, is_admin = ? WHERE ID = ?`,
+            [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin, req.body.id],
+            function (error, results, fields) {
+        if (error) {
+            console.log(error);
+        }
+        console.log('Rows returned are: ', results);
+        res.send({ status: "success", msg: "Record edited." });
+    }
+    )
+});
+
+app.post('/delete-users' , function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`DELETE FROM ${userTable} WHERE (user_name) = ? `,
+    [req.body.user_name],
+    function (error, results, fields) {
+if (error) {
+    console.log(error);
+}
+//console.log('Rows returned are: ', results);
+res.send({ status: "success", msg: "Record deleted." });
+}
+)
+
 });
 
 app.get("/logout", function(req, res) {
