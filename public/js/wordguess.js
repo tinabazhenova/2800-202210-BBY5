@@ -16,6 +16,9 @@ ready(function() {
     let tempEnteredWord = '';
 
     window.addEventListener('keydown', function(event) {
+        if(event.target === this.document.getElementById("chatInput")){
+            return;
+        }
         if (position < 5 || event.keyCode == 8) {
             if (event.keyCode >= 65 && event.keyCode <= 90) { //checks if the user entered a letter
                 letters[word * 5 + position].innerHTML = event.key; // fill array in a line
