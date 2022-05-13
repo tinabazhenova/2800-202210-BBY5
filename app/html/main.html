@@ -1,20 +1,47 @@
-<div id="content">
-  <div id="profile_name">
-    <h1 class="title"></h1>
-  </div>
-</div>
+<head>
+    <link href="/css/main.css" rel="stylesheet" />
+</head>
+
 <div id="menu">
-  <ul>
-    <li>
-      <form action="/app/html/wordguess.html" method="get">
-        <input type="submit" value="wordguess" />
-      </form>
-    </li>
-  </ul>
+    <div class="menuItem" id="div1">
+        <button id="btn-wordguess">wordguess</button>
+    </div>
+
+    <div class="menuItem" id="div2">
+        <button id="btn-wordmatch">wordmatch</button>
+    </div>
+
+    <div class="menuItem" id="div3">
+        <button id="btn-crossword">crossword</button>
+    </div>
+
+    <div class="menuItem" id="div4">
+        <button id="btn-openModal">Join a Room</button>
+    </div>
+
+    <div class="menuItem" id="div5">
+        <form action="/profile" method="get">
+            <input type="submit" value="Edit Profile">
+        </form>
+    </div>
+
+    <div id="logout">
+        <form action="/logout" method="get">
+            <input type="submit" value="LOGOUT">
+        </form>
+    </div>
 </div>
 
-<div class="div1">
-  <form action="/wordmatch" method="get">
-    <input type="submit" value="Matching Game" />
-  </form>
+<div id="roomModalBackground">
+    <div id="roomModalContainer">
+        <form id="findLobbyForm">
+            <label>Enter the code here: </label>
+            <input type="text" id="code-input">
+            <span id="error"></span>
+            <input type="submit" id="btn-joinRoom" value="Join">
+        </form>
+    </div>
 </div>
+
+
+<script src="/js/socket-connection.js"></script>

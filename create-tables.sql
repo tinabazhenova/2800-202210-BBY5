@@ -2,12 +2,13 @@
 -- interpreted by the database)
 
 
-CREATE TABLE BBY_05_user (
+CREATE TABLE BBY_5_user (
   ID int NOT NULL AUTO_INCREMENT,
   user_name VARCHAR(50),
   first_name VARCHAR(50),
   last_name VARCHAR(50),
   password VARCHAR(50),
+  is_admin TINYINT(1),
   bbscore int,
   xscore int,
   yscore int,
