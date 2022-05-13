@@ -123,7 +123,11 @@ function wrongAnswer(e) {
 // });
 
 // Need to add function to play again
+<<<<<<< HEAD
 function nextQuestion() {
+=======
+function setNextQuestion() {
+>>>>>>> 71af858 (startWordMatch(), correctAnswer(), wrongAnswer(), nextQuestion() all have frameworks but still aren't fully functioning. added notes to work on next steps)
   // all this function does is remove hidden class from a "next question" button so it appears on the page. 
   // when clicked, it does startWordMatch() again
 }
