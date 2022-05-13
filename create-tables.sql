@@ -9,6 +9,7 @@ CREATE TABLE BBY_5_user (
   last_name VARCHAR(50),
   password VARCHAR(50),
   is_admin TINYINT(1),
+  user_image VARCHAR(100) DEFAULT NULL,
   bbscore int,
   xscore int,
   yscore int,
