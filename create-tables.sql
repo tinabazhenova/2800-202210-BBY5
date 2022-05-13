@@ -16,7 +16,7 @@ CREATE TABLE BBY_5_user (
   PRIMARY KEY (ID)
 );
 
-CREATE TABLE BBY_05_master (
+CREATE TABLE BBY_5_master (
   word_ID int NOT NULL AUTO_INCREMENT,
   phrase VARCHAR(50) NOT NULL,
   meaning VARCHAR(200),

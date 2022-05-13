@@ -496,6 +496,28 @@ app.get("/main", function (req, res) {
 
 });
 
+app.get('/get-phrase', function (req, res) {
+
+    let connection = mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'comp2800'
+    });
+    connection.connect();
+    connection.query('SELECT * FROM BBY_5_master ORDER BY rand() LIMIT 3;', function (error, results, fields) {
+      if (error) {
+        console.log(error);
+      }
+      console.log('Rows returned are: ', results);
+      res.send({
+        status: "success",
+        rows: results
+      });
+    });
+    connection.end();
+  });
+    
 app.get("/wordmatch", function (req, res) {
     if (req.session.loggedIn) {
         let dom = wrap("./app/html/wordmatch.html", req.session);

@@ -1,67 +1,67 @@
 .parent {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    grid-template-rows: repeat(5, 1fr) auto;
-    grid-column-gap: 0px;
-    grid-row-gap: 25px;
-    background-color: #E56E18;
-    height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: repeat(5, 1fr) auto;
+  grid-column-gap: 0px;
+  grid-row-gap: 25px;
+  background-color: #e56e18;
+  height: 100vh;
 }
 
 .div1 {
-    grid-area: 1 / 1 / 2 / 3;
-    background-color: #FFFFFF;
+  grid-area: 1 / 1 / 2 / 3;
+  background-color: #ffffff;
 }
 
 .div2 {
-    grid-area: 1 / 3 / 2 / 4;
-    text-align: right;
-    align-items: center;
-    background-color: #FFFFFF;
+  grid-area: 1 / 3 / 2 / 4;
+  text-align: right;
+  align-items: center;
+  background-color: #ffffff;
 }
 
 .div3 {
-    grid-area: 2 / 1 / 3 / 4;
-    text-align: center;
-    align-content: center;
-    background-color: #FFFFFF;
-
+  grid-area: 2 / 1 / 3 / 4;
+  text-align: center;
+  align-content: center;
+  background-color: #ffffff;
 }
 
 .div4 {
-    grid-area: 3 / 2 / 4 / 3;
-    height: 100%;
-    text-align: center;
-    align-items: center;
-    background-color: #FFFFFF;
+  grid-area: 3 / 2 / 4 / 3;
+  height: 100%;
+  text-align: center;
+  align-items: center;
+  background-color: #ffffff;
 }
 
 .div5 {
-    grid-area: 4 / 2 / 5 / 3;
-    background-color: #FFFFFF;
-    text-align: center;
-    align-content: center;
+  grid-area: 4 / 2 / 5 / 3;
+  background-color: #ffffff;
+  text-align: center;
+  align-content: center;
 }
 
 .div6 {
-    grid-area: 5 / 2 / 6 / 3;
-    background-color: #FFFFFF;
-    text-align: center;
-    align-content: center;
+  grid-area: 5 / 2 / 6 / 3;
+  background-color: #ffffff;
+  text-align: center;
+  align-content: center;
 }
 
 .div7 {
-    grid-area: 6 / 3 / 7 / 4;
-    background-color: #FFFFFF;
-    
-
+  grid-area: 6 / 3 / 7 / 4;
+  background-color: #ffffff;
 }
 
+#hide {
+  display: none;
+}
 #chat-box {
-    display: none;
-  }
+  display: none;
+}
 
 button {
-    background-color: #FFB703;
-    color: white;
+  background-color: #ffb703;
+  color: white;
 }

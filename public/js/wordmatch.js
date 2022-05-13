@@ -1,74 +1,93 @@
-
-// May not work asynchronously with getPhrase(). Might need to add promise or await function
 function startWordMatch() {
+  const xhr = new XMLHttpRequest();
+  xhr.onload = function () {
+    if (this.readyState == XMLHttpRequest.DONE) {
 
-  const mysql = require("mysql2");
-  // const {
-  //   runInNewContext
-  // } = require("vm");
-  // const {
-  //   redirect
-  // } = require("express/lib/response");
-  // const res = require("express/lib/response");
- 
-  const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "COMP2800"
-  });
+      // 200 means everthing worked
+      if (xhr.status === 200) {
 
-  connection.connect();
-  connection.query('SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 3;',
-    function (error, results, fields) {
-      if (error) {
-        console.log(error);
+        let data = JSON.parse(this.responseText);
+        if (data.status == "success") {
+
+          let genPhrase = document.getElementById("div3");
+          //Answer phrase is placed in div3, answer meaning is placed randomly in div4-6
+          let randomAnswerDiv = document.getElementById("div" + (Math.random() * 3 + 4));
+          randomAnswerDiv.innerHTML = results[0].meaning;
+          genPhrase.innerHTML += results[0].phrase;
+
+          results[0].addEventListener("click", correctAnswer(randomAnswerDiv));
+
+          // console.log(genPhrase, answer);
+
+          // connection.connect();
+          // connection.query('SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 3;',
+          //   function (error, results, fields) {
+          //     if (error) {
+          //       console.log(error);
+          //     }
+          console.log('Rows returned are: ', results);
+
+          // for each result after the first (first is the answer)
+          for (j = 1; j < data.rows.length; j++) {
+            console.log("row", row);
+            //if div is empty (has no answer) then a random meaning is placed there
+            if (document.getElementByID("div" + (j + 4)).innerHTML = "") {
+              let i = document.getElementById("div" + (j + 4));
+              i.innerHTML = results[j].meaning;
+              
+              i.addEventListener("click", wrongAnswer(i));
+            }
+          }
+        } else {
+          console.log("Error with for loop.");
+        }
+      } else {
+        console.log(this.status);
       }
-      console.log('Rows returned are: ', results);
+    } else {
+      console.log("error", this.status);
+    }
+  };
+  xhr.open("GET", "/get-phrase");
+  xhr.send();
 
-      for (j = 0; j < results.length; j++) {
-        //if (element is empty)
-        document.getElementById("div" + (j + 4)).innerHTML = results[j].meaning;
-        results[j].addEventListener("click", guessMeaning());
-      }
-
-      res.send({
-        status: "success",
-        rows: results
-      });
-
-
-    });
-  connection.end();
+  // res.send({
+  //   status: "success",
+  //   rows: results
+  // });
 }
-
+// connection.end();
 startWordMatch();
 
-// function getPhrase() {
-//   const genPhrase = document.getElementById("div3")
-//   const answer = document.getElementById("div" + Math.random() * 3 + 4)
-//   connection.connect();
-//   connection.query('SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 1;'),
-//     function (error, results, fields) {
-//       if (error) {
-//         console.log(error);
-//       }
-//       genPhrase.innerHTML += results[0].phrase;
-
-
-//     }
-// }
-// getPhrase()
-
 // Need to add function to change CSS to green on correct guess, and add score to player's count
-function guessMeaning() {
+function correctAnswer(e) {
+  e.classList.add('correct'); //add css for correct answer to change div background color to green
 
+  let currentBBScore = 0;
+  let currentXScore = 0;
+  let currentYScore = 0;
+  let currentZScore = 0;
+  
+  currentBBScore += results[0].bbvalue;
+  currentXScore += results[0].xvalue;
+  currentYScore += results[0].yvalue;
+  currentZScore += results[0].zvalue;
+
+  // Need to add more divs to the page
+  document.getElementByID("").innerHTML = "Current BB Points: " + currentBBScore;
+  document.getElementByID("").innerHTML = "Current X Points: " + currentXScore;
+  document.getElementByID("").innerHTML = "Current Y Points: " + currentYScore;
+  document.getElementByID("").innerHTML = "Current Z Points: " + currentZScore;
 }
 
-// Need to add function to play again
+// Optional: add function to display history of the word after guessing 
+// (something like "wrong answer"--> eventlistener on click --> remove "hide" class from history div
+// add a div2.innerHTML = answer result[0].history)
+function wrongAnswer(e) {
+  i.classList.add('incorrect'); //add css for correct answer to change div background color to red
+}
 
-// Optional: add function to display history of the word after guessing
-
+// not working code, first attempt:
 // app.get("/wordmatch", function (req, res) {
 //     // check for a session first!
 //     if (req.session.loggedIn) {
@@ -102,6 +121,12 @@ function guessMeaning() {
 //     }
 
 // });
+
+// Need to add function to play again
+function setNextQuestion() {
+  // all this function does is remove hidden class from a "next question" button so it appears on the page. 
+  // when clicked, it does startWordMatch() again
+}
 
 function showDetails() {
   for (var i = 0; i < arguments.length; i++) {
