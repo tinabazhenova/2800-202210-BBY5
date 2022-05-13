@@ -78,10 +78,3 @@ footer {
     font-size: 0.75em;
     width: 100%;
 }
-
-@media only screen and (max-width:1400px) and (min-width:700px) {
-    body {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
