@@ -19,7 +19,7 @@ async function createLobby(game) {
 async function joinLobby(code) {
   try {
     let response = await fetch("/joinLobby", {
-      method: "GET",
+      method: "POST",
       headers: {
         "Accept": 'application/json',
         "Content-Type": 'application/json'
