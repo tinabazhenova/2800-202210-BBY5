@@ -1,5 +1,3 @@
-let modal = document.getElementById("roomModalBackground");
-
 async function createLobby(game) {
   try {
     let response = await fetch("/createLobby", {
@@ -21,7 +19,7 @@ async function createLobby(game) {
 async function joinLobby(code) {
   try {
     let response = await fetch("/joinLobby", {
-      method: "POST",
+      method: "GET",
       headers: {
         "Accept": 'application/json',
         "Content-Type": 'application/json'
@@ -41,11 +39,13 @@ async function joinLobby(code) {
   }
 }
 
-document.getElementById("btn-wordguess").addEventListener("click", e => {
+document.getElementById("wordguess").addEventListener("click", e => {
   createLobby("wordguess");
 });
 
-document.getElementById("btn-openModal").addEventListener("click", e => {
+let modal = document.getElementById("modalBackground");
+
+document.getElementById("openModal").addEventListener("click", e => {
   modal.style.display = "block";
 });
 
@@ -61,4 +61,8 @@ document.getElementById("findLobbyForm").addEventListener("submit", e => {
   joinLobby({
     code: sessionStorage.getItem("code")
   });
+});
+
+document.getElementById("shop").addEventListener("click", e => {
+  window.location.href = "/shop";
 });
