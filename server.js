@@ -392,39 +392,32 @@ app.get("/main", function (req, res) {
 });
 
 app.get("/wordmatch", function (req, res) {
-    // check for a session first!
     if (req.session.loggedIn) {
-
-        let matchPage = fs.readFileSync("./app/html/wordmatch.html", "utf8");
-        let mainDOM = new JSDOM(matchPage);
-
-        connection.execute(
-            "SELECT phrase FROM master ORDER BY Rand();",
-            //"TABLESAMPLE (10 PERCENT)" if we want to speed up the search with larger db, does not round up though
-            function (error, results, fields) {
-                console.log("results: ", results);
-    
-                if (error) {
-                    console.log(error);
-                }
-                let wordMatchStart = results[0].phrase;
-                connection.end();         
-            });
-          
-        let display = "getElementById('div3')"
-        div3.innerHTML += results[0].phrase;
-        
+        let dom = wrap("./app/html/wordmatch.html", req.session);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
-        res.send(mainDOM.serialize());
-            // res.send(wordMatchStart);
+        res.send(dom.serialize());
 
-
+        let connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: '',
+            database: 'comp2800'
+        });
+        connection.connect();
+        connection.query('SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 3;', 
+        function (error, results, fields) {
+            if (error) {
+                console.log(error);
+            }
+            console.log('The results are: ', results);
+            res.send({status: "success", rows: results});
+        })
+        connection.end();
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
-
 });
 
 // RUN SERVER

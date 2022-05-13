@@ -45,6 +45,10 @@ document.getElementById("btn-wordguess").addEventListener("click", e => {
   createLobby("wordguess");
 });
 
+document.getElementById("btn-wordmatch").addEventListener("click", e => {
+  createLobby("wordmatch");
+});
+
 document.getElementById("btn-openModal").addEventListener("click", e => {
   modal.style.display = "block";
 });
