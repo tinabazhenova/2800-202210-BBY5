@@ -1,4 +1,4 @@
 runtime: nodejs12
 instance_class: F2
 vpc_access_connector:
- name: projects/vast-art-350001/locations/us-west1/connectors/genwe-0-vpc-connector
+ name: projects/vast-art-350001/locations/us-central1/connectors/genwe-1-vpc-connector
