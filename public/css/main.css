@@ -1,10 +1,4 @@
 :root {
-    --color1:#E56E18;
-    --color2: #FFB703;
-    --color3: white;
-}
-
-.parent {
     --color6: #2ACF01;
 }
 
@@ -16,7 +10,6 @@
     grid-template-rows: repeat(3, 1fr);
     grid-column-gap: 20px;
     grid-row-gap: 0px;
-    height:100vh;
 
     padding: 10%;
 }
