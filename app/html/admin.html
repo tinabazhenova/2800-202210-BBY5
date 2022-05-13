@@ -10,22 +10,68 @@
 </head>
 
 <body>
-    
+    <div id="container">    
     <div id="title">
-        <p>Administrator Page</p>
+        <div id="profile_name">
+            <h1></h1>
+        </div>
     </div>
+    <div class="div1">
+        <table id="users_table">
+          <!-- <tr>          
+            <th><span>First Name</span></th>
+            <th><span>Last Name</span></th> 
+            <th><span>Username</span></th>
+            <th><span>Password</span></th>
+            <th><span>isAdmin</span></th>
+          </tr>
+          <tr>
+            <td><span id="first_name"></span></td>
+            <td><span id="last_name"></span></td>
+            <td><span id="user_name"></span></td>
+            <td><span id="password"></span></td>
+            <td><span id="isAdmin"></span></td>
+          </tr> -->
+        </table>
+    </div>
+    <fieldset id="admins_table_add">
+        <legend>Add a User</legend>
+        <input type="text" placeholder="firstname" id="addfirstname"/>
+        <input type="text" placeholder="lastname" id="addlastname"/>
+        <input type="text" placeholder="username" id="addusername"/>
+        <input type="text" placeholder="password" id="addpassword"/>
+        <input type="text" placeholder="isAdmin" id="addisAdmin"/>
+        <input type="button" id="add-submit" value="Submit"/>
+    </fieldset>
+    <fieldset id="admins_table_edit">
+        <legend>Edit a User (except ID)</legend>
+        <input type="number" placeholder="ID" id="id"/>
+        <input type="text" placeholder="firstname" id="editfirstname"/>
+        <input type="text" placeholder="lastname" id="editlastname"/>
+        <input type="text" placeholder="username" id="editusername"/>
+        <input type="text" placeholder="password" id="editpassword"/>
+        <input type="text" placeholder="isAdmin" id="editisAdmin"/>
+        <input type="button" id="edit-submit" value="Submit"/>
+    </fieldset>
+    <fieldset id="admins_table_delete">
+        <legend>Delete a User by Username</legend>
+        <input type="text" placeholder="username" id="delusername"/>
+        <input type="button" id="delete-submit" value="Submit"/>
+    </fieldset>
+
 
     <div id="logout">
         <form action="/logout" method="get">
           <input type="submit" value="LOGOUT">
         </form>
     </div>
-
+    </div>
     <footer id="footer">
         GEN WE PROJECT &copy BCIT 2022
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js" integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/js/admin-dashboard.js"></script>
 </body>
 
 </html>

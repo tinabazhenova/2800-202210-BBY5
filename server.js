@@ -147,6 +147,7 @@ app.get("/admin", function (req, res) {
             console.log(results);
             // great time to get the user's data and put it into the page!
             mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
+            mainDOM.window.document.getElementById("profile_name").innerHTML = "Welcome Admin " + req.session.username;
 
             res.set("Server", "Wazubi Engine");
             res.set("X-Powered-By", "Wazubi");
@@ -346,6 +347,62 @@ app.get('/get-password', function (req, res){
         res.send({ status: "success", password: results[0].password});   
     }
     )
+});
+
+app.get('/get-users', function (req, res){
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT * FROM ${userTable} `,
+    function (error, results, field){
+        if (error) {
+            console.log(error);
+        }
+        // req.session.name = results[0].user_name;
+        res.send({ status: "success", rows: results});   
+    }
+    )
+});
+
+app.post('/add-user' , function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`INSERT INTO ${userTable} (user_name, first_name, last_name, password, is_admin) values (?, ?, ?, ?, ?)`,
+            [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin],
+            function (error, results, fields) {
+        if (error) {
+            console.log(error);
+        }
+        //console.log('Rows returned are: ', results);
+        res.send({ status: "success", msg: "Record added." });
+    }
+    )
+});
+
+app.post('/edit-user' , function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`UPDATE ${userTable} SET user_name = ?, first_name = ?, last_name = ?, password = ?, is_admin = ? WHERE ID = ?`,
+            [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin, req.body.id],
+            function (error, results, fields) {
+        if (error) {
+            console.log(error);
+        }
+        console.log('Rows returned are: ', results);
+        res.send({ status: "success", msg: "Record edited." });
+    }
+    )
+});
+
+app.post('/delete-users' , function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`DELETE FROM ${userTable} WHERE (user_name) = ? `,
+    [req.body.user_name],
+    function (error, results, fields) {
+if (error) {
+    console.log(error);
+}
+//console.log('Rows returned are: ', results);
+res.send({ status: "success", msg: "Record deleted." });
+}
+)
+
 });
 
 app.get("/logout", function(req, res) {
