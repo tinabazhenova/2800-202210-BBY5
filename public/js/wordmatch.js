@@ -123,7 +123,7 @@ function wrongAnswer(e) {
 // });
 
 // Need to add function to play again
-function setNextQuestion() {
+function nextQuestion() {
   // all this function does is remove hidden class from a "next question" button so it appears on the page. 
   // when clicked, it does startWordMatch() again
 }
