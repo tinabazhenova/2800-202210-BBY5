@@ -27,6 +27,7 @@
         "mysql2": "^2.3.3",
         "socket.io": "^4.5.0",
         "multer": "1.4.4",
+        "util": "0.12.4"
         "express-socket.io-session": "4.5.0"
     }
 }
