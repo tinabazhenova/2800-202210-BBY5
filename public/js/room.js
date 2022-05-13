@@ -24,7 +24,7 @@ socket.on("postMessage", message => {
 
 socket.on("updateUserlist", members => {
   const list = document.getElementById("userList");
-  list.innerHTML = "";
+  list.innerHTML = "Users in this room:";
   members.forEach(m => {
     list.innerHTML += "<br>" + m;
   });

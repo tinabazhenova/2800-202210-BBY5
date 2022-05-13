@@ -106,13 +106,7 @@ app.use(bodyparser.urlencoded({
     extended: true
 }));
 
-app.use(session({
-    secret: "extra text that no one will guess",
-    name: "wazaSessionID",
-    resave: false,
-    // create a unique identifier for that client
-    saveUninitialized: true
-}));
+app.use(session);
 app.get("/", function (req, res) {
 
     if (req.session.loggedIn) {
