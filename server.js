@@ -78,6 +78,16 @@ io.on("connection", socket => {
     });
 });
 
+const storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, "./public/imgs/")
+    },
+    filename: function(req, file, callback) {
+        callback(null, "my-app-" + file.originalname.split('/').pop().trim());
+    }
+});
+const upload = multer({ storage: storage });
+
 app.get("/", function (req, res) {
 
     if (req.session.loggedIn) {
