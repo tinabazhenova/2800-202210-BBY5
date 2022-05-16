@@ -61,7 +61,7 @@ io.on("connection", socket => {
     });
     //receives a message from one client and sends it to all other clients so that everyone (in the same room) can see the message
     socket.on("sendMessage", (message, room) => {
-        io.to(room).emit("postMessage", message);
+        io.to(room).emit("postMessage", session.username + ": " + message);
     });
     socket.on("disconnect", () => {
         for (var i = 0; i < rooms.length; i++) {
