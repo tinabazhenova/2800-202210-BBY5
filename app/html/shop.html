@@ -1,0 +1,42 @@
+<div id="container">
+    <div id="itemList">
+
+    </div>
+    <div id="shoppingOptions">
+        <button type="button" id="proceedOrder">Proceed</button>
+        <button type="button" id="cencelOrder">Cancel</button>
+    </div>
+</div>
+
+<div id="cartBackground">
+    <div id="cartContainer">
+
+    </div>
+</div>
+
+<div id="modalBackground">
+    <div id="modalContainer">
+        <span>Would you like to save your cart for later?</span>
+        <button type="button" id="saveCart">Save</button>
+        <button type="button" id="discardCart">Discard</button>
+        <button type="button" id="cancelCancel">Cancel</button>
+    </div>
+</div>
+
+<template id="itemTemplate">
+    <div class="itemContainer">
+        <img class="itemImage" src="..." alt="...">
+        <h5 class="itemName"></h5>
+        <button type="button" class="addToCart">Add to cart</button>
+    </div>
+</template>
+
+<template id="cartItemTemplate">
+    <div class="cartItemContainer">
+        <img class="itemImage" src="..." alt="...">
+        <h5 class="itemName"></h5>
+        <button type="button" class="removeFromCart">Remove</button>
+    </div>
+</template>
+
+<script src="/js/shop.js"></script>

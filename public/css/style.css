@@ -19,8 +19,8 @@ body {
     font-size: 17pt;
     height: 100vh;
     display: grid;
-    grid-template-columns: repeat(5, vw100);
-    grid-template-rows: repeat(5, vh100);
+    grid-template-columns: repeat(5, vw20);
+    grid-template-rows: repeat(5, vh20);
     align-items: end;
     background: url("/imgs/we1.png") center/cover fixed;
     backdrop-filter: blur(6px);
@@ -63,13 +63,17 @@ li {
     list-style: none;
 }
 
+li#guest>a:hover {
+    color: var(--color5);
+}
+
 a {
     text-decoration: none;
     color: var(--color4);
 }
 
 #loginForm {
-    color: white;
+    color: var(--color2);
     text-align: center;
 }
 
@@ -83,7 +87,7 @@ a {
     text-align: center;
     color: black;
     padding: 0.4em;
-    background-color: whitesmoke;
+    background-color: var(--color3);
     border-radius: 3px;
     border: 2px solid var(--color1);
 }
@@ -101,12 +105,132 @@ a {
 #loginForm>input[type="button"] {
     background-color: var(--color1);
     border-radius: 3px;
-    color: #f2f2f8;
+    color: var(--color2);
     cursor: pointer;
 }
 
 #loginForm>input[type="button"]:hover {
-    color: #212121;
+    color: var(--color5);
     background-color: var(--color2);
     outline: none;
+}
+
+#admin-submit:hover {
+    color: red;
+}
+
+@media screen and (max-width: 750px) {
+
+    :root{
+        --color1: rgb(139, 0, 105);
+        --color2: black;
+        --color3: #E56E18;
+        --color4: #E56E18;
+        --color5: #f2f2f8;
+    }
+    body {
+        margin: 0;
+        font-family: "atwriter";
+        font-size: 14pt;
+        height: 100vh;
+        display: grid;
+        grid-template-columns: repeat(5, vw20);
+        grid-template-rows: repeat(5, vh20);
+        align-items: end;
+        background: url("/imgs/we1.png") center/cover fixed;
+        backdrop-filter: blur(6px);
+    }
+    
+    input {
+        font-family: "atwriter";
+    }
+    
+    label {
+        font-size: medium;
+    }
+    
+    #errorMsg {
+        color: red;
+    }
+    
+    #formPanel {
+        grid-row: 2;
+        grid-column: 3;
+        background-color: none;
+        opacity: 0.8;
+    }
+    
+    footer {
+        grid-row: 5 / 5;
+        grid-column: 1 / span 5;
+        background-color: var(--color3);
+        color: var(--color5);
+        text-align: center;
+        padding: 10px;
+        font-size: 0.75em;
+    }
+    
+    ul {
+        text-align: center;
+    }
+    
+    li {
+        list-style: none;
+    }
+
+    li#guest>a:hover {
+        color: var(--color5);
+    }    
+
+    a {
+        text-decoration: none;
+        color: var(--color4);
+    }
+    
+    #loginForm {
+        color: var(--color2);
+        text-align: center;
+    }
+    
+    #loginForm>input {
+        font-size: 0.9em;
+        display: block;
+        margin: 0 auto;
+        margin-top: 1em;
+        outline: none;
+        border: none;
+        text-align: center;
+        color: var(--color5);
+        padding: 0.4em;
+        background-color: var(--color3);
+        border-radius: 3px;
+        border: 2px solid var(--color1);
+    }
+    
+    #formTitle {
+        font-size: xx-large;
+        padding: 30px;
+        color: var(--color4);
+    }
+    
+    ::placeholder {
+        color: var(--color4);
+    }
+    
+    #loginForm>input[type="button"] {
+        background-color: var(--color1);
+        border-radius: 3px;
+        color: var(--color3);
+        cursor: pointer;
+    }
+    
+    #loginForm>input[type="button"]:hover {
+        color: var(--color5);
+        background-color: var(--color2);
+        outline: none;
+    }
+
+    #admin-submit:hover {
+        color: red;
+    }
 }

@@ -1,18 +1,32 @@
+<head>
+    <link href="/css/main.css" rel="stylesheet" />
+</head>
+
 <div id="menu">
-    <div class="menuItem">
-        <button id="btn-wordguess">wordguess</button>
+    <div class="menuItem" id="div1">
+        <button id="wordguess">wordguess</button>
     </div>
 
-    <div class="menuItem">
-        <button id="btn-wordmatch">wordmatch</button>
+    <div class="menuItem" id="div2">
+        <button id="wordmatch">wordmatch</button>
     </div>
 
-    <div class="menuItem">
-        <button id="btn-crossword">crossword</button>
+    <div class="menuItem" id="div3">
+        <button id="crossword">crossword</button>
     </div>
 
-    <div class="menuItem">
-        <button id="btn-openModal">Join a Room</button>
+    <div class="menuItem" id="div4">
+        <button id="openModal">Join a Room</button>
+    </div>
+
+    <div class="menuItem" id="div5">
+        <form action="/profile" method="get">
+            <input type="submit" value="Edit Profile">
+        </form>
+    </div>
+
+    <div class="menuItem" id="div6">
+        <button id="shop">Shop</button>
     </div>
 
     <div id="logout">
@@ -22,8 +36,8 @@
     </div>
 </div>
 
-<div id="roomModalBackground">
-    <div id="roomModalContainer">
+<div id="modalBackground">
+    <div id="modalContainer">
         <form id="findLobbyForm">
             <label>Enter the code here: </label>
             <input type="text" id="code-input">

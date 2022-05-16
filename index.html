@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Gen We</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./public/css/style.css" rel="stylesheet" />
+    <link href="./public/imgs/favicon.ico" rel="icon" type="image/x-icon" />
+
+  </head>
+
+  <body>
+    <div id="formPanel">
+      <form id="loginForm">
+        <p id="formTitle">Welcome</p>
+        <input
+          id="username"
+          type="text"
+          required="required"
+          placeholder="Username"
+        />
+        <input
+          id="password"
+          type="password"
+          required="required"
+          placeholder="Password"
+        />
+        <input id="submit" type="button" value="Login" />
+        <div id="admin-submit">
+          <p>LOGIN AS ADMINISTRATOR</p>
+        </div>
+        <p><span id="serverMsg"></span></p>
+        <p id="errorMsg">&nbsp;</p>
+      </form>
+      <ul>
+        <li id="guest"><a href="/main">Countinue as guest</a></li>
+      </ul>
+    </div>
+
+    <footer id="footer">GEN WE PROJECT &copy BCIT 2022</footer>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"
+      integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="./public/js/client.js"></script>
+  </body>
+</html>
