@@ -1,6 +1,7 @@
 :root {
-    --color: black;
-    --backColor: white;
+    --color3: #564154;
+    --color6: #FF6542;
+    --backColor: #E0CBA8;
     --gridWidth: 3;
 }
 
@@ -18,16 +19,16 @@
     background-color: var(--backColor);
     width: 50px;
     height: 50px;
-    border: 5px solid var(--color);
+    border: 5px solid var(--color3);
     text-transform: capitalize;
 }
 
 #startGame {
-    background-color: green;
+    background-color: #779FA1;
 }
 
 #leaveRoom {
-    background-color: red;
+    background-color: #88498F;
 }
 
 button {
@@ -41,4 +42,32 @@ button {
 
 .green {
     background-color: green;
+}
+
+.letter,
+.enter,
+#backspace {
+    background-color: var(--color6);
+    margin-left: 1%;
+    align-self: center;
+    color: var(--color2);
+}
+
+.letter {
+    min-width: 2%;
+}
+
+#backspace {
+    min-width: 4%;
+}
+
+.enter {
+    min-width: 4%;
+}
+
+.row1,
+.row2,
+.row3 {
+    display: flex;
+    margin-top: 1%;
 }
