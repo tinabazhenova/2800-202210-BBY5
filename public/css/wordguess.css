@@ -21,6 +21,11 @@
     text-transform: capitalize;
 }
 
+button {
+    width: 10px;
+    background-color: green;
+}
+
 .yellow {
     background-color: yellow;
 }

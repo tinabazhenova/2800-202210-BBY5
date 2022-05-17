@@ -46,6 +46,19 @@ button {
     cursor: pointer;
 }
 
+
+/* button {
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color1);
+    border-radius: 20%;
+    min-width: 40%;
+    width: auto;
+    color: var(--color2);
+    cursor: pointer;
+}
+
 input[type='submit'] {
     font-family: 'atwriter';
     padding: 12px;
@@ -56,6 +69,18 @@ input[type='submit'] {
     width: auto;
     color: var(--color2);
     cursor: pointer;
+} */
+
+#name {
+    text-align: center;
+    color: var(--color5);
+    margin-top: 1%;
+}
+
+#back {
+    width: 10%;
+    margin-left: 1%;
+    margin-top: 1%;
 }
 
 .wrapper {
