@@ -148,12 +148,35 @@ function wrap(filename, session) {
     return dom;
 }
 
-app.get("/wordguess", function(req, res) {
+function respondWithWord(guessWord, req, res) {
+    let dom = wrap("./app/html/wordguess.html", req.session);
+    let grid = dom.window.document.querySelector(".wordguess_grid");
+    grid.setAttribute("word_length", guessWord.length);
+    grid.setAttribute("guess_attempts", 5);
+    res.send(dom.serialize());
+}
+
+app.get("/wordguess", async function(req, res) {
     if (req.session.loggedIn) {
-        let dom = wrap("./app/html/wordguess.html", req.session);
+        let guessWord = req.session.guessWord;
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
-        res.send(dom.serialize());
+        if (!guessWord) {
+            connection.query(`SELECT phrase FROM BBY_05_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
+                if (error || !results || !results.length) {
+                    console.log(error);
+                    let dom = wrap("./app/html/wordguess_wait.html", req.session);
+                    res.send(dom.serialize());
+
+                } else {
+                    req.session.guessWord = guessWord = results[0].phrase.toUpperCase();
+                    respondWithWord(guessWord, req, res);
+                }
+            });
+        } else {
+            respondWithWord(guessWord, req, res);
+        }
+
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
@@ -161,7 +184,7 @@ app.get("/wordguess", function(req, res) {
 });
 
 app.post("/try_word", function(req, res) {
-    let hardCodedWord = 'alley'.toUpperCase();
+    let hardCodedWord = req.session.guessWord;
     let tempEnteredWord = req.body.word.toUpperCase();
     let checkResult = new Array(0, 0, 0, 0, 0);
     for (let i = 0; i < 5; i++) {
