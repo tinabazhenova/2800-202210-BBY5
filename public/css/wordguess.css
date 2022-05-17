@@ -46,7 +46,7 @@ button {
 }
 
 .letter,
-.enter,
+#enter,
 #backspace {
     background-color: var(--color6);
     margin-left: 1%;
@@ -64,7 +64,7 @@ button {
     padding-right: 2%;
 }
 
-.enter {
+#enter {
     min-width: 3%;
 }
 
