@@ -59,11 +59,22 @@ class Matcher {
             console.log(parsed);
             let strictMatches = 0;
             for (let i = 0; i < this.word_length; i++) {
+                let paintedKeyboardLetter = document.getElementById('letter' + this.tempEnteredWord[i]);
                 if (parsed[i] == 2) {
                     this.letters[this.word * this.word_length + i].classList.add("green");
+                    //keyboard letter painted
+                    paintedKeyboardLetter.classList.remove("originalKey");
+                    paintedKeyboardLetter.classList.add("green");
                     strictMatches++;
                 } else if (parsed[i] == 1) {
                     this.letters[this.word * this.word_length + i].classList.add("yellow");
+                    if (paintedKeyboardLetter.classList.contains("originalKey")) {
+                        paintedKeyboardLetter.classList.remove("originalKey");
+                        paintedKeyboardLetter.classList.add("yellow");
+                    }
+                } else {
+                    paintedKeyboardLetter.classList.remove("originalKey");
+                    paintedKeyboardLetter.classList.add("discard");
                 }
             }
 
@@ -95,6 +106,8 @@ ready(function() {
     }
     for (let i = 0; i < elements.length; i++) {
         elements[i].addEventListener('click', click, false);
+        elements[i].id = 'letter' + elements[i].innerHTML;
+        elements[i].classList.add("originalKey");
     }
     let bkspc = document.getElementById("backspace");
     bkspc.addEventListener('click', function() {
