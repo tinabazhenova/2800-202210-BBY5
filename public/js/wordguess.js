@@ -26,7 +26,7 @@ class Matcher {
                 this.tempEnteredWord += event.key.toUpperCase(); //records a letter into string
                 this.position++; // increase position
 
-            } else if (event.keyCode == 8 && position != 0) { // if user hits BS 
+            } else if (event.keyCode == 8 && this.position != 0) { // if user hits BS 
                 this.position--; // decrease position
                 this.tempEnteredWord = this.tempEnteredWord.substring(0, this.position);
                 this.letters[this.word * this.word_length + this.position].innerHTML = ''; //rewrite an indec in an array with empty char
@@ -87,7 +87,22 @@ class Matcher {
 ready(function() {
     //alert('LOL');
     let matcher = new Matcher();
-
+    let elements = document.getElementsByClassName("letter");
+    let click = function() {
+        let content = this.innerHTML;
+        let event = { key: content, keyCode: content.charCodeAt(0) };
+        matcher.onInput(event);
+    }
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].addEventListener('click', click, false);
+    }
+    let bkspc = document.getElementById("backspace");
+    bkspc.addEventListener('click', function() {
+        matcher.onInput({ keyCode: 8 });
+    });
+    document.getElementById("enter").addEventListener('click', function() {
+        matcher.onInput({ keyCode: 13 });
+    });
     window.addEventListener('keydown', function(event) {
 
         if (event.target === this.document.getElementById("chatInput")) {
@@ -95,6 +110,7 @@ ready(function() {
         }
         matcher.onInput(event);
     })
+
 })
 
 function ready(callback) {

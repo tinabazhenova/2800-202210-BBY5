@@ -170,6 +170,7 @@ app.get("/wordguess", async function(req, res) {
 
                 } else {
                     req.session.guessWord = guessWord = results[0].phrase.toUpperCase();
+                    req.session.save(function(err) {});
                     respondWithWord(guessWord, req, res);
                 }
             });
@@ -184,21 +185,21 @@ app.get("/wordguess", async function(req, res) {
 });
 
 app.post("/try_word", function(req, res) {
+    console.log("hardcoded word: {}", req.session.guessWord);
     let hardCodedWord = req.session.guessWord;
     let tempEnteredWord = req.body.word.toUpperCase();
-    let checkResult = new Array(0, 0, 0, 0, 0);
-    for (let i = 0; i < 5; i++) {
+    let checkResult = Array.apply(null, Array(hardCodedWord.length)).map(function(x, i) {
         let temp = tempEnteredWord[i];
-        for (let j = 0; j < 5; j++) {
+        let result = 0;
+        for (let j = 0; j < hardCodedWord.length; j++) {
             if (temp == hardCodedWord[j]) {
-                if (i == j) {
-                    checkResult[i] = 2;
-                    break;
-                } else
-                    checkResult[i] = 1;
+                if (i == j)
+                    return 2;
+                result = 1;
             }
         }
-    }
+        return result;
+    })
     let result = checkResult;
     res.send(result);
 })
