@@ -161,7 +161,7 @@ app.get("/wordguess", function(req, res) {
 });
 
 app.post("/try_word", function(req, res) {
-    let hardCodedWord = 'alley'.toUpperCase();
+    let hardCodedWord = 'kicks'.toUpperCase();
     let tempEnteredWord = req.body.word.toUpperCase();
     let checkResult = new Array(0, 0, 0, 0, 0);
     for (let i = 0; i < 5; i++) {
