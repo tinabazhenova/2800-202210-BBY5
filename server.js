@@ -160,6 +160,26 @@ app.get("/wordguess", function(req, res) {
     }
 });
 
+app.post("/try_word", function(req, res) {
+    let hardCodedWord = 'alley'.toUpperCase();
+    let tempEnteredWord = req.body.word.toUpperCase();
+    let checkResult = new Array(0, 0, 0, 0, 0);
+    for (let i = 0; i < 5; i++) {
+        let temp = tempEnteredWord[i];
+        for (let j = 0; j < 5; j++) {
+            if (temp == hardCodedWord[j]) {
+                if (i == j) {
+                    checkResult[i] = 2;
+                    break;
+                } else
+                    checkResult[i] = 1;
+            }
+        }
+    }
+    let result = checkResult;
+    res.send(result);
+})
+
 app.get("/main", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
