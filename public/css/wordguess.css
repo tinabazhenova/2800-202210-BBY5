@@ -22,9 +22,17 @@
     text-transform: capitalize;
 }
 
-button {
-    width: 10px;
+#startGame {
     background-color: green;
+}
+
+#leaveRoom {
+    background-color: red;
+}
+
+button {
+    min-width: 10%;
+    margin-bottom: 2%;
 }
 
 .yellow {
