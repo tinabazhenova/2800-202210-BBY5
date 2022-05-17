@@ -34,6 +34,7 @@
 button {
     min-width: 10%;
     margin-bottom: 2%;
+    background-color: var(--color6);
 }
 
 .yellow {
@@ -49,20 +50,22 @@ button {
 #backspace {
     background-color: var(--color6);
     margin-left: 1%;
-    align-self: center;
+    margin-bottom: 0.5%;
     color: var(--color2);
 }
 
 .letter {
-    min-width: 2%;
+    min-width: 3%;
 }
 
 #backspace {
     min-width: 4%;
+    padding-left: 2%;
+    padding-right: 2%;
 }
 
 .enter {
-    min-width: 4%;
+    min-width: 3%;
 }
 
 .row1,
@@ -70,4 +73,5 @@ button {
 .row3 {
     display: flex;
     margin-top: 1%;
+    justify-content: center;
 }
