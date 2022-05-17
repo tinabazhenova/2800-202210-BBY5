@@ -151,6 +151,13 @@ function wrap(filename, session) {
 app.get("/wordguess", function(req, res) {
     if (req.session.loggedIn) {
         let dom = wrap("./app/html/wordguess.html", req.session);
+        let grid = dom.window.document.querySelector(".wordguess_grid");
+        let guessWord = req.session.guessWord;
+        if (!guessWord) {
+            req.session.guessWord = guessWord = 'asdf'.toUpperCase();
+        }
+        grid.setAttribute("word_length", guessWord.length);
+        grid.setAttribute("guess_attempts", 4);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(dom.serialize());
@@ -161,7 +168,7 @@ app.get("/wordguess", function(req, res) {
 });
 
 app.post("/try_word", function(req, res) {
-    let hardCodedWord = 'alley'.toUpperCase();
+    let hardCodedWord = req.session.guessWord;
     let tempEnteredWord = req.body.word.toUpperCase();
     let checkResult = new Array(0, 0, 0, 0, 0);
     for (let i = 0; i < 5; i++) {

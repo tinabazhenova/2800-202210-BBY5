@@ -6,24 +6,30 @@ class Matcher {
         this.tempEnteredWord = '';
         this.position = 0;
 
+        let grid = document.querySelector(".wordguess_grid");
+        this.word_length = grid.getAttribute("word_length");
+        this.guess_attempts = grid.getAttribute("guess_attempts");
+        let r = document.querySelector(':root');
+        r.style.setProperty('--gridWidth', this.word_length);
+
         //rec.innerHTML = "A";
-        for (let i = 1; i < 25; ++i) {
+        for (let i = 1; i < this.word_length * this.guess_attempts; ++i) {
             this.letters[i] = rec.cloneNode(true);
-            document.querySelector(".wordguess_grid").appendChild(this.letters[i]);
+            grid.appendChild(this.letters[i]);
         }
     }
 
     onInput(event) {
-        if (this.position < 5 || event.keyCode == 8) {
+        if (this.position < this.word_length || event.keyCode == 8) {
             if (event.keyCode >= 65 && event.keyCode <= 90) { //checks if the user entered a letter
-                this.letters[this.word * 5 + this.position].innerHTML = event.key; // fill array in a line
+                this.letters[this.word * this.word_length + this.position].innerHTML = event.key; // fill array in a line
                 this.tempEnteredWord += event.key.toUpperCase(); //records a letter into string
                 this.position++; // increase position
 
             } else if (event.keyCode == 8 && position != 0) { // if user hits BS 
                 this.position--; // decrease position
                 this.tempEnteredWord = this.tempEnteredWord.substring(0, this.position);
-                this.letters[this.word * 5 + this.position].innerHTML = ''; //rewrite an indec in an array with empty char
+                this.letters[this.word * this.word_length + this.position].innerHTML = ''; //rewrite an indec in an array with empty char
             } else {
                 alert('Enter the letter from A- Z'); //the user entered the worng character
             }
@@ -52,16 +58,16 @@ class Matcher {
             let parsed = await check.json();
             console.log(parsed);
             let strictMatches = 0;
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < this.word_length; i++) {
                 if (parsed[i] == 2) {
-                    this.letters[this.word * 5 + i].classList.add("green");
+                    this.letters[this.word * this.word_length + i].classList.add("green");
                     strictMatches++;
                 } else if (parsed[i] == 1) {
-                    this.letters[this.word * 5 + i].classList.add("yellow");
+                    this.letters[this.word * this.word_length + i].classList.add("yellow");
                 }
             }
 
-            if (strictMatches == 5) {
+            if (strictMatches == this.word_length) {
                 alert('Victory');
 
             } else if (this.word < 4) {

@@ -1,11 +1,12 @@
 :root {
     --color: black;
     --backColor: white;
+    --gridWidth: 3;
 }
 
 .wordguess_grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(var(--gridWidth), 1fr);
     width: min-content;
     grid-gap: 20px;
     align-self: center;
