@@ -289,17 +289,10 @@ app.get("/profile", function(req, res) {
         profileDOM.window.document.getElementById("user_name").innerHTML = req.session.name;
         profileDOM.window.document.getElementById("password").innerHTML = req.session.pass;
 
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
-            console.log(error);
-            console.log(results);
-            // great time to get the user's data and put it into the page!
-            profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
-            profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome back " + req.session.username;
-
-            res.set("Server", "Wazubi Engine");
-            res.set("X-Powered-By", "Wazubi");
-            res.send(profileDOM.serialize());
-        });
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(profileDOM.serialize());
+        
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
