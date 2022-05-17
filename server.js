@@ -1,3 +1,5 @@
+var util = require('util');
+var encoder = new util.TextEncoder('utf-8');
 const express = require("express");
 const session = require("express-session")({
     secret: "extra text that no one will guess",
@@ -59,7 +61,7 @@ io.on("connection", socket => {
     });
     //receives a message from one client and sends it to all other clients so that everyone (in the same room) can see the message
     socket.on("sendMessage", (message, room) => {
-        io.to(room).emit("postMessage", message);
+        io.to(room).emit("postMessage", session.username + ": " + message);
     });
     socket.on("disconnect", () => {
         for (var i = 0; i < rooms.length; i++) {
@@ -79,7 +81,7 @@ io.on("connection", socket => {
 });
 
 const storage = multer.diskStorage({
-    destination: function (req, file, callback) {
+    destination: function(req, file, callback) {
         callback(null, "./public/imgs/")
     },
     filename: function(req, file, callback) {
@@ -88,7 +90,24 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-app.get("/", function (req, res) {
+
+
+app.set("view engine", "ejs");
+// static path mappings
+app.use("/js", express.static("./public/js"));
+app.use("/css", express.static("./public/css"));
+app.use("/imgs", express.static("./public/imgs"));
+app.use("/fonts", express.static("./public/fonts"));
+app.use("/html", express.static("./public/html"));
+app.use("/media", express.static("./public/media"));
+// body-parser middleware use
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({
+    extended: true
+}));
+
+app.use(session);
+app.get("/", function(req, res) {
 
     if (req.session.loggedIn) {
         res.redirect("/main");
@@ -106,7 +125,8 @@ const { runInNewContext } = require("vm");
 const { redirect } = require("express/lib/response");
 const res = require("express/lib/response");
 const connection = mysql.createConnection({
-    host: "localhost",
+    host: process.env.DB_HOST,
+    port: 3306,
     user: "root",
     password: "",
     database: "COMP2800"
@@ -128,17 +148,60 @@ function wrap(filename, session) {
     return dom;
 }
 
-app.get("/wordguess", function(req, res) {
+function respondWithWord(guessWord, req, res) {
+    let dom = wrap("./app/html/wordguess.html", req.session);
+    let grid = dom.window.document.querySelector(".wordguess_grid");
+    grid.setAttribute("word_length", guessWord.length);
+    grid.setAttribute("guess_attempts", 5);
+    res.send(dom.serialize());
+}
+
+app.get("/wordguess", async function(req, res) {
     if (req.session.loggedIn) {
-        let dom = wrap("./app/html/wordguess.html", req.session);
+        let guessWord = req.session.guessWord;
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
-        res.send(dom.serialize());
+        if (!guessWord) {
+            connection.query(`SELECT phrase FROM BBY_05_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
+                if (error || !results || !results.length) {
+                    console.log(error);
+                    let dom = wrap("./app/html/wordguess_wait.html", req.session);
+                    res.send(dom.serialize());
+
+                } else {
+                    req.session.guessWord = guessWord = results[0].phrase.toUpperCase();
+                    respondWithWord(guessWord, req, res);
+                }
+            });
+        } else {
+            respondWithWord(guessWord, req, res);
+        }
+
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
 });
+
+app.post("/try_word", function(req, res) {
+    let hardCodedWord = req.session.guessWord;
+    let tempEnteredWord = req.body.word.toUpperCase();
+    let checkResult = new Array(0, 0, 0, 0, 0);
+    for (let i = 0; i < 5; i++) {
+        let temp = tempEnteredWord[i];
+        for (let j = 0; j < 5; j++) {
+            if (temp == hardCodedWord[j]) {
+                if (i == j) {
+                    checkResult[i] = 2;
+                    break;
+                } else
+                    checkResult[i] = 1;
+            }
+        }
+    }
+    let result = checkResult;
+    res.send(result);
+})
 
 app.get("/main", function(req, res) {
     // check for a session first!
@@ -161,7 +224,9 @@ app.get("/admin", function(req, res) {
         let main = fs.readFileSync("./app/html/admin.html", "utf8");
         let mainDOM = new JSDOM(main);
 
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = "${req.session.username}"`, function(error, results) {
+
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
+
             console.log(error);
             console.log(results);
             // great time to get the user's data and put it into the page!
@@ -194,6 +259,9 @@ app.post("/login", function(req, res) {
 
     console.log("What was sent", req.body.username, req.body.password);
     connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
+
+        console.log(req, results);
+
         if (error || !results || !results.length) {
             res.send({ status: "fail", msg: "User account not found." });
             console.log(error);
@@ -520,7 +588,9 @@ app.post("/removeItemFromCart", (req, res) => {
 });
 
 // RUN SERVER
+
 let port = 8000;
+
 server.listen(port, function() {
     console.log("Listening on port " + port + "!");
 });
