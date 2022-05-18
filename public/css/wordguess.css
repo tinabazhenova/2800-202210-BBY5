@@ -39,19 +39,28 @@ button {
 
 .yellow {
     background-color: yellow;
+    color: var(--color3);
 }
 
 .green {
     background-color: green;
 }
 
+.originalKey {
+    background-color: var(--color6);
+    color: var(--color2);
+}
+
+.discard {
+    background-color: var(--backColor);
+    color: var(--color3);
+}
+
 .letter,
 #enter,
 #backspace {
-    background-color: var(--color6);
     margin-left: 1%;
     margin-bottom: 0.5%;
-    color: var(--color2);
 }
 
 .letter {
@@ -62,10 +71,14 @@ button {
     min-width: 4%;
     padding-left: 2%;
     padding-right: 2%;
+    background-color: var(--color6);
+    color: var(--color2);
 }
 
 #enter {
     min-width: 3%;
+    background-color: var(--color6);
+    color: var(--color2);
 }
 
 .row1,
