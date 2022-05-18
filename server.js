@@ -162,7 +162,7 @@ app.get("/wordguess", async function(req, res) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         if (!guessWord) {
-            connection.query(`SELECT phrase FROM BBY_05_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
+            connection.query(`SELECT phrase, meaning FROM BBY_05_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
                 if (error || !results || !results.length) {
                     console.log(error);
                     let dom = wrap("./app/html/wordguess_wait.html", req.session);
@@ -170,6 +170,7 @@ app.get("/wordguess", async function(req, res) {
 
                 } else {
                     req.session.guessWord = guessWord = results[0].phrase.toUpperCase();
+                    req.session.guessMeaning = results[0].meaning;
                     req.session.save(function(err) {});
                     respondWithWord(guessWord, req, res);
                 }
@@ -199,8 +200,14 @@ app.post("/try_word", function(req, res) {
             }
         }
         return result;
-    })
-    let result = checkResult;
+    });
+    let strictMatches = 0;
+    for (let i = 0; i < checkResult.length; ++i)
+        if (checkResult[i] == 2)
+            strictMatches++;
+    let result = { matches: checkResult };
+    if (strictMatches == hardCodedWord.length)
+        result.meaning = req.session.guessMeaning;
     res.send(result);
 })
 

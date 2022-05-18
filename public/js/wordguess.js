@@ -57,16 +57,14 @@ class Matcher {
             console.log(check.body);
             let parsed = await check.json();
             console.log(parsed);
-            let strictMatches = 0;
             for (let i = 0; i < this.word_length; i++) {
                 let paintedKeyboardLetter = document.getElementById('letter' + this.tempEnteredWord[i]);
-                if (parsed[i] == 2) {
+                if (parsed.matches[i] == 2) {
                     this.letters[this.word * this.word_length + i].classList.add("green");
                     //keyboard letter painted
                     paintedKeyboardLetter.classList.remove("originalKey");
                     paintedKeyboardLetter.classList.add("green");
-                    strictMatches++;
-                } else if (parsed[i] == 1) {
+                } else if (parsed.matches[i] == 1) {
                     this.letters[this.word * this.word_length + i].classList.add("yellow");
                     if (paintedKeyboardLetter.classList.contains("originalKey")) {
                         paintedKeyboardLetter.classList.remove("originalKey");
@@ -78,8 +76,8 @@ class Matcher {
                 }
             }
 
-            if (strictMatches == this.word_length) {
-                alert('Victory');
+            if (parsed.meaning) {
+                document.getElementById("explanation").innerHTML = "You guessed right! The meaning is: " + parsed.meaning;
 
             } else if (this.word < 4) {
                 ++this.word; // we give one more option to enter the word
