@@ -110,6 +110,7 @@ async function emptyCart() {
         "Content-Type": 'application/json'
       }
     });
+    document.getElementById("cartItemList").innerHTML = "";
   } catch (error) {
     console.log(error);
   }
@@ -128,7 +129,7 @@ async function purchaseCart() {
     let parsed = await response.json();
     if (parsed.approved) {
       emptyCart();
-      document.getElementById("cartMessage").innerHTML = "Approved. Thank you for your purchase!";
+      document.getElementById("cartMessage").innerHTML = "Approved. Thank you!";
     } else {
       document.getElementById("cartMessage").innerHTML = parsed.errorMessage;
     }

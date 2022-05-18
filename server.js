@@ -332,23 +332,10 @@ app.get("/getCartItems", (req, res) => {
 });
 
 app.post("/shopItem", (req, res) => {
-    connection.query(`SELECT * FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?;`,
-    [req.session.userID, req.body.itemID], (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            if (results.length == 0) {
-                connection.query(`INSERT INTO BBY_5_cart_item VALUES (?, ?, ?);`,
-                [req.session.userID, req.body.itemID, req.body.quantity], (error, results) => {
-                    if (error) console.log(error);
-                });
-            } else {
-                connection.query(`UPDATE BBY_5_cart_item SET quantity = quantity + ? WHERE user_ID = ? AND item_ID = ?;`,
-                [req.body.quantity, req.session.userID, req.body.itemID], (error, results) => {
-                    if (error) console.log(error);
-                });
-            }
-        }
+    connection.query(`INSERT INTO bby_5_cart_item VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
+    [req.session.userID, req.body.itemID, req.body.quantity, req.body.quantity], (error, results) => {
+        if (error) console.log(error);
     });
     res.send();
 });
