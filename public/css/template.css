@@ -6,11 +6,11 @@
 }
 
 :root {
-    --color1: rgb(224, 103, 3);
+    --color1: #FF6542;
     --color2: #f2f2f8;
     --color3: rgb(217, 241, 250);
-    --color4: black;
-    --color5: rgb(139, 0, 105);
+    --color4: #564154;
+    --color5: #88498F;
 }
 
 html,
@@ -45,31 +45,6 @@ button {
     color: var(--color2);
     cursor: pointer;
 }
-
-
-/* button {
-    font-family: 'atwriter';
-    padding: 12px;
-    font-size: 1em;
-    background-color: var(--color1);
-    border-radius: 20%;
-    min-width: 40%;
-    width: auto;
-    color: var(--color2);
-    cursor: pointer;
-}
-
-input[type='submit'] {
-    font-family: 'atwriter';
-    padding: 12px;
-    font-size: 1em;
-    background-color: var(--color1);
-    border-radius: 20%;
-    min-width: 40%;
-    width: auto;
-    color: var(--color2);
-    cursor: pointer;
-} */
 
 #name {
     text-align: center;

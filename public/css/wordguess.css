@@ -1,6 +1,5 @@
 :root {
-    --color3: #564154;
-    --color6: #FF6542;
+    --color7: #779FA1;
     --backColor: #E0CBA8;
     --gridWidth: 3;
 }
@@ -19,41 +18,54 @@
     background-color: var(--backColor);
     width: 50px;
     height: 50px;
-    border: 5px solid var(--color3);
+    border: 5px solid var(--color4);
     text-transform: capitalize;
 }
 
 #startGame:hover {
-    background-color: #779FA1;
+    background-color: var(--color7);
 }
 
 #leaveRoom:hover {
-    background-color: #88498F;
+    background-color: var(--color5);
 }
 
 button {
-    min-width: 10%;
+    min-width: 5%;
     margin-bottom: 2%;
-    background-color: var(--color6);
+    background-color: var(--color1);
+}
+
+input {
+    width: 15%;
+    padding: 0.5%;
+    box-sizing: border-box;
+    border: none;
+    background-color: var(--backColor);
+    color: var(--color4);
+    font-weight: bold;
+    font-size: 100%;
+    border: 5px solid var(--color4);
 }
 
 .yellow {
     background-color: yellow;
-    color: var(--color3);
+    color: var(--color4);
 }
 
 .green {
     background-color: green;
+    color: var(--color2);
 }
 
 .originalKey {
-    background-color: var(--color6);
+    background-color: var(--color1);
     color: var(--color2);
 }
 
 .discard {
     background-color: var(--backColor);
-    color: var(--color3);
+    color: var(--color4);
 }
 
 .letter,
@@ -71,13 +83,13 @@ button {
     min-width: 4%;
     padding-left: 2%;
     padding-right: 2%;
-    background-color: var(--color6);
+    background-color: var(--color1);
     color: var(--color2);
 }
 
 #enter {
     min-width: 3%;
-    background-color: var(--color6);
+    background-color: var(--color1);
     color: var(--color2);
 }
 
@@ -87,4 +99,81 @@ button {
     display: flex;
     margin-top: 1%;
     justify-content: center;
+}
+
+
+/* Popup container - can be anything you want */
+
+.popup {
+    margin-top: 1%;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: var(--color4);
+}
+
+
+/* The actual popup */
+
+.popup .popuptext {
+    visibility: hidden;
+    width: 300%;
+    background-color: var(--color5);
+    color: var(--color2);
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 0%;
+    margin-left: -80px;
+}
+
+
+/* Popup arrow */
+
+.popup .popuptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--color5) transparent transparent transparent;
+}
+
+
+/* Toggle this class - hide and show the popup */
+
+.popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+
+/* Add animation (fade in the popup) */
+
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }

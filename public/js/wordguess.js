@@ -133,3 +133,8 @@ function ready(callback) {
         console.log("Listener was invoked");
     }
 }
+
+function toggleExplanation() {
+    var popup = document.getElementById("explanation");
+    popup.classList.toggle("show");
+}

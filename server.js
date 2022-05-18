@@ -185,6 +185,13 @@ app.get("/wordguess", async function(req, res) {
     }
 });
 
+app.get("/popup", function(req, res) {
+    let mainDOM = wrap("./app/html/popup.html", req.session);
+    res.set("Server", "Wazubi Engine");
+    res.set("X-Powered-By", "Wazubi");
+    res.send(mainDOM.serialize());
+})
+
 app.post("/try_word", function(req, res) {
     console.log("hardcoded word: {}", req.session.guessWord);
     let hardCodedWord = req.session.guessWord;
