@@ -385,12 +385,12 @@ app.post("/purchaseCart", (req, res) => {
                             [req.session.userID, cartItem.item_ID, cartItem.quantity, cartItem.quantity], (error, results) => {
                                 if (error) console.log(error);
                             });
-                            connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ? WHERE ID = ?`,
-                            [req.session.userID, cartItem.price * cartItem.quantity], (error, results) => {
+                        });
+                        connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ? WHERE ID = ?`,
+                            [req.body.total, req.session.userID], (error, results) => {
                                 if (error) console.log(error);
                             });
-                            res.send({ approved: true });
-                        });
+                        res.send({ approved: true });
                     } else {
                         res.send({ approved: false, errorMessage: "Cart is empty!" });
                     }
