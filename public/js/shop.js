@@ -124,7 +124,7 @@ async function purchaseCart() {
         "Accept": 'application/json',
         "Content-Type": 'application/json'
       },
-      body: JSON.stringify({total: document.getElementById("cartTotalPriceValue").innerHTML})
+      body: JSON.stringify({total: +document.getElementById("cartTotalPriceValue").innerHTML})
     });
     let parsed = await response.json();
     if (parsed.approved) {
