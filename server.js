@@ -518,20 +518,19 @@ app.get('/get-phrase', function (req, res) {
     connection.end();
   });
     
-app.get("/wordmatch", function (req, res) {
+app.get("/wordMatch", function (req,res) {
     if (req.session.loggedIn) {
         let dom = wrap("./app/html/wordmatch.html", req.session);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(dom.serialize());
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
+})
 
-        let connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '',
-            database: 'comp2800'
-        });
-        connection.connect();
+app.get("/startWordMatch", function (req, res) {
         connection.query('SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 3;', 
         function (error, results, fields) {
             if (error) {
@@ -540,11 +539,6 @@ app.get("/wordmatch", function (req, res) {
             console.log('The results are: ', results);
             res.send({status: "success", rows: results});
         })
-        connection.end();
-    } else {
-        // not logged in - no session and no access, redirect to home!
-        res.redirect("/");
-    }
 });
 
 // RUN SERVER

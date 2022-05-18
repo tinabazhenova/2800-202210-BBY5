@@ -1,3 +1,5 @@
+document.getElementById("start").onClick = () => startWordMatch();
+
 function startWordMatch() {
   const xhr = new XMLHttpRequest();
   xhr.onload = function () {
@@ -8,32 +10,35 @@ function startWordMatch() {
 
         let data = JSON.parse(this.responseText);
         if (data.status == "success") {
-
+          console.log(data);
           let genPhrase = document.getElementById("div3");
           //Answer phrase is placed in div3, answer meaning is placed randomly in div4-6
-          let randomAnswerDiv = document.getElementById("div" + (Math.random() * 3 + 4));
-          randomAnswerDiv.innerHTML = results[0].meaning;
-          genPhrase.innerHTML += results[0].phrase;
+          let randomNumber = Math.floor((Math.random() * 3 + 4));
+          console.log(randomNumber);
+          let randomAnswerDiv = document.getElementById("div" + randomNumber);
+          console.log(randomAnswerDiv);
+          randomAnswerDiv.innerHTML = data.rows[0].meaning;
+          genPhrase.innerHTML += data.rows[0].phrase;
 
-          randomAnswerDiv.addEventListener("click", correctAnswer(randomAnswerDiv));
+          randomAnswerDiv.addEventListener("click", correctAnswer(randomAnswerDiv, data.rows[0]));
 
           // console.log(genPhrase, answer);
 
           // connection.connect();
           // connection.query('SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 3;',
-          //   function (error, results, fields) {
+          //   function (error, data, fields) {
           //     if (error) {
           //       console.log(error);
           //     }
-          console.log('Rows returned are: ', results);
+          console.log('Rows returned are: ', data);
 
           // for each result after the first (first is the answer)
           for (j = 1; j < data.rows.length; j++) {
-            console.log("row", row);
+            console.log("row", data.rows);
             //if div is empty (has no answer) then a random meaning is placed there
-            if (document.getElementByID("div" + (j + 4)).innerHTML = "") {
+            if (document.getElementById("div" + (j + 4)).innerHTML = "") {
               let i = document.getElementById("div" + (j + 4));
-              i.innerHTML = results[j].meaning;
+              i.innerHTML = data[j].meaning;
               
               i.addEventListener("click", wrongAnswer(i));
             }
@@ -53,14 +58,14 @@ function startWordMatch() {
 
   // res.send({
   //   status: "success",
-  //   rows: results
+  //   rows: data
   // });
 }
 // connection.end();
 startWordMatch();
 
 // Need to add function to change CSS to green on correct guess, and add score to player's count
-function correctAnswer(e) {
+function correctAnswer(e, f) {
   e.classList.add('correct'); //add css for correct answer to change div background color to green
 
   let currentBBScore = 0;
@@ -68,16 +73,16 @@ function correctAnswer(e) {
   let currentYScore = 0;
   let currentZScore = 0;
   
-  currentBBScore += results[0].bbvalue;
-  currentXScore += results[0].xvalue;
-  currentYScore += results[0].yvalue;
-  currentZScore += results[0].zvalue;
+  currentBBScore += f.bbvalue;
+  currentXScore += f.xvalue;
+  currentYScore += f.yvalue;
+  currentZScore += f.zvalue;
 
   // Need to add more divs to the page
-  document.getElementByID("").innerHTML = "Current BB Points: " + currentBBScore;
-  document.getElementByID("").innerHTML = "Current X Points: " + currentXScore;
-  document.getElementByID("").innerHTML = "Current Y Points: " + currentYScore;
-  document.getElementByID("").innerHTML = "Current Z Points: " + currentZScore;
+  document.getElementById("div9").innerHTML = "Current BB Points: " + currentBBScore;
+  document.getElementById("div10").innerHTML = "Current X Points: " + currentXScore;
+  document.getElementById("div11").innerHTML = "Current Y Points: " + currentYScore;
+  document.getElementById("div12").innerHTML = "Current Z Points: " + currentZScore;
 }
 
 // Optional: add function to display history of the word after guessing 
@@ -98,18 +103,18 @@ function wrongAnswer(e) {
 //         connection.execute(
 //             "SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 1;",
 //             //"TABLESAMPLE (10 PERCENT)" if we want to speed up the search with larger db, does not round up though
-//             function (error, results, fields) {
-//                 console.log("results: ", results);
+//             function (error, data, fields) {
+//                 console.log("data: ", data);
 
 //                 if (error) {
 //                     console.log(error);
 //                 }
-//                 let wordMatchStart = results[0].phrase;
+//                 let wordMatchStart = data[0].phrase;
 //                 connection.end();         
 //             });
 
 //         let display = wordMatchDOM.getElementById('div3');
-//         display.innerHTML += results[0].phrase;
+//         display.innerHTML += data[0].phrase;
 
 //         res.set("Server", "Wazubi Engine");
 //         res.set("X-Powered-By", "Wazubi");
