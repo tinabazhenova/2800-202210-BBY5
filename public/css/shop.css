@@ -1,0 +1,144 @@
+#itemList {
+  width: 100%;
+  height: 100%;
+}
+
+.itemContainer {
+  display: block;
+  float: left;
+  border: 1px solid black;
+  background-color: white;
+  width: 30%;
+  margin: 1.5%;
+}
+
+.itemImage {
+  width: 90%;
+  height: 90%;
+  margin-top: 5%;
+}
+
+.itemName {
+  font-size: 100%;
+  margin: 0;
+}
+
+.itemDescription, .itemPrice {
+  font-size: 80%;
+  margin: 0;
+}
+
+.itemQuantity {
+  text-align: center;
+  border: 1px solid grey;
+  width: 40%;
+  height: 21px;
+  padding: 0 5px;
+}
+
+.itemQuantity::-webkit-inner-spin-button, .itemQuantity::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.itemMinus, .itemPlus {
+  position: relative;
+  background-color: transparent;
+  border: 1px solid grey;
+  width: 10%;
+  height: 23px;
+}
+
+.itemMinus:hover, .itemPlus:hover {
+  background-color: darkgrey;
+}
+
+.itemMinus {
+  margin-right: -12px;
+  border-right: 0;
+}
+
+.itemPlus {
+  margin-left: -12px;
+  border-left: 0;
+}
+
+.addToCart {
+  background-color: transparent;
+  border: 1px solid grey;
+  width: 50%;
+  height: 30px;
+  margin: 5% 0;
+}
+
+/* CART ITEM */
+
+#cartContainer {
+  display: none;
+  position: fixed;
+  border: 1px solid black;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background-color: white;
+  width: 90%;
+  height: 90%;
+  left: 5%;
+  top: 6%;
+}
+
+#cartItemList {
+  border: 1px solid grey;
+  height: 80%;
+  margin: 5%;
+}
+
+.cartItemContainer {
+  display: block;
+  position:relative;
+  background-color: white;
+  border: 1px solid grey;
+  width: 96%;
+  height: 80px;
+  margin: 2%;
+}
+
+.cartItemImage {
+  float: left;
+  width: 70px;
+  height: 70px;
+  margin: 5px;
+}
+
+.cartItemName, .cartItemPrice {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.removeFromCart {
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+}
+
+.removeFromCart:hover {
+  background-color: grey;
+}
+
+#cartTotalPrice {
+  float: right;
+  margin-right: 5%;
+  transform: translateY(-50%);
+}
+
+#cartButtonContainer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 20px;
+}

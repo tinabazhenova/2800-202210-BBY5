@@ -11,17 +11,24 @@ CREATE TABLE BBY_5_user (
 
 CREATE TABLE BBY_5_item (
   ID int NOT NULL AUTO_INCREMENT,
-  item_name VARCHAR(50),
+  name VARCHAR(50),
   description VARCHAR(50),
+  price int,
   PRIMARY KEY (ID)
 );
 
 CREATE TABLE BBY_5_cart_item (
-  ID int NOT NULL AUTO_INCREMENT,
   user_ID INT,
   item_ID INT,
   quantity INT,
-  PRIMARY KEY (ID)
+  PRIMARY KEY (user_ID, item_ID)
+);
+
+CREATE TABLE BBY_5_has_item (
+  user_ID INT,
+  item_ID INT,
+  quantity INT,
+  PRIMARY KEY (user_ID, item_ID)
 );
 
 ALTER TABLE BBY_5_cart_item ADD FOREIGN KEY (user_ID) REFERENCES BBY_5_user (ID);
