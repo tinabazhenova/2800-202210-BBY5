@@ -2,9 +2,13 @@
 // document.getElementById("start").onClick(()=>startWordMatch());
 // document.getElementById("start").addEventListener("click", startWordMatch());
 
-document.getElementById("start").addEventListener("click", (e) => {
+// document.getElementById("start").addEventListener("click", (e) => {
+//   startWordMatch();
+// });
+
+document.getElementById("start").onclick = () => {
   startWordMatch();
-});
+};
 
 function startWordMatch() {
   const xhr = new XMLHttpRequest();
@@ -40,18 +44,23 @@ function startWordMatch() {
           // //Answer meaning is placed randomly in button 1-4
           let randomNumber = Math.floor(Math.random() * 4 + 1);
           console.log(randomNumber);
-          let randomAnswerBtn = document.getElementById("btn" + randomNumber);
+          let randomAnswerBtn = "";
+          randomAnswerBtn = document.getElementById("btn" + randomNumber);
           console.log(randomAnswerBtn);
           randomAnswerBtn.innerHTML = data.rows[0].meaning;
 
           // use this function when css works again so we can change color of randomAnswerBtn
-          randomAnswerBtn.addEventListener(
-            "click",
-            (e) => {
-              correctAnswer(randomAnswerBtn, data.rows[0]);
-            },
-            (once = true)
-          );
+          randomAnswerBtn.onclick = () => {
+            correctAnswer(randomAnswerBtn, data.rows[0]);
+          };
+
+          // randomAnswerBtn.addEventListener(
+          //   "click",
+          //   (e) => {
+          //     correctAnswer(randomAnswerBtn, data.rows[0]);
+          //   },
+          //   (once = true)
+          // );
 
           // trying to remove the event listener with removeEventListener(e, var, capture = true) but didn't work
           // randomAnswerBtn.addEventListener(
@@ -111,9 +120,11 @@ let currentXScore = 0;
 let currentYScore = 0;
 let currentZScore = 0;
 
-function correctAnswer(div, values) {
-  div.classList.add("correct"); //add css for correct answer to change div background color to green
-  div.classList.remove("incorrect");
+function correctAnswer(btnDiv, values) {
+  btnDiv.classList.add("correct"); //add css for correct answer to change div background color to green
+  btnDiv.classList.remove("incorrect");
+
+  console.log(btnDiv, values);
 
   document.getElementById("div9").classList.remove("hide");
   document.getElementById("div10").classList.remove("hide");
@@ -139,13 +150,15 @@ function correctAnswer(div, values) {
   document.getElementById("start").innerHTML = "NEXT QUESTION";
 
   // div.removeEventListener("click", correctAnswer, capture = true);
+  // div.onclick = () => ;
 }
 
 // Optional: add function to display history of the word after guessing
 // (something like "wrong answer"--> eventlistener on click --> remove "hide" class from history div
 // add a div2.innerHTML = answer result[0].history)
+
 function wrongAnswer(e) {
-  e.classList.add("incorrect"); //add css for correct answer to change div background color to red
+  e.classList.add("incorrect"); //added css for correct answer to change div background color to red
   // document.getElementById("btn1").classList.add("hide");
   // document.getElementById("btn2").classList.add("hide");
   // document.getElementById("btn3").classList.add("hide");
