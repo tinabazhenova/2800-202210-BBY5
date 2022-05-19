@@ -16,14 +16,15 @@
       <h1 class="title"></h1>
     </div>
     <div id="profile-picture">
-      <img id="picture_src" src="">
+      <img id="picture_src" width= "400" height="400" src="">
     </div>
       <form id="upload-images-form" enctype="multipart/form-data" action="/upload" method="POST">
         <input id="image-upload" type="file" name="image" value="Upload Image" accept="image/png, image/gif, image/jpeg"
           multiple="multiple" />
         <input id="submit" type="submit" value="Submit" />
       </form>
-    <div>
+      <input id="remove" type="submit" value="Remove" />
+    <div id="tables">
       <table id="user_info">
         <tr>          
           <th><span>username</span></th>
@@ -35,15 +36,15 @@
         </tr>
       </table>
     </div>
+    <div id="banner-scroll" class="banner">
+      <h1>HOW DO YOU DO, FELLOW KIDS? THIS IS ADULT SK8ERBOI! WANNA HANG?! </h1>
+    </div>
     <div class="center">
       <form action="/logout" method="get">
         <input type="submit" value="LOGOUT">
       </form>
     </div>
   </div>
-  <footer id="footer">
-    GEN WE PROJECT &copy BCIT 2022
-  </footer>
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
