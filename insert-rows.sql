@@ -19,6 +19,11 @@ INSERT INTO BBY_05_master (phrase, meaning, history, xvalue) VALUES ("Wigging ou
 INSERT INTO BBY_05_master (phrase, meaning, history, yvalue) VALUES ("NOT", "psych!", "Popularized in North America in the 1990s by the Saturday Night Live sketch and subsequent film Wayne''s World, 'not' was selected as the 1992 Word of the Year by the American Dialect Society.", 200);
 INSERT INTO BBY_05_master (phrase, meaning, history, yvalue) VALUES ("Gettin' Jiggy", "Dance like no one is watching", "This 90s phrase came from the popular music video by Will Smith, Gettin’ Jiggy With It.", 200);
 
+INSERT INTO BBY_5_crossword(crossword_id, word_id, row, col, vertical) VALUES(1, 2, 3, 0, 0);
+INSERT INTO BBY_5_crossword(crossword_id, word_id, row, col, vertical) VALUES(1, 3, 0, 1, 1);
+INSERT INTO BBY_5_crossword(crossword_id, word_id, row, col, vertical) VALUES(1, 4, 3, 3, 1);
+INSERT INTO BBY_5_crossword(crossword_id, word_id, row, col, vertical) VALUES(1, 6, 6, 1, 0);
+
 INSERT INTO BBY_5_item (ID, item_name, description) VALUES (1, 'Item 1', 'This is Item 1');
 INSERT INTO BBY_5_item (ID, item_name, description) VALUES (2, 'Item 2', 'This is Item 2');
 INSERT INTO BBY_5_item (ID, item_name, description) VALUES (3, 'Item 3', 'This is Item 3');

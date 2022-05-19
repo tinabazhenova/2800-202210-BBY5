@@ -24,6 +24,15 @@ CREATE TABLE BBY_05_master (
   PRIMARY KEY (word_ID)
 );
 
+CREATE TABLE BBY_5_crossword (
+  crossword_id int not null,
+  word_id int not null,
+  row int not null,
+  col int not null,
+  vertical tinyint not null,
+  primary key (crossword_id, word_id)
+);
+
 CREATE TABLE BBY_5_item (
   ID int NOT NULL AUTO_INCREMENT,
   item_name VARCHAR(50),
