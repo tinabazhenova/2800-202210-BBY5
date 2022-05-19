@@ -18,7 +18,7 @@ button {
 }
 
 input {
-    width: 15%;
+    width: 50px;
     padding: 0.5%;
     box-sizing: border-box;
     border: none;
@@ -27,4 +27,11 @@ input {
     font-weight: bold;
     font-size: 100%;
     border: 5px solid var(--color4);
+}
+
+.crossword_board_grid{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: min-content;
+    background-color: var(--backColor);
 }
