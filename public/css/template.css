@@ -32,6 +32,7 @@ body {
     align-items: center;
     background: url("/imgs/we1.png") center/cover fixed;
     backdrop-filter: blur(6px);
+    background-size: cover;
 }
 
 button {
