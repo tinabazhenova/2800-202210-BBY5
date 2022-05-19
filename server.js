@@ -45,7 +45,7 @@ io.on("connection", socket => {
     socket.on("joinRoom", (code, game) => {
         /* socket.join() function is used to let users join a room
         Notice how socket.join() also creates a room
-        This means rooms are not created by you - Socket will do the work for you */
+        This means rooms are not created - not by you - Socket will do the work for you */
         if (!rooms.some(r => r.code == code)) {
             rooms.push({
                 "code": code,
@@ -142,7 +142,7 @@ function wrap(filename, session) {
     if (session.username == null) {
         dom.window.document.getElementById("name").innerHTML = "Guest";
     } else {
-        dom.window.document.getElementById("name").innerHTML = session.username;
+        dom.window.document.getElementById("name").innerHTML = "WELCOME " + session.username.toUpperCase();
     }
 
     return dom;
@@ -266,8 +266,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-//connection.connect();
-
 // Notice that this is a "POST"
 app.post("/login", function(req, res) {
     res.setHeader("Content-Type", "application/json");
@@ -342,6 +340,7 @@ app.post("/loginAsAdmin", function(req, res) {
 });
 
 app.post('/upload', upload.single("image"), function(req, res) {
+    console.log(req);
     if (!req.file) {
         console.log("No file upload");
     } else {
@@ -362,23 +361,29 @@ app.get("/profile", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
 
-        let profile = fs.readFileSync("./app/html/profile.html", "utf8");
-        let profileDOM = new JSDOM(profile);
+        let profileDOM = wrap("./app/html/profile.html",req.session);
+        // let profile = fs.readFileSync("./app/html/profile.html", "utf8");
+        // let profileDOM = new JSDOM(profile);
         console.log(profileDOM.window.document.getElementById("profile_name").innerHTML);
 
         profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
-        profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
-        profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
+        // profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
+            if (req.session.name== "adult" && req.session.pass== "sk8erboi") {
+                profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
+                profileDOM.window.document.querySelector(".banner").style.display = "block";
+            } else if(req.session.userImage == "NULL") {
+                profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
+            } else {
+                profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
+            }
+        
         profileDOM.window.document.getElementById("user_name").innerHTML = req.session.name;
         profileDOM.window.document.getElementById("password").innerHTML = req.session.pass;
-
-
-        console.log(req.session.username);
 
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(profileDOM.serialize());
-
+        
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
@@ -391,36 +396,42 @@ app.post('/update-username', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
 
     console.log("username", req.body.user_name);
-    //connection.connect();
     console.log("user ID", req.session.userID);
     connection.query(`UPDATE ${userTable} SET user_name = ? WHERE ID = ?`, [req.body.user_name, req.session.userID],
         function(error, results, fields) {
             if (error) {
                 console.log(error);
             }
-            //console.log('Rows returned are: ', results);
             res.send({ status: "success", msg: "Record updated." });
 
         });
-    //connection.end();
 });
 
 app.post('/update-password', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-
-    console.log("password", req.body.password);
-    //connection.connect();
-    console.log("user ID", req.session.userID);
     connection.query(`UPDATE ${userTable} SET password = ? WHERE ID = ?`, [req.body.password, req.session.userID],
         function(error, results, fields) {
             if (error) {
                 console.log(error);
             }
-            //console.log('Rows returned are: ', results);
             res.send({ status: "success", msg: "Record updated." });
 
         });
-    //connection.end();
+    
+});
+
+app.post('/delete-image', function(req, res) {
+    // res.setHeader('Content-Type', 'application/json');
+    connection.query(`UPDATE  ${userTable} SET user_image = "NULL" WHERE ID = ?`, [req.session.userID],
+        function(error, results, fields) {
+            if (error) {
+                console.log(error);
+            }
+            req.session.userImage = null;
+            res.send({ status: "success", msg: "Record updated." });
+
+        });
+
 });
 
 app.get('/get-username', function(req, res) {
@@ -566,27 +577,20 @@ app.get("/getShopItems", (req, res) => {
 });
 
 app.get("/getCartItems", (req, res) => {
-    connection.query(`SELECT * FROM ${itemTable} WHERE ID IN (SELECT item_ID FROM BBY_5_cart_item WHERE user_ID = ?);`, [req.session.userID], (error, results) => {
+    connection.query(`SELECT * FROM BBY_5_cart_item
+    LEFT JOIN BBY_5_item ON BBY_5_item.ID = BBY_5_cart_item.item_ID
+    WHERE BBY_5_cart_item.user_ID = ?;`,
+    [req.session.userID, req.session.userID], (error, results) => {
         if (error) console.log(error);
         res.send({ cartList: results });
     });
 });
 
 app.post("/shopItem", (req, res) => {
-    connection.query(`SELECT * FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?;`, [req.session.userID, req.body.itemID], (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            if (results.length == 0) {
-                connection.query(`INSERT INTO BBY_5_cart_item (ID, user_ID, item_ID, quantity) VALUES (?, ?, ?, ?);`, [null, req.session.userID, req.body.itemID, 1], (error, results) => {
-                    if (error) console.log(error);
-                });
-            } else {
-                connection.query(`UPDATE BBY_5_cart_item SET quantity = quantity + ? WHERE user_ID = ? AND item_ID = ?;`, [req.body.quantity, req.session.userID, req.body.itemID], (error, results) => {
-                    if (error) console.log(error);
-                });
-            }
-        }
+    connection.query(`INSERT INTO bby_5_cart_item VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
+    [req.session.userID, req.body.itemID, req.body.quantity, req.body.quantity], (error, results) => {
+        if (error) console.log(error);
     });
     res.send();
 });
@@ -599,10 +603,45 @@ app.post("/emptyCart", (req, res) => {
 });
 
 app.post("/removeItemFromCart", (req, res) => {
-    connection.query(`DELETE FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?`, [req.session.userID, req.body.itemID], (error, results) => {
+    connection.query(`DELETE FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?`,
+    [req.session.userID, req.body.itemID], (error, results) => {
         if (error) console.log(error);
     });
     res.send();
+});
+
+app.post("/purchaseCart", (req, res) => {
+    connection.query(`SELECT bbscore FROM BBY_5_user WHERE ID = ?`,
+    [req.session.userID], (error, results) => {
+        if (error) console.log(error);
+        if (results[0] >= req.body.total) {
+            connection.query(`SELECT * FROM bby_5_cart_item WHERE user_ID = ?`,
+            [req.session.userID], (error, results) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    if (results.length > 0) {
+                        results.forEach(cartItem => {
+                            connection.query(`INSERT INTO bby_5_has_item VALUES (?, ?, ?)
+                            ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
+                            [req.session.userID, cartItem.item_ID, cartItem.quantity, cartItem.quantity], (error, results) => {
+                                if (error) console.log(error);
+                            });
+                        });
+                        connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ? WHERE ID = ?`,
+                            [req.body.total, req.session.userID], (error, results) => {
+                                if (error) console.log(error);
+                            });
+                        res.send({ approved: true });
+                    } else {
+                        res.send({ approved: false, errorMessage: "Cart is empty!" });
+                    }
+                }
+            });
+        } else {
+            res.send({ approved: false, errorMessage: "Not enough points!" });
+        }
+    });
 });
 
 // RUN SERVER

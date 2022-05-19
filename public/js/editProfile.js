@@ -215,3 +215,29 @@ function getPassword() {
   xhr.send();
 
 }
+
+document.getElementById("remove").addEventListener("click", function (e) {
+  const xhr = new XMLHttpRequest();
+  xhr.onload = function () {
+    if (this.readyState == XMLHttpRequest.DONE) {
+
+      // 200 means everthing worked
+      if (xhr.status === 200) {
+
+        //getUsers();
+        console.log("Image deleted.");
+        document.getElementById("picture_src").src = "/imgs/dummy.jpg";
+      } else {
+
+        // not a 200, could be anything (404, 500, etc.)
+        console.log(this.status);
+
+      }
+
+    } else {
+      console.log("ERROR", this.status);
+    }
+  }
+  xhr.open("POST", "/delete-image");
+  xhr.send();
+});
