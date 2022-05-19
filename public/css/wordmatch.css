@@ -1,3 +1,11 @@
+:root {
+  --color1: rgb(224, 103, 3);
+  --color2: #f2f2f8;
+  --color3: rgb(217, 241, 250);
+  --color4: black;
+  --color5: rgb(139, 0, 105);
+}
+
 #parent {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -81,8 +89,11 @@
 }
 
 button {
-  background-color: #ffb703;
-  color: white;
+  background-color: var(--color1);
+  color: var(--color2);
+  border-radius: 25px;
+  min-width: 40%;
+  width: 80%;
 }
 
 .correct {

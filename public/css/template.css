@@ -39,7 +39,7 @@ button {
     padding: 12px;
     font-size: 1em;
     background-color: var(--color1);
-    border-radius: 20%;
+    border-radius: 25px;
     min-width: 40%;
     width: auto;
     color: var(--color2);
@@ -51,7 +51,7 @@ input[type='submit'] {
     padding: 12px;
     font-size: 1em;
     background-color: var(--color1);
-    border-radius: 20%;
+    border-radius: 25px;
     min-width: 40%;
     width: auto;
     color: var(--color2);
