@@ -1,16 +1,24 @@
+<head>
+    <link href="/css/shop.css" rel="stylesheet" />
+</head>
+
 <div id="container">
     <div id="itemList">
 
     </div>
     <div id="shoppingOptions">
-        <button type="button" id="proceedOrder">Proceed</button>
+        <button type="button" id="viewCart">Cart</button>
         <button type="button" id="cencelOrder">Cancel</button>
     </div>
 </div>
 
-<div id="cartBackground">
-    <div id="cartContainer">
-
+<div id="cartContainer">
+    <div id="cartItemList"></div>
+    <span id="cartTotalPrice">Total: <span id="cartTotalPriceValue"></span> points</span>
+    <div id="cartButtonContainer">
+        <button type="button" id="purchaseCart">Purchase</button>
+        <button type="button" id="closeCart">Close</button><br>
+        <span id="cartMessage"></span>
     </div>
 </div>
 
@@ -26,16 +34,22 @@
 <template id="itemTemplate">
     <div class="itemContainer">
         <img class="itemImage" src="..." alt="...">
-        <h5 class="itemName"></h5>
+        <span class="itemName"></span><br>
+        <span class="itemDescription"></span><br>
+        <span class="itemPrice"></span><br>
+        <input type="button" value="-" class="itemMinus">
+        <input type="number" value="1" class="itemQuantity" step="1" min="1" max="100">
+        <input type="button" value="+" class="itemPlus"><br>
         <button type="button" class="addToCart">Add to cart</button>
     </div>
 </template>
 
 <template id="cartItemTemplate">
     <div class="cartItemContainer">
-        <img class="itemImage" src="..." alt="...">
-        <h5 class="itemName"></h5>
-        <button type="button" class="removeFromCart">Remove</button>
+        <img class="cartItemImage" src="..." alt="...">
+        <span class="cartItemName"></span><br>
+        <span class="cartItemPrice"></span>
+        <button type="button" class="removeFromCart">X</button>
     </div>
 </template>
 

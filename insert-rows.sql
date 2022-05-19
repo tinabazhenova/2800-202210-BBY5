@@ -19,7 +19,8 @@ INSERT INTO BBY_05_master (phrase, meaning, history, xvalue) VALUES ("Wigging ou
 INSERT INTO BBY_05_master (phrase, meaning, history, yvalue) VALUES ("NOT", "psych!", "Popularized in North America in the 1990s by the Saturday Night Live sketch and subsequent film Wayne''s World, 'not' was selected as the 1992 Word of the Year by the American Dialect Society.", 200);
 INSERT INTO BBY_05_master (phrase, meaning, history, yvalue) VALUES ("Gettin' Jiggy", "Dance like no one is watching", "This 90s phrase came from the popular music video by Will Smith, Gettin’ Jiggy With It.", 200);
 
-INSERT INTO BBY_5_item (ID, item_name, description) VALUES (1, 'Item 1', 'This is Item 1');
-INSERT INTO BBY_5_item (ID, item_name, description) VALUES (2, 'Item 2', 'This is Item 2');
-INSERT INTO BBY_5_item (ID, item_name, description) VALUES (3, 'Item 3', 'This is Item 3');
-INSERT INTO BBY_5_item (ID, item_name, description) VALUES (4, 'Item 4', 'This is Item 4');
+INSERT INTO BBY_5_item (ID, name, description, price) VALUES (1, 'Item 1', 'This is Item 1', 2000);
+INSERT INTO BBY_5_item (ID, name, description, price) VALUES (2, 'Item 2', 'This is Item 2', 3000);
+INSERT INTO BBY_5_item (ID, name, description, price) VALUES (3, 'Item 3', 'This is Item 3', 400);
+INSERT INTO BBY_5_item (ID, name, description, price) VALUES (4, 'Item 4', 'This is Item 4', 150);
+INSERT INTO BBY_5_item (ID, name, description, price) VALUES (5, 'Item 5', 'This is Item 5', 0);

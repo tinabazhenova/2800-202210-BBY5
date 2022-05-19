@@ -45,7 +45,7 @@ io.on("connection", socket => {
     socket.on("joinRoom", (code, game) => {
         /* socket.join() function is used to let users join a room
         Notice how socket.join() also creates a room
-        This means rooms are not created by you - Socket will do the work for you */
+        This means rooms are not created - not by you - Socket will do the work for you */
         if (!rooms.some(r => r.code == code)) {
             rooms.push({
                 "code": code,
@@ -566,27 +566,20 @@ app.get("/getShopItems", (req, res) => {
 });
 
 app.get("/getCartItems", (req, res) => {
-    connection.query(`SELECT * FROM ${itemTable} WHERE ID IN (SELECT item_ID FROM BBY_5_cart_item WHERE user_ID = ?);`, [req.session.userID], (error, results) => {
+    connection.query(`SELECT * FROM BBY_5_cart_item
+    LEFT JOIN BBY_5_item ON BBY_5_item.ID = BBY_5_cart_item.item_ID
+    WHERE BBY_5_cart_item.user_ID = ?;`,
+    [req.session.userID, req.session.userID], (error, results) => {
         if (error) console.log(error);
         res.send({ cartList: results });
     });
 });
 
 app.post("/shopItem", (req, res) => {
-    connection.query(`SELECT * FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?;`, [req.session.userID, req.body.itemID], (error, results) => {
-        if (error) {
-            console.log(error);
-        } else {
-            if (results.length == 0) {
-                connection.query(`INSERT INTO BBY_5_cart_item (ID, user_ID, item_ID, quantity) VALUES (?, ?, ?, ?);`, [null, req.session.userID, req.body.itemID, 1], (error, results) => {
-                    if (error) console.log(error);
-                });
-            } else {
-                connection.query(`UPDATE BBY_5_cart_item SET quantity = quantity + ? WHERE user_ID = ? AND item_ID = ?;`, [req.body.quantity, req.session.userID, req.body.itemID], (error, results) => {
-                    if (error) console.log(error);
-                });
-            }
-        }
+    connection.query(`INSERT INTO bby_5_cart_item VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
+    [req.session.userID, req.body.itemID, req.body.quantity, req.body.quantity], (error, results) => {
+        if (error) console.log(error);
     });
     res.send();
 });
@@ -599,10 +592,45 @@ app.post("/emptyCart", (req, res) => {
 });
 
 app.post("/removeItemFromCart", (req, res) => {
-    connection.query(`DELETE FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?`, [req.session.userID, req.body.itemID], (error, results) => {
+    connection.query(`DELETE FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?`,
+    [req.session.userID, req.body.itemID], (error, results) => {
         if (error) console.log(error);
     });
     res.send();
+});
+
+app.post("/purchaseCart", (req, res) => {
+    connection.query(`SELECT bbscore FROM BBY_5_user WHERE ID = ?`,
+    [req.session.userID], (error, results) => {
+        if (error) console.log(error);
+        if (results[0] >= req.body.total) {
+            connection.query(`SELECT * FROM bby_5_cart_item WHERE user_ID = ?`,
+            [req.session.userID], (error, results) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    if (results.length > 0) {
+                        results.forEach(cartItem => {
+                            connection.query(`INSERT INTO bby_5_has_item VALUES (?, ?, ?)
+                            ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
+                            [req.session.userID, cartItem.item_ID, cartItem.quantity, cartItem.quantity], (error, results) => {
+                                if (error) console.log(error);
+                            });
+                        });
+                        connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ? WHERE ID = ?`,
+                            [req.body.total, req.session.userID], (error, results) => {
+                                if (error) console.log(error);
+                            });
+                        res.send({ approved: true });
+                    } else {
+                        res.send({ approved: false, errorMessage: "Cart is empty!" });
+                    }
+                }
+            });
+        } else {
+            res.send({ approved: false, errorMessage: "Not enough points!" });
+        }
+    });
 });
 
 // RUN SERVER
