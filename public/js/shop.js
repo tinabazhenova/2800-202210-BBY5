@@ -14,7 +14,7 @@ async function refreshShop() {
       itemTemplate.querySelector(".itemImage").src = `/imgs/item/item_image${item.ID}.png`;
       itemTemplate.querySelector(".itemName").innerHTML = item.name;
       itemTemplate.querySelector(".itemDescription").innerHTML = item.description;
-      itemTemplate.querySelector(".itemPrice").innerHTML = `${item.price} points`;
+      itemTemplate.querySelector(".itemPrice").innerHTML = `${item.price} ${item.type} points`;
       let selector = itemTemplate.querySelector(".itemQuantity");
       itemTemplate.querySelector(".itemMinus").addEventListener("click", () => setQuantity(selector, -1));
       itemTemplate.querySelector(".itemPlus").addEventListener("click", () => setQuantity(selector, 1));
@@ -78,7 +78,7 @@ function appendToCart(item, subtotal) {
   if (item.quantity > 1) {
     cartItemTemplate.querySelector(".cartItemName").innerHTML += ` x ${item.quantity}`;
   }
-  cartItemTemplate.querySelector(".cartItemPrice").innerHTML = `${subtotal} points`;
+  cartItemTemplate.querySelector(".cartItemPrice").innerHTML = `${subtotal} ${item.type} points`;
   cartItemTemplate.querySelector(".cartItemImage").src = `/imgs/item/item_image${item.ID}.png`;
   cartItemTemplate.querySelector(".removeFromCart").addEventListener("click", () => removeItemFromCart(item));
   document.getElementById("cartItemList").appendChild(cartItemTemplate);

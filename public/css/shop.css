@@ -71,6 +71,10 @@
   margin: 5% 0;
 }
 
+.addToCart:hover {
+  background-color: grey;
+}
+
 /* CART ITEM */
 
 #cartContainer {

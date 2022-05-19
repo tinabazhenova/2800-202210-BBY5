@@ -12,15 +12,13 @@ CREATE TABLE BBY_5_user (
   PRIMARY KEY (ID)
 );
 
-CREATE TABLE BBY_05_master (
+CREATE TABLE BBY_5_master (
   word_ID int NOT NULL AUTO_INCREMENT,
   phrase VARCHAR(50) NOT NULL,
   meaning VARCHAR(200),
   history VARCHAR(500),
-  bbvalue int,
-  xvalue int,
-  yvalue int,
-  zvalue int,
+  value int,
+  generation VARCHAR(1),
   PRIMARY KEY (word_ID)
 );
 
@@ -29,6 +27,7 @@ CREATE TABLE BBY_5_item (
   name VARCHAR(50),
   description VARCHAR(50),
   price int,
+  type VARCHAR(1),
   PRIMARY KEY (ID)
 );
 
