@@ -185,8 +185,8 @@ app.get("/wordguess", async function(req, res) {
     }
 });
 
-app.get("/popup", function(req, res) {
-    let mainDOM = wrap("./app/html/popup.html", req.session);
+app.get("/crossword", function(req, res) {
+    let mainDOM = wrap("./app/html/crossword.html", req.session);
     res.set("Server", "Wazubi Engine");
     res.set("X-Powered-By", "Wazubi");
     res.send(mainDOM.serialize());

@@ -1,0 +1,30 @@
+:root {
+    --color7: #779FA1;
+    --backColor: #E0CBA8;
+    --gridWidth: 3;
+}
+#startGame:hover {
+    background-color: var(--color7);
+}
+
+#leaveRoom:hover {
+    background-color: var(--color5);
+}
+
+button {
+    min-width: 5%;
+    margin-bottom: 2%;
+    background-color: var(--color1);
+}
+
+input {
+    width: 15%;
+    padding: 0.5%;
+    box-sizing: border-box;
+    border: none;
+    background-color: var(--backColor);
+    color: var(--color4);
+    font-weight: bold;
+    font-size: 100%;
+    border: 5px solid var(--color4);
+}
