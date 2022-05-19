@@ -569,22 +569,6 @@ app.get("/main", function (req, res) {
   }
 });
 
-app.get("/startWordMatch", function (req, res) {
-  connection.query(
-    "SELECT * FROM BBY_5_master ORDER BY rand() LIMIT 4;",
-    function (error, results, fields) {
-      if (error) {
-        console.log(error);
-      }
-      console.log("Rows returned are: ", results);
-      res.send({
-        status: "success",
-        rows: results //data or rows?
-      });
-    }
-  );
-});
-
 app.get("/wordMatch", function (req, res) {
   if (req.session.loggedIn) {
     let dom = wrap("./app/html/wordmatch.html", req.session);
@@ -597,6 +581,22 @@ app.get("/wordMatch", function (req, res) {
   }
 });
 
+app.get("/startWordMatch", function (req, res) {
+    connection.query(
+      "SELECT * FROM BBY_5_master ORDER BY rand() LIMIT 5;",
+      function (error, results, fields) {
+        if (error) {
+          console.log(error);
+        }
+        console.log("Rows returned are: ", results);
+        res.send({
+          status: "success",
+          rows: results //data or rows?
+        });
+      }
+    );
+  });
+  
 // RUN SERVER
 let port = 8000;
 server.listen(port, function () {

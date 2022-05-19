@@ -1,54 +1,96 @@
 // document.getElementById("start").onClick = () => startWordMatch();
-// document.getElementById("start").onClick(()=>startWordMatch()); 
-document.getElementById("start").addEventListener("click", startWordMatch()); 
+// document.getElementById("start").onClick(()=>startWordMatch());
+// document.getElementById("start").addEventListener("click", startWordMatch());
+
+document.getElementById("start").addEventListener("click", (e) => {
+  startWordMatch();
+});
 
 function startWordMatch() {
   const xhr = new XMLHttpRequest();
   xhr.onload = function () {
     if (this.readyState == XMLHttpRequest.DONE) {
-
       // 200 means everthing worked
       if (xhr.status === 200) {
-
         let data = JSON.parse(this.responseText);
         if (data.status == "success") {
           console.log(data);
 
+          // //shows hidden answer divs
+          document
+            .getElementById("btn1")
+            .classList.remove("hide", "correct", "incorrect");
+          document
+            .getElementById("btn2")
+            .classList.remove("hide", "correct", "incorrect");
+          document
+            .getElementById("btn3")
+            .classList.remove("hide", "correct", "incorrect");
+          document
+            .getElementById("btn4")
+            .classList.remove("hide", "correct", "incorrect");
+
+          document.getElementById("start").classList.add("hide");
+
           //Answer phrase is placed in div4,
+          document.getElementById("div4").classList.remove("hide");
           let genPhrase = document.getElementById("div4");
-          genPhrase.innerHTML += data.rows[0].phrase;
+          genPhrase.innerHTML = "Guess this phrase: " + data.rows[0].phrase;
 
-          //shows hidden answer divs
-          document.getElementById("div4").classList.remove('hide');
-          document.getElementById("div5").classList.remove('hide');
-          document.getElementById("div6").classList.remove('hide');
-          document.getElementById("div7").classList.remove('hide');
-
-          //Answer meaning is placed randomly in div4-6
-          let randomNumber = Math.floor((Math.random() * 3 + 5));
+          // //Answer meaning is placed randomly in button 1-4
+          let randomNumber = Math.floor(Math.random() * 4 + 1);
           console.log(randomNumber);
-          let randomAnswerDiv = document.getElementById("div" + randomNumber);
-          console.log(randomAnswerDiv);
-          randomAnswerDiv.innerHTML = data.rows[0].meaning;
-          
-          
-          console.log('Rows returned are: ', data);
+          let randomAnswerBtn = document.getElementById("btn" + randomNumber);
+          console.log(randomAnswerBtn);
+          randomAnswerBtn.innerHTML = data.rows[0].meaning;
 
-          randomAnswerDiv.addEventListener("click", correctAnswer(randomAnswerDiv, data.rows[0]));
+          // use this function when css works again so we can change color of randomAnswerBtn
+          randomAnswerBtn.addEventListener(
+            "click",
+            (e) => {
+              correctAnswer(randomAnswerBtn, data.rows[0]);
+            },
+            (once = true)
+          );
 
-          // for each result after the first (first is the answer)
-          for (j = 1; j < data.rows.length; j++) {
+          // trying to remove the event listener with removeEventListener(e, var, capture = true) but didn't work
+          // randomAnswerBtn.addEventListener(
+          //   "click",
+          //   (e) => {
+          //     correctAnswer(randomAnswerBtn, data.rows[0]);
+          //   },
+          //   (capture = true)
+          // );
+
+          // // for each result after the first (first is the answer)
+          for (j = data.rows.length; j > 1; j--) {
             console.log("row", data.rows);
             //if div is empty (has no answer) then a random meaning is placed there
-            if (document.getElementById("div" + (j + 5)).innerHTML = "") {
-              let i = document.getElementById("div" + (j + 5));
-              i.innerHTML = data[j].meaning;
-              
-              i.addEventListener("click", wrongAnswer(i));
+            if (document.getElementById("btn" + (j - 1)) != randomAnswerBtn) {
+              let i = document.getElementById("btn" + (j - 1));
+              console.log("wrong answer");
+
+              i.innerHTML = data.rows[j - 1].meaning;
+
+              i.addEventListener(
+                "click",
+                (e) => {
+                  wrongAnswer(i);
+                },
+                (once = true)
+              );
+            } else {
+              console.log("correct answer");
             }
           }
-        } else {
-          console.log("Error with for loop.");
+
+          // score doesn't add properly, removing event listener makes it count twice as fast?
+          // randomAnswerBtn.removeEventListener("click", (e) => correctAnswer());
+
+          //attempt at show history button after a correct or incorrect guess
+          // let addButton = document.createElement("button");
+          // addButton.id = "showHistory"
+          // genPhrase.appendChild(addButton)
         }
       } else {
         console.log(this.status);
@@ -59,84 +101,77 @@ function startWordMatch() {
   };
   xhr.open("GET", "/startWordMatch");
   xhr.send();
-
-  // res.send({
-  //   status: "success",
-  //   rows: data
-  // });
 }
 
-function chooseAnswer() {
-
-}
 // Need to add function to change CSS to green on correct guess, and add score to player's count
-function correctAnswer(e, f) {
-  e.classList.add('correct'); //add css for correct answer to change div background color to green
+// function correctAnswer(e, f) {
 
-  let currentBBScore = 0;
-  let currentXScore = 0;
-  let currentYScore = 0;
-  let currentZScore = 0;
-  
-  currentBBScore += f.bbvalue;
-  currentXScore += f.xvalue;
-  currentYScore += f.yvalue;
-  currentZScore += f.zvalue;
+let currentBBScore = 0;
+let currentXScore = 0;
+let currentYScore = 0;
+let currentZScore = 0;
 
-  // Need to add more divs to the page
-  document.getElementById("div9").innerHTML = "Current BB Points: " + currentBBScore;
-  document.getElementById("div10").innerHTML = "Current X Points: " + currentXScore;
-  document.getElementById("div11").innerHTML = "Current Y Points: " + currentYScore;
-  document.getElementById("div12").innerHTML = "Current Z Points: " + currentZScore;
+function correctAnswer(div, values) {
+  div.classList.add("correct"); //add css for correct answer to change div background color to green
+  div.classList.remove("incorrect");
+
+  document.getElementById("div9").classList.remove("hide");
+  document.getElementById("div10").classList.remove("hide");
+  document.getElementById("div11").classList.remove("hide");
+  document.getElementById("div12").classList.remove("hide");
+
+  currentBBScore += values.bbvalue;
+  currentXScore += values.xvalue;
+  currentYScore += values.yvalue;
+  currentZScore += values.zvalue;
+
+  // // Need to add more divs to the page
+  document.getElementById("div9").innerHTML =
+    "Current BB Points: " + currentBBScore;
+  document.getElementById("div10").innerHTML =
+    "Current X Points: " + currentXScore;
+  document.getElementById("div11").innerHTML =
+    "Current Y Points: " + currentYScore;
+  document.getElementById("div12").innerHTML =
+    "Current Z Points: " + currentZScore;
+
+  document.getElementById("start").classList.remove("hide");
+  document.getElementById("start").innerHTML = "NEXT QUESTION";
+
+  // div.removeEventListener("click", correctAnswer, capture = true);
 }
 
-// Optional: add function to display history of the word after guessing 
+// Optional: add function to display history of the word after guessing
 // (something like "wrong answer"--> eventlistener on click --> remove "hide" class from history div
 // add a div2.innerHTML = answer result[0].history)
 function wrongAnswer(e) {
-  i.classList.add('incorrect'); //add css for correct answer to change div background color to red
+  e.classList.add("incorrect"); //add css for correct answer to change div background color to red
+  // document.getElementById("btn1").classList.add("hide");
+  // document.getElementById("btn2").classList.add("hide");
+  // document.getElementById("btn3").classList.add("hide");
+  // document.getElementById("btn4").classList.add("hide");
+
+  document.getElementById("start").classList.remove("hide");
+  document.getElementById("start").innerHTML = "NEXT QUESTION";
 }
 
-// not working code, first attempt:
-// app.get("/wordmatch", function (req, res) {
-//     // check for a session first!
-//     if (req.session.loggedIn) {
+// Need to add function to play another round of 3
+// function nextQuestion() {
+//   // all this function does is remove hidden class from a "next question" button so it appears on the page.
+//   // when clicked, it does startWordMatch() again
+//   document.getElementById("div3").addEventListener("click", (e) => {
+//     newFunction();
+//   });
 
-//         let wordMatchPage = fs.readFileSync("./app/html/wordmatch.html", "utf8");
-//         let wordMatchDOM = new JSDOM(wordMatchPage);
+//   document.getElementById("start").classList.add("hide");
 
-//         connection.execute(
-//             "SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 1;",
-//             //"TABLESAMPLE (10 PERCENT)" if we want to speed up the search with larger db, does not round up though
-//             function (error, data, fields) {
-//                 console.log("data: ", data);
+//   currentBBScore = 0;
+//   currentXScore = 0;
+//   currentYScore = 0;
+//   currentZScore = 0;
 
-//                 if (error) {
-//                     console.log(error);
-//                 }
-//                 let wordMatchStart = data[0].phrase;
-//                 connection.end();         
-//             });
-
-//         let display = wordMatchDOM.getElementById('div3');
-//         display.innerHTML += data[0].phrase;
-
-//         res.set("Server", "Wazubi Engine");
-//         res.set("X-Powered-By", "Wazubi");
-//         res.send(mainDOM.serialize());
-//             // res.send(wordMatchStart);
-//     } else {
-//         // not logged in - no session and no access, redirect to home!
-//         res.redirect("/");
-//     }
-
-// });
-
-// Need to add function to play again
-function nextQuestion() {
-  // all this function does is remove hidden class from a "next question" button so it appears on the page. 
-  // when clicked, it does startWordMatch() again
-}
+//   startWordMatch();
+// }
 
 function showDetails() {
   for (var i = 0; i < arguments.length; i++) {

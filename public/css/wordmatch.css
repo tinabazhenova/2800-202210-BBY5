@@ -1,4 +1,4 @@
-.parent {
+#parent {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: 0.5fr repeat(3, 1fr) repeat(4, 0.3fr) 1fr;
@@ -8,67 +8,67 @@
 }
 
 /*Room number*/
-.roomInfo {
+#roomInfo {
   grid-area: 1 / 1 / 2 / 3;
 }
 
 /*start*/
-.div2 {
+#div2 {
   grid-area: 2 / 1 / 3 / 3;
 }
 
 /*next question*/
-.div3 {
+#div3 {
   grid-area: 2 / 1 / 3 / 3;
 }
 
 /*Guess this phrase*/
-.div4 {
+#div4 {
   grid-area: 3 / 1 / 4 / 3;
 }
 
 /*Answer 1*/
-.div5 {
+#div5 {
   grid-area: 4 / 1 / 5 / 2;
 }
 
 /*Answer 2*/
-.div6 {
+#div6 {
   grid-area: 4 / 2 / 5 / 3;
 }
 
 /*Answer 3*/
-.div7 {
+#div7 {
   grid-area: 5 / 1 / 6 / 2;
 }
 
 /*Answer 4*/
-.div8 {
+#div8 {
   grid-area: 5 / 2 / 6 / 3;
 }
 
 /*z score*/
-.div9 {
+#div9 {
   grid-area: 6 / 1 / 7 / 3;
 }
 
 /*x score*/
-.div10 {
+#div10 {
   grid-area: 7 / 1 / 8 / 3;
 }
 
 /*y score*/
-.div11 {
+#div11 {
   grid-area: 8 / 1 / 9 / 3;
 }
 
 /*bb score*/
-.div12 {
+#div12 {
   grid-area: 9 / 1 / 10 / 3;
 }
 
 /*Chat*/
-.div13 {
+#div13 {
   grid-area: 10 / 1 / 11 / 3;
 }
 
@@ -83,4 +83,12 @@
 button {
   background-color: #ffb703;
   color: white;
+}
+
+.correct {
+  background-color: green;
+}
+
+.incorrect { 
+  background-color: red;
 }
