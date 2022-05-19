@@ -1,4 +1,6 @@
-document.getElementById("start").onClick = () => startWordMatch();
+// document.getElementById("start").onClick = () => startWordMatch();
+// document.getElementById("start").onClick(()=>startWordMatch()); 
+document.getElementById("start").addEventListener("click", startWordMatch()); 
 
 function startWordMatch() {
   const xhr = new XMLHttpRequest();
@@ -11,33 +13,35 @@ function startWordMatch() {
         let data = JSON.parse(this.responseText);
         if (data.status == "success") {
           console.log(data);
-          let genPhrase = document.getElementById("div3");
-          //Answer phrase is placed in div3, answer meaning is placed randomly in div4-6
-          let randomNumber = Math.floor((Math.random() * 3 + 4));
+
+          //Answer phrase is placed in div4,
+          let genPhrase = document.getElementById("div4");
+          genPhrase.innerHTML += data.rows[0].phrase;
+
+          //shows hidden answer divs
+          document.getElementById("div4").classList.remove('hide');
+          document.getElementById("div5").classList.remove('hide');
+          document.getElementById("div6").classList.remove('hide');
+          document.getElementById("div7").classList.remove('hide');
+
+          //Answer meaning is placed randomly in div4-6
+          let randomNumber = Math.floor((Math.random() * 3 + 5));
           console.log(randomNumber);
           let randomAnswerDiv = document.getElementById("div" + randomNumber);
           console.log(randomAnswerDiv);
           randomAnswerDiv.innerHTML = data.rows[0].meaning;
-          genPhrase.innerHTML += data.rows[0].phrase;
+          
+          
+          console.log('Rows returned are: ', data);
 
           randomAnswerDiv.addEventListener("click", correctAnswer(randomAnswerDiv, data.rows[0]));
-
-          // console.log(genPhrase, answer);
-
-          // connection.connect();
-          // connection.query('SELECT * FROM BBY_5_user ORDER BY rand() LIMIT 3;',
-          //   function (error, data, fields) {
-          //     if (error) {
-          //       console.log(error);
-          //     }
-          console.log('Rows returned are: ', data);
 
           // for each result after the first (first is the answer)
           for (j = 1; j < data.rows.length; j++) {
             console.log("row", data.rows);
             //if div is empty (has no answer) then a random meaning is placed there
-            if (document.getElementById("div" + (j + 4)).innerHTML = "") {
-              let i = document.getElementById("div" + (j + 4));
+            if (document.getElementById("div" + (j + 5)).innerHTML = "") {
+              let i = document.getElementById("div" + (j + 5));
               i.innerHTML = data[j].meaning;
               
               i.addEventListener("click", wrongAnswer(i));
@@ -53,7 +57,7 @@ function startWordMatch() {
       console.log("error", this.status);
     }
   };
-  xhr.open("GET", "/get-phrase");
+  xhr.open("GET", "/startWordMatch");
   xhr.send();
 
   // res.send({
@@ -61,9 +65,10 @@ function startWordMatch() {
   //   rows: data
   // });
 }
-// connection.end();
-startWordMatch();
 
+function chooseAnswer() {
+
+}
 // Need to add function to change CSS to green on correct guess, and add score to player's count
 function correctAnswer(e, f) {
   e.classList.add('correct'); //add css for correct answer to change div background color to green

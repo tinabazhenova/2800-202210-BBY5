@@ -1,62 +1,81 @@
 .parent {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: repeat(5, 1fr) auto;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 0.5fr repeat(3, 1fr) repeat(4, 0.3fr) 1fr;
   grid-column-gap: 0px;
-  grid-row-gap: 25px;
-  background-color: #e56e18;
+  grid-row-gap: 0px;
   height: 100vh;
 }
 
-.div1 {
+/*Room number*/
+.roomInfo {
   grid-area: 1 / 1 / 2 / 3;
-  background-color: #ffffff;
 }
 
+/*start*/
 .div2 {
-  grid-area: 1 / 3 / 2 / 4;
-  text-align: right;
-  align-items: center;
-  background-color: #ffffff;
+  grid-area: 2 / 1 / 3 / 3;
 }
 
+/*next question*/
 .div3 {
-  grid-area: 2 / 1 / 3 / 4;
-  text-align: center;
-  align-content: center;
-  background-color: #ffffff;
+  grid-area: 2 / 1 / 3 / 3;
 }
 
+/*Guess this phrase*/
 .div4 {
-  grid-area: 3 / 2 / 4 / 3;
-  height: 100%;
-  text-align: center;
-  align-items: center;
-  background-color: #ffffff;
+  grid-area: 3 / 1 / 4 / 3;
 }
 
+/*Answer 1*/
 .div5 {
-  grid-area: 4 / 2 / 5 / 3;
-  background-color: #ffffff;
-  text-align: center;
-  align-content: center;
+  grid-area: 4 / 1 / 5 / 2;
 }
 
+/*Answer 2*/
 .div6 {
-  grid-area: 5 / 2 / 6 / 3;
-  background-color: #ffffff;
-  text-align: center;
-  align-content: center;
+  grid-area: 4 / 2 / 5 / 3;
 }
 
+/*Answer 3*/
 .div7 {
-  grid-area: 6 / 3 / 7 / 4;
-  background-color: #ffffff;
+  grid-area: 5 / 1 / 6 / 2;
 }
 
-#hide {
+/*Answer 4*/
+.div8 {
+  grid-area: 5 / 2 / 6 / 3;
+}
+
+/*z score*/
+.div9 {
+  grid-area: 6 / 1 / 7 / 3;
+}
+
+/*x score*/
+.div10 {
+  grid-area: 7 / 1 / 8 / 3;
+}
+
+/*y score*/
+.div11 {
+  grid-area: 8 / 1 / 9 / 3;
+}
+
+/*bb score*/
+.div12 {
+  grid-area: 9 / 1 / 10 / 3;
+}
+
+/*Chat*/
+.div13 {
+  grid-area: 10 / 1 / 11 / 3;
+}
+
+.hide {
   display: none;
 }
+
 #chat-box {
   display: none;
 }
