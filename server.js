@@ -142,7 +142,7 @@ function wrap(filename, session) {
     if (session.username == null) {
         dom.window.document.getElementById("name").innerHTML = "Guest";
     } else {
-        dom.window.document.getElementById("name").innerHTML = session.username;
+        dom.window.document.getElementById("name").innerHTML = "WELCOME " + session.username.toUpperCase();
     }
 
     return dom;
@@ -251,8 +251,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-//connection.connect();
-
 // Notice that this is a "POST"
 app.post("/login", function(req, res) {
     res.setHeader("Content-Type", "application/json");
@@ -327,6 +325,7 @@ app.post("/loginAsAdmin", function(req, res) {
 });
 
 app.post('/upload', upload.single("image"), function(req, res) {
+    console.log(req);
     if (!req.file) {
         console.log("No file upload");
     } else {
@@ -347,13 +346,22 @@ app.get("/profile", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
 
-        let profile = fs.readFileSync("./app/html/profile.html", "utf8");
-        let profileDOM = new JSDOM(profile);
+        let profileDOM = wrap("./app/html/profile.html",req.session);
+        // let profile = fs.readFileSync("./app/html/profile.html", "utf8");
+        // let profileDOM = new JSDOM(profile);
         console.log(profileDOM.window.document.getElementById("profile_name").innerHTML);
 
         profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
-        profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
-        profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
+        // profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
+            if (req.session.name== "adult" && req.session.pass== "sk8erboi") {
+                profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
+                profileDOM.window.document.querySelector(".banner").style.display = "block";
+            } else if(req.session.userImage == "NULL") {
+                profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
+            } else {
+                profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
+            }
+        
         profileDOM.window.document.getElementById("user_name").innerHTML = req.session.name;
         profileDOM.window.document.getElementById("password").innerHTML = req.session.pass;
 
@@ -373,36 +381,42 @@ app.post('/update-username', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
 
     console.log("username", req.body.user_name);
-    //connection.connect();
     console.log("user ID", req.session.userID);
     connection.query(`UPDATE ${userTable} SET user_name = ? WHERE ID = ?`, [req.body.user_name, req.session.userID],
         function(error, results, fields) {
             if (error) {
                 console.log(error);
             }
-            //console.log('Rows returned are: ', results);
             res.send({ status: "success", msg: "Record updated." });
 
         });
-    //connection.end();
 });
 
 app.post('/update-password', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-
-    console.log("password", req.body.password);
-    //connection.connect();
-    console.log("user ID", req.session.userID);
     connection.query(`UPDATE ${userTable} SET password = ? WHERE ID = ?`, [req.body.password, req.session.userID],
         function(error, results, fields) {
             if (error) {
                 console.log(error);
             }
-            //console.log('Rows returned are: ', results);
             res.send({ status: "success", msg: "Record updated." });
 
         });
-    //connection.end();
+    
+});
+
+app.post('/delete-image', function(req, res) {
+    // res.setHeader('Content-Type', 'application/json');
+    connection.query(`UPDATE  ${userTable} SET user_image = "NULL" WHERE ID = ?`, [req.session.userID],
+        function(error, results, fields) {
+            if (error) {
+                console.log(error);
+            }
+            req.session.userImage = null;
+            res.send({ status: "success", msg: "Record updated." });
+
+        });
+
 });
 
 app.get('/get-username', function(req, res) {

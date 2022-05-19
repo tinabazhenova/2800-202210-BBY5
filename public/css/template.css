@@ -71,7 +71,8 @@ input[type='submit'] {
     cursor: pointer;
 } */
 
-#name {
+.user_name {
+    font-size: 36px;
     text-align: center;
     color: var(--color5);
     margin-top: 1%;
