@@ -1,5 +1,4 @@
-// document.getElementById("start").onClick = () => startWordMatch();
-// document.getElementById("start").onClick(()=>startWordMatch());
+// document.getElementById("start").onclick(()=>startWordMatch());
 // document.getElementById("start").addEventListener("click", startWordMatch());
 
 // document.getElementById("start").addEventListener("click", (e) => {
@@ -20,7 +19,12 @@ function startWordMatch() {
         if (data.status == "success") {
           console.log(data);
 
-          // //shows hidden answer divs
+          document.getElementById("btn1").disabled = false;
+          document.getElementById("btn2").disabled = false;
+          document.getElementById("btn3").disabled = false;
+          document.getElementById("btn4").disabled = false;
+
+          //shows hidden answer divs and resets correct/incorrect values
           document
             .getElementById("btn1")
             .classList.remove("hide", "correct", "incorrect");
@@ -36,7 +40,7 @@ function startWordMatch() {
 
           document.getElementById("start").classList.add("hide");
 
-          //Answer phrase is placed in div4,
+          //Question is placed in div4,
           document.getElementById("div4").classList.remove("hide");
           let genPhrase = document.getElementById("div4");
           genPhrase.innerHTML = "Guess this phrase: " + data.rows[0].phrase;
@@ -50,9 +54,15 @@ function startWordMatch() {
           randomAnswerBtn.innerHTML = data.rows[0].meaning;
 
           // use this function when css works again so we can change color of randomAnswerBtn
+
           randomAnswerBtn.onclick = () => {
             correctAnswer(randomAnswerBtn, data.rows[0]);
           };
+
+          // let newCorrectAnswer = () =>
+          //   correctAnswer(randomAnswerBtn, data.rows[0]);
+
+          // randomAnswerBtn.addEventListener("click", newCorrectAnswer);
 
           // randomAnswerBtn.addEventListener(
           //   "click",
@@ -81,13 +91,15 @@ function startWordMatch() {
 
               i.innerHTML = data.rows[j - 1].meaning;
 
-              i.addEventListener(
-                "click",
-                (e) => {
-                  wrongAnswer(i);
-                },
-                (once = true)
-              );
+              i.onclick = () => wrongAnswer(i);
+
+              // i.addEventListener(
+              //   "click",
+              //   (e) => {
+              //     wrongAnswer(i);
+              //   },
+              //   (once = true)
+              // );
             } else {
               console.log("correct answer");
             }
@@ -146,11 +158,18 @@ function correctAnswer(btnDiv, values) {
   document.getElementById("div12").innerHTML =
     "Current Z Points: " + currentZScore;
 
+  btnDiv.disabled = true;
+
   document.getElementById("start").classList.remove("hide");
   document.getElementById("start").innerHTML = "NEXT QUESTION";
 
-  // div.removeEventListener("click", correctAnswer, capture = true);
-  // div.onclick = () => ;
+  // btnDiv.removeEventListener("click", newCorrectAnswer);
+
+  // btnDiv.removeEventListener("click", correctAnswer, capture = true);
+  // btnDiv.removeEventListener("click", () => correctAnswer());
+  // btnDiv.onclick(this.disabled = true);
+
+  //Validation code goes here
 }
 
 // Optional: add function to display history of the word after guessing

@@ -103,3 +103,7 @@ button {
 .incorrect { 
   background-color: red;
 }
+
+@media screen and (max-width: 750px) {
+  
+}
