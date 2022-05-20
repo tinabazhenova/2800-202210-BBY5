@@ -197,10 +197,9 @@ function respondWithCrossword(crossword, req, res) {
     for(let i = 0; i < results.length; ++i) {
         // console.log ("checking " + results[i].phrase);
         let col = results[i].col;
-        let row = results[i].row;
+        let row = results[i].row_num;
         let vert = results[i].vertical;
         for(let j = 0; j < results[i].phrase.length; ++j) {
-            // console.log ("    row " + row + ", col " + col);
             let arrInd = row * w + col;
             if(letters[arrInd]) {
                 let wasStarting = letters[arrInd].node.getAttribute("startingVert");
@@ -245,7 +244,7 @@ app.get("/crossword", function(req, res) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         if(!crossword){
-            connection.query(`SELECT cr.word_id, cr.row, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 1`, (error, results) => {
+            connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 1`, (error, results) => {
                 if (error || !results || !results.length) {
                     console.log(error);
                     // Need to handle errors properly
@@ -262,7 +261,7 @@ app.get("/crossword", function(req, res) {
                         let minw = results[i].col + (results[i].vertical === 1 ? 1 : results[i].phrase.length);
                         if(minw > w)
                             w = minw;
-                        let minh = results[i].row + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
+                        let minh = results[i].row_num + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
                         if(minh > h)
                             h = minh;
                         // console.log(results[i], minw, minh);

@@ -25,7 +25,7 @@ CREATE TABLE BBY_5_master (
 CREATE TABLE BBY_5_crossword (
   crossword_id int not null,
   word_id int not null,
-  row int not null,
+  row_num int not null,
   col int not null,
   vertical tinyint not null,
   primary key (crossword_id, word_id)
