@@ -451,7 +451,7 @@ app.get("/profile", function(req, res) {
 
         profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
         // profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
-            if (req.session.name== "adult" && req.session.pass== "sk8erboi") {
+            if (req.session.name== "adult" && req.session.pass== "sk8terboi") {
                 profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
                 profileDOM.window.document.querySelector(".banner").style.display = "block";
             } else if(req.session.userImage == "NULL") {

@@ -23,7 +23,7 @@ CREATE TABLE BBY_5_master (
   phrase VARCHAR(50) NOT NULL,
   meaning VARCHAR(200),
   history VARCHAR(500),
-  score int,
+  value int,
   generation VARCHAR(1),
   PRIMARY KEY (word_ID)
 );
