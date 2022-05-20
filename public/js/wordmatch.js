@@ -143,10 +143,18 @@ function correctAnswer(btnDiv, values) {
   document.getElementById("div11").classList.remove("hide");
   document.getElementById("div12").classList.remove("hide");
 
-  currentBBScore += values.bbvalue;
-  currentXScore += values.xvalue;
-  currentYScore += values.yvalue;
-  currentZScore += values.zvalue;
+  if (values.generation == "B") {
+    currentBBScore += values.value;
+  }
+  if (values.generation == "X") {
+    currentXScore += values.value;
+  }
+  if (values.generation == "Y") {
+    currentYScore += values.value;
+  }
+  if (values.generation == "Z") {
+    currentZScore += values.value;
+  }
 
   // // Need to add more divs to the page
   document.getElementById("div9").innerHTML =
@@ -213,9 +221,9 @@ function wrongAnswer(e) {
 //   startWordMatch();
 // }
 
-function showDetails() {
-  for (var i = 0; i < arguments.length; i++) {
-    var e = document.getElementById(arguments[i]);
-    e.style.display = e.style.display == "block" ? "none" : "block";
-  }
-}
+// function showDetails() {
+//   for (var i = 0; i < arguments.length; i++) {
+//     var e = document.getElementById(arguments[i]);
+//     e.style.display = e.style.display == "block" ? "none" : "block";
+//   }
+// }

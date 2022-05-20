@@ -618,7 +618,7 @@ app.post("/joinLobby", (req, res) => {
   }
 });
 
-app.get("/wordMatch", function (req, res) {
+app.get("/wordmatch", function (req, res) {
   if (req.session.loggedIn) {
     let dom = wrap("./app/html/wordmatch.html", req.session);
     res.set("Server", "Wazubi Engine");

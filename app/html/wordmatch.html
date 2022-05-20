@@ -1,48 +1,45 @@
+<head>
+  <link href="/css/wordmatch.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="parent">
+    <head>
+      <link rel="stylesheet" type="text/css" href="/css/wordmatch.css" />
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>WordMatch</title>
+    </head>
+    <div id="roomInfo"></div>
+    <div id="div2"><button id="start">START</button></div>
+    <div id="div3" class="hide">NEXT QUESTION</div>
+    <div id="div4" class="hide">GUESS THIS PHRASE:</div>
+    <div id="div5"><button id="btn1" class="hide">Answer:</button></div>
+    <div id="div6"><button id="btn2" class="hide">Answer:</button></div>
+    <div id="div7"><button id="btn3" class="hide">Answer:</button></div>
+    <div id="div8"><button id="btn4" class="hide">Answer:</button></div>
+    <div id="div9" class="hide">Current BB Points:</div>
+    <div id="div10" class="hide">Current X Points:</div>
+    <div id="div11" class="hide">Current Y Points:</div>
+    <div id="div12" class="hide">Current Z Points:</div>
 
-   
-  <head>
-      <link href="/css/wordmatch.css" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="parent">
-      <head>
-        <link rel="stylesheet" type="text/css" href="/css/wordmatch.css" />
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>WordMatch</title>
-      </head>
-      <div id="roomInfo"></div>
-      <div id="div2"><button id="start">START</button></div>
-      <div id="div3" class="hide">NEXT QUESTION</div>
-      <div id="div4" class="hide">GUESS THIS PHRASE: </div>
-      <div id="div5"><button id="btn1" class="hide">Answer: </button></div>
-      <div id="div6"><button id="btn2" class="hide">Answer: </button></div>
-      <div id="div7"><button id="btn3" class="hide">Answer: </button></div>
-      <div id="div8"><button id="btn4" class="hide">Answer: </button></div>
-      <div id="div9" class="hide">Current BB Points: </div>
-      <div id="div10" class="hide">Current X Points: </div>
-      <div id="div11" class="hide">Current Y Points: </div>
-      <div id="div12" class="hide">Current Z Points: </div>
-
-      <div id="div13">
-        <button onclick="showDetails('chat-box')">Chat</button>
-        <div id="chat-box">
-          <div id="chat-dialog"></div>
-          <form id="chat-form">
-            <input type="text" id="chat-input" />
-            <button type="submit" id="chat-submit">Send</button>
-          </form>
-        </div>
-      </div>
+    <div id="div13">
+      <!-- <button onclick="showDetails('chat-box')">Chat</button> -->
+      <div id="userList" style="border: 1px solid black"></div>
+      <div id="chat-dialog"></div>
+      <form id="chatForm">
+        <input type="text" id="chatInput" />
+        <button type="submit" id="send">Send</button>
+      </form>
+      <button type="button" id="leaveRoom">Leave</button>
     </div>
-    <script src="/js/wordmatch.js"></script>
-    <script
-      src="/socket.io/socket.io.js"
-      integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script src="/js/room.js"></script>
-  </body>
-</html>
+  </div>
+  <script src="/js/wordmatch.js"></script>
+  <script
+    src="/socket.io/socket.io.js"
+    integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script src="/js/room.js"></script>
+</body>
