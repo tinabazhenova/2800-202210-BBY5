@@ -183,6 +183,7 @@ async function purchaseCart() {
   }
 }
 
+// assign buttons and modals
 let modal = document.getElementById("modalBackground");
 let cart = document.getElementById("cartContainer");
 
@@ -190,7 +191,13 @@ document.getElementById("viewCart").onclick = () => cart.style.display = "block"
 document.getElementById("closeCart").onclick = () => cart.style.display = "none";
 document.getElementById("purchaseCart").onclick = () => purchaseCart();
 
-document.getElementById("cencelOrder").onclick = () => modal.style.display = "block";
+document.getElementById("cencelOrder").onclick = () => {
+  if (document.getElementById("cartItemList").innerHTML == "") {
+    window.location.href = "/main";
+  } else {
+    modal.style.display = "block"
+  }
+};
 window.onclick = (event) => {if (event.target == modal) modal.style.display = "none"};
 
 document.getElementById("saveCart").onclick = () => window.location.href = "/main";

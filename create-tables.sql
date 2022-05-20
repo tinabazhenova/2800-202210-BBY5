@@ -9,6 +9,10 @@ CREATE TABLE BBY_5_user (
   xscore int DEFAULT 0,
   yscore int DEFAULT 0,
   zscore int DEFAULT 0,
+  bblevel int DEFAULT 1,
+  xlevel int DEFAULT 1,
+  ylevel int DEFAULT 1,
+  zlevel int DEFAULT 1,
   PRIMARY KEY (ID)
 );
 
@@ -37,6 +41,7 @@ CREATE TABLE BBY_5_item (
   description VARCHAR(50),
   price int,
   type VARCHAR(1),
+  query VARCHAR(100),
   PRIMARY KEY (ID)
 );
 

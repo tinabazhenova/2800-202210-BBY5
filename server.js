@@ -642,7 +642,7 @@ app.get("/getCartItems", (req, res) => {
     connection.query(`SELECT * FROM BBY_5_cart_item
     LEFT JOIN BBY_5_item ON BBY_5_item.ID = BBY_5_cart_item.item_ID
     WHERE BBY_5_cart_item.user_ID = ?;`,
-    [req.session.userID, req.session.userID], (error, results) => {
+    [req.session.userID], (error, results) => {
         if (error) console.log(error);
         res.send({ cartList: results });
     });
@@ -718,6 +718,43 @@ app.post("/shopCheat", (req, res) => {
         if (error) console.log(error);
     });
     res.send();
+});
+
+app.get("/getInventoryItems", (req, res) => {
+    connection.query(`SELECT * FROM BBY_5_has_item
+    LEFT JOIN BBY_5_item ON BBY_5_item.ID = BBY_5_has_item.item_ID
+    WHERE BBY_5_has_item.user_ID = ?;`,
+    [req.session.userID], (error, results) => {
+        if (error) console.log(error);
+        res.send({ itemList: results });
+    });
+});
+
+app.post("/useItem", (req, res) => {
+    connection.query(req.body.item.query,
+    [req.session.userID], (error, results) => {
+        if (error) {
+            console.log(error);
+        } else {
+            connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
+            [req.session.userID, req.body.item.ID], (error, results) => {
+                if (error) console.log(error);
+            });
+            connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
+            [req.session.userID, req.body.item.ID], (error, results) => {
+                if (error) console.log(error);
+            });
+        }
+    });
+    res.send();
+});
+
+app.get("/getUserLevels", (req, res) => {
+    connection.query(`SELECT bblevel, xlevel, ylevel, zlevel FROM BBY_5_user WHERE ID = ?;`,
+    [req.session.userID], (error, results) => {
+        if (error) console.log(error);
+        res.send({ levels: results[0] });
+    });
 });
 
 // RUN SERVER
