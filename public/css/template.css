@@ -94,6 +94,7 @@ input[type='submit'] {
 #templateContent {
     flex-grow: 1;
     text-align: center;
+    overflow: auto;
 }
 
 footer {

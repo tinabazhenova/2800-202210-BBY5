@@ -20,7 +20,7 @@ INSERT INTO BBY_5_master (phrase, meaning, history, value, generation) VALUES ("
 INSERT INTO BBY_5_master (phrase, meaning, history, value, generation) VALUES ("NOT", "psych!", "Popularized in North America in the 1990s by the Saturday Night Live sketch and subsequent film Wayne''s World, 'not' was selected as the 1992 Word of the Year by the American Dialect Society.", 200, 'Y');
 INSERT INTO BBY_5_master (phrase, meaning, history, value, generation) VALUES ("Gettin' Jiggy", "Dance like no one is watching", "This 90s phrase came from the popular music video by Will Smith, Gettin' Jiggy With It.", 200, 'Y');
 
-INSERT INTO BBY_5_item (ID, name, description, price, type) VALUES (NULL, 'BB upgrade coupon', 'Upgrades your BB title by 1 level.', 2000, 'B');
-INSERT INTO BBY_5_item (ID, name, description, price, type) VALUES (NULL, 'X upgrade coupon', 'Upgrades your X title by 1 level.', 2000, 'X');
-INSERT INTO BBY_5_item (ID, name, description, price, type) VALUES (NULL, 'Y upgrade coupon', 'Upgrades your Y title by 1 level.', 2000, 'Y');
-INSERT INTO BBY_5_item (ID, name, description, price, type) VALUES (NULL, 'Z upgrade coupon', 'Upgrades your Z title by 1 level.', 2000, 'Z');
+INSERT INTO BBY_5_item (ID, name, description, price, type) VALUES (1, 'B upgrade coupon', 'Upgrades your B title by 1 level.', 2000, 'B');
+INSERT INTO BBY_5_item (ID, name, description, price, type) VALUES (2, 'X upgrade coupon', 'Upgrades your X title by 1 level.', 2000, 'X');
+INSERT INTO BBY_5_item (ID, name, description, price, type) VALUES (3, 'Y upgrade coupon', 'Upgrades your Y title by 1 level.', 2000, 'Y');
+INSERT INTO BBY_5_item (ID, name, description, price, type) VALUES (4, 'Z upgrade coupon', 'Upgrades your Z title by 1 level.', 2000, 'Z');

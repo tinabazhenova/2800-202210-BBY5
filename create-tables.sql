@@ -5,10 +5,10 @@ CREATE TABLE BBY_5_user (
   last_name VARCHAR(50),
   password VARCHAR(50),
   is_admin TINYINT(1),
-  bbscore int,
-  xscore int,
-  yscore int,
-  zscore int,
+  bbscore int DEFAULT 0,
+  xscore int DEFAULT 0,
+  yscore int DEFAULT 0,
+  zscore int DEFAULT 0,
   PRIMARY KEY (ID)
 );
 

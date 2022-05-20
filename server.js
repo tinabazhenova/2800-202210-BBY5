@@ -68,7 +68,6 @@ io.on("connection", socket => {
             if (rooms[i].users.includes(session.username)) {
                 rooms[i].users.splice(rooms[i].users.indexOf(session.username), 1);
                 if (rooms[i].users.length == 0) {
-                    console.log("Room " + rooms[i].code + " was removed");
                     rooms.splice(i, 1);
                     i--;
                 } else {
@@ -164,7 +163,7 @@ app.get("/wordguess", async function(req, res) {
         if (!guessWord) {
             connection.query(`SELECT phrase, meaning FROM BBY_05_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
                 if (error || !results || !results.length) {
-                    console.log(error);
+                    if (error) console.log(error);
                     let dom = wrap("./app/html/wordguess_wait.html", req.session);
                     res.send(dom.serialize());
 
@@ -235,15 +234,11 @@ app.get("/main", function(req, res) {
 app.get("/admin", function(req, res) {
     // check for a session first!
     if (req.session.loggedIn && req.session.isAdmin) {
-
         let main = fs.readFileSync("./app/html/admin.html", "utf8");
         let mainDOM = new JSDOM(main);
 
-
         connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
-
-            console.log(error);
-            console.log(results);
+            if (error) console.log(error);
             // great time to get the user's data and put it into the page!
             mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
             mainDOM.window.document.getElementById("profile_name").innerHTML = "Welcome Admin " + req.session.username;
@@ -269,15 +264,10 @@ app.use(express.urlencoded({ extended: true }));
 // Notice that this is a "POST"
 app.post("/login", function(req, res) {
     res.setHeader("Content-Type", "application/json");
-
-    console.log("What was sent", req.body.username, req.body.password);
     connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
-
-        console.log(req, results);
-
         if (error || !results || !results.length) {
+            if (error) console.log(error);
             res.send({ status: "fail", msg: "User account not found." });
-            console.log(error);
         } else {
             // user authenticated, create a session
             req.session.loggedIn = true;
@@ -302,6 +292,7 @@ app.post("/login", function(req, res) {
 
 app.post("/guest_login", function(req, res) {
     req.session.loggedIn = true;
+    req.session.isGuest = true;
     res.send({});
 });
 // Notice that this is a "POST"
@@ -310,13 +301,11 @@ app.post("/loginAsAdmin", function(req, res) {
 
     console.log("What was sent", req.body.username, req.body.password);
     connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
-        console.log(req, results);
         if (error || !results || !results.length) {
-            res.send({ status: "fail", msg: "User account not found." });
             console.log(error);
+            res.send({ status: "fail", msg: "User account not found." });
         } else if (!results[0].is_admin) {
             res.send({ status: "fail", msg: "User is not admin." });
-            console.log(error);
         } else {
             // user authenticated, create a session
             req.session.loggedIn = true;
@@ -340,7 +329,6 @@ app.post("/loginAsAdmin", function(req, res) {
 });
 
 app.post('/upload', upload.single("image"), function(req, res) {
-    console.log(req);
     if (!req.file) {
         console.log("No file upload");
     } else {
@@ -399,9 +387,7 @@ app.post('/update-username', function(req, res) {
     console.log("user ID", req.session.userID);
     connection.query(`UPDATE ${userTable} SET user_name = ? WHERE ID = ?`, [req.body.user_name, req.session.userID],
         function(error, results, fields) {
-            if (error) {
-                console.log(error);
-            }
+            if (error) console.log(error);
             res.send({ status: "success", msg: "Record updated." });
 
         });
@@ -411,9 +397,7 @@ app.post('/update-password', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`UPDATE ${userTable} SET password = ? WHERE ID = ?`, [req.body.password, req.session.userID],
         function(error, results, fields) {
-            if (error) {
-                console.log(error);
-            }
+            if (error) console.log(error);
             res.send({ status: "success", msg: "Record updated." });
 
         });
@@ -424,9 +408,7 @@ app.post('/delete-image', function(req, res) {
     // res.setHeader('Content-Type', 'application/json');
     connection.query(`UPDATE  ${userTable} SET user_image = "NULL" WHERE ID = ?`, [req.session.userID],
         function(error, results, fields) {
-            if (error) {
-                console.log(error);
-            }
+            if (error) console.log(error);
             req.session.userImage = null;
             res.send({ status: "success", msg: "Record updated." });
 
@@ -438,9 +420,7 @@ app.get('/get-username', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`SELECT user_name FROM ${userTable} WHERE ID = ? `, [req.session.userID],
         function(error, results, field) {
-            if (error) {
-                console.log(error);
-            }
+            if (error) console.log(error);
             req.session.name = results[0].user_name;
             res.send({ status: "success", username: results[0].user_name });
         }
@@ -451,9 +431,7 @@ app.get('/get-password', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`SELECT password FROM ${userTable} WHERE ID = ? `, [req.session.userID],
         function(error, results, field) {
-            if (error) {
-                console.log(error);
-            }
+            if (error) console.log(error);
             req.session.pass = results[0].password;
 
             res.send({ status: "success", password: results[0].password });
@@ -465,10 +443,7 @@ app.get('/get-users', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`SELECT * FROM ${userTable} `,
         function(error, results, field) {
-            if (error) {
-                console.log(error);
-            }
-            // req.session.name = results[0].user_name;
+            if (error) console.log(error);
             res.send({ status: "success", rows: results });
         }
     )
@@ -478,10 +453,7 @@ app.post('/add-user', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`INSERT INTO ${userTable} (user_name, first_name, last_name, password, is_admin) values (?, ?, ?, ?, ?)`, [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin],
         function(error, results, fields) {
-            if (error) {
-                console.log(error);
-            }
-            //console.log('Rows returned are: ', results);
+            if (error) console.log(error);
             res.send({ status: "success", msg: "Record added." });
         }
     )
@@ -491,9 +463,7 @@ app.post('/edit-user', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`UPDATE ${userTable} SET user_name = ?, first_name = ?, last_name = ?, password = ?, is_admin = ? WHERE ID = ?`, [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin, req.body.id],
         function(error, results, fields) {
-            if (error) {
-                console.log(error);
-            }
+            if (error) console.log(error);
             console.log('Rows returned are: ', results);
             res.send({ status: "success", msg: "Record edited." });
         }
@@ -504,10 +474,7 @@ app.post('/delete-users', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`DELETE FROM ${userTable} WHERE (user_name) = ? `, [req.body.user_name],
         function(error, results, fields) {
-            if (error) {
-                console.log(error);
-            }
-            //console.log('Rows returned are: ', results);
+            if (error) console.log(error);
             res.send({ status: "success", msg: "Record deleted." });
         }
     )
@@ -559,7 +526,7 @@ app.post("/joinLobby", (req, res) => {
 });
 
 app.get("/shop", function(req, res) {
-    if (req.session.loggedIn) {
+    if (req.session.loggedIn && !req.session.isGuest) {
         let dom = wrap("./app/html/shop.html", req.session);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
@@ -567,6 +534,14 @@ app.get("/shop", function(req, res) {
     } else {
         res.redirect("/");
     }
+});
+
+app.get("/getUserPoints", (req, res) => {
+    connection.query(`SELECT bbscore, xscore, yscore, zscore FROM BBY_5_user WHERE ID = ?`,
+    [req.session.userID], (error, results) => {
+        if (error) console.log(error);
+        res.send({ points: results[0] });
+    });
 });
 
 app.get("/getShopItems", (req, res) => {
@@ -586,10 +561,18 @@ app.get("/getCartItems", (req, res) => {
     });
 });
 
-app.post("/shopItem", (req, res) => {
+app.post("/addToCart", (req, res) => {
     connection.query(`INSERT INTO bby_5_cart_item VALUES (?, ?, ?)
     ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
     [req.session.userID, req.body.itemID, req.body.quantity, req.body.quantity], (error, results) => {
+        if (error) console.log(error);
+    });
+    res.send();
+});
+
+app.post("/removeFromCart", (req, res) => {
+    connection.query(`DELETE FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?`,
+    [req.session.userID, req.body.itemID], (error, results) => {
         if (error) console.log(error);
     });
     res.send();
@@ -602,19 +585,20 @@ app.post("/emptyCart", (req, res) => {
     res.send();
 });
 
-app.post("/removeItemFromCart", (req, res) => {
-    connection.query(`DELETE FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?`,
-    [req.session.userID, req.body.itemID], (error, results) => {
-        if (error) console.log(error);
-    });
-    res.send();
-});
-
 app.post("/purchaseCart", (req, res) => {
-    connection.query(`SELECT bbscore FROM BBY_5_user WHERE ID = ?`,
+    let points = getUserPoints();
+    connection.query(`SELECT bbscore, xscore, yscore, zscore FROM BBY_5_user WHERE ID = ?`,
     [req.session.userID], (error, results) => {
         if (error) console.log(error);
-        if (results[0] >= req.body.total) {
+        if (results[0].bbscore < req.body.total.B) {
+            res.send({ approved: false, errorMessage: "Not enough B-points!" });
+        } else if (results[0].xscore < req.body.total.X) {
+            res.send({ approved: false, errorMessage: "Not enough X-points!" });
+        } else if (results[0].yscore < req.body.total.Y) {
+            res.send({ approved: false, errorMessage: "Not enough Y-points!" });
+        } else if (results[0].zscore < req.body.total.Z) {
+            res.send({ approved: false, errorMessage: "Not enough Z-points!" });
+        } else {
             connection.query(`SELECT * FROM bby_5_cart_item WHERE user_ID = ?`,
             [req.session.userID], (error, results) => {
                 if (error) {
@@ -628,8 +612,8 @@ app.post("/purchaseCart", (req, res) => {
                                 if (error) console.log(error);
                             });
                         });
-                        connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ? WHERE ID = ?`,
-                            [req.body.total, req.session.userID], (error, results) => {
+                        connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ?, xscore = xscore - ?, yscore = yscore - ?, zscore = zscore - ? WHERE ID = ?`,
+                            [req.body.total.B, req.body.total.X, req.body.total.Y, req.body.total.Z, req.session.userID], (error, results) => {
                                 if (error) console.log(error);
                             });
                         res.send({ approved: true });
@@ -638,10 +622,16 @@ app.post("/purchaseCart", (req, res) => {
                     }
                 }
             });
-        } else {
-            res.send({ approved: false, errorMessage: "Not enough points!" });
         }
     });
+});
+
+app.post("/shopCheat", (req, res) => {
+    connection.query(`UPDATE bby_5_user SET bbscore = ?, xscore = ?, yscore = ?, zscore = ? WHERE ID = ?`,
+    [10000, 10000, 10000, 10000, req.session.userID], (error, results) => {
+        if (error) console.log(error);
+    });
+    res.send();
 });
 
 // RUN SERVER
