@@ -158,7 +158,10 @@ function correctAnswer(btnDiv, values) {
   document.getElementById("div12").innerHTML =
     "Current Z Points: " + currentZScore;
 
-  btnDiv.disabled = true;
+  document.getElementById("btn1").disabled = true;
+  document.getElementById("btn2").disabled = true;
+  document.getElementById("btn3").disabled = true;
+  document.getElementById("btn4").disabled = true;
 
   document.getElementById("start").classList.remove("hide");
   document.getElementById("start").innerHTML = "NEXT QUESTION";
@@ -182,6 +185,11 @@ function wrongAnswer(e) {
   // document.getElementById("btn2").classList.add("hide");
   // document.getElementById("btn3").classList.add("hide");
   // document.getElementById("btn4").classList.add("hide");
+
+  document.getElementById("btn1").disabled = true;
+  document.getElementById("btn2").disabled = true;
+  document.getElementById("btn3").disabled = true;
+  document.getElementById("btn4").disabled = true;
 
   document.getElementById("start").classList.remove("hide");
   document.getElementById("start").innerHTML = "NEXT QUESTION";
