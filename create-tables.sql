@@ -14,6 +14,7 @@ CREATE TABLE BBY_5_user (
   ylevel int DEFAULT 1,
   zlevel int DEFAULT 1,
   title VARCHAR(20) DEFAULT "None",
+  user_image VARCHAR(100) DEFAULT NULL,
   PRIMARY KEY (ID)
 );
 
@@ -22,7 +23,7 @@ CREATE TABLE BBY_5_master (
   phrase VARCHAR(50) NOT NULL,
   meaning VARCHAR(200),
   history VARCHAR(500),
-  value int,
+  score int,
   generation VARCHAR(1),
   PRIMARY KEY (word_ID)
 );

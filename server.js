@@ -9,12 +9,12 @@ const session = require("express-session")({
     saveUninitialized: true
 });
 const app = express();
-const bodyparser = require('body-parser');
-const multer = require('multer');
-const path = require('path');
+const bodyparser = require("body-parser");
+const multer = require("multer");
+const path = require("path");
 const ejs = require("ejs");
 const fs = require("fs");
-const { JSDOM } = require('jsdom');
+const { JSDOM } = require("jsdom");
 const { BlockList } = require("net");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
@@ -87,9 +87,8 @@ const storage = multer.diskStorage({
         callback(null, "my-app-" + file.originalname.split('/').pop().trim());
     }
 });
+
 const upload = multer({ storage: storage });
-
-
 
 app.set("view engine", "ejs");
 // static path mappings
@@ -101,9 +100,11 @@ app.use("/html", express.static("./public/html"));
 app.use("/media", express.static("./public/media"));
 // body-parser middleware use
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({
-    extended: true
-}));
+app.use(
+  bodyparser.urlencoded({
+    extended: true,
+  })
+);
 
 app.use(session);
 app.get("/", function(req, res) {
@@ -144,7 +145,7 @@ function wrap(filename, session) {
         dom.window.document.getElementById("name").innerHTML = "WELCOME " + session.username.toUpperCase();
     }
 
-    return dom;
+  return dom;
 }
 
 function respondWithWord(guessWord, req, res) {
@@ -334,19 +335,19 @@ app.get("/admin", function(req, res) {
             res.set("X-Powered-By", "Wazubi");
             res.send(mainDOM.serialize());
         });
-
-
     } else {
         // not admin - no session and no access, redirect to home!
         res.redirect("/");
         //res.send({ status: "fail", msg: "Access is denied." });
     }
-
 });
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 // Notice that this is a "POST"
 app.post("/login", function(req, res) {
@@ -370,12 +371,15 @@ app.post("/login", function(req, res) {
                 // session saved. For analytics, we could record this in a DB
             });
 
-            // all we are doing as a server is telling the client that they
-            // are logged in, it is up to them to switch to the profile page
-            res.send({ status: "success", msg: "Logged in." });
-        }
-
-    });
+        // all we are doing as a server is telling the client that they
+        // are logged in, it is up to them to switch to the profile page
+        res.send({
+          status: "success",
+          msg: "Logged in.",
+        });
+      }
+    }
+  );
 });
 
 app.post("/guest_login", function(req, res) {
@@ -408,12 +412,15 @@ app.post("/loginAsAdmin", function(req, res) {
                 // session saved. For analytics, we could record this in a DB
             });
 
-            // all we are doing as a server is telling the client that they
-            // are logged in, it is up to them to switch to the profile page
-            res.send({ status: "success", msg: "Logged in." });
-        }
-
-    });
+        // all we are doing as a server is telling the client that they
+        // are logged in, it is up to them to switch to the profile page
+        res.send({
+          status: "success",
+          msg: "Logged in.",
+        });
+      }
+    }
+  );
 });
 
 app.post('/upload', upload.single("image"), function(req, res) {
@@ -424,9 +431,9 @@ app.post('/upload', upload.single("image"), function(req, res) {
         var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename
         var insertData = `UPDATE ${userTable} SET user_image = ? WHERE ${userTable}.ID = '${req.session.userID}'`
         connection.query(insertData, [imgsrc], (err, result) => {
-            if (err) throw err
-            console.log("file uploaded")
-            console.log(result)
+            if (err) throw err;
+            console.log("file uploaded");
+            console.log(result);
         })
         req.session.userImage = imgsrc
         res.redirect("/profile")
@@ -464,7 +471,6 @@ app.get("/profile", function(req, res) {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
-
 });
 
 // we are changing stuff on the server!!!
@@ -569,18 +575,17 @@ app.post('/delete-users', function(req, res) {
 
 });
 
-app.get("/logout", function(req, res) {
-
-    if (req.session) {
-        req.session.destroy(function(error) {
-            if (error) {
-                res.status(400).send("Unable to log out")
-            } else {
-                // session deleted, redirect to home
-                res.redirect("/");
-            }
-        });
-    }
+app.get("/logout", function (req, res) {
+  if (req.session) {
+    req.session.destroy(function (error) {
+      if (error) {
+        res.status(400).send("Unable to log out");
+      } else {
+        // session deleted, redirect to home
+        res.redirect("/");
+      }
+    });
+  }
 });
 
 app.get("/createLobby", (req, res) => {
@@ -608,11 +613,39 @@ app.post("/joinLobby", (req, res) => {
         } else {
             res.send({ found: false })
         }
-    } else {
-        res.redirect("/");
-    }
+  } else {
+    res.redirect("/");
+  }
 });
 
+app.get("/wordmatch", function (req, res) {
+  if (req.session.loggedIn) {
+    let dom = wrap("./app/html/wordmatch.html", req.session);
+    res.set("Server", "Wazubi Engine");
+    res.set("X-Powered-By", "Wazubi");
+    res.send(dom.serialize());
+  } else {
+    // not logged in - no session and no access, redirect to home!
+    res.redirect("/");
+  }
+});
+
+app.get("/startWordMatch", function (req, res) {
+    connection.query(
+      "SELECT * FROM BBY_5_master ORDER BY rand() LIMIT 5;",
+      function (error, results, fields) {
+        if (error) {
+          console.log(error);
+        }
+        console.log("Rows returned are: ", results);
+        res.send({
+          status: "success",
+          rows: results //data or rows?
+        });
+      }
+    );
+  });
+  
 app.get("/shop", function(req, res) {
     if (req.session.loggedIn && !req.session.isGuest) {
         let dom = wrap("./app/html/shop.html", req.session);

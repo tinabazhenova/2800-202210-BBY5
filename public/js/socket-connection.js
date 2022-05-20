@@ -43,6 +43,10 @@ document.getElementById("wordguess").addEventListener("click", (e) => {
     createLobby("wordguess");
 });
 
+document.getElementById("wordmatch").addEventListener("click", (e) => {
+  createLobby("wordmatch");
+});
+
 document.getElementById("crossword").addEventListener("click", (e) => {
     createLobby("crossword");
 });
