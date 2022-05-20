@@ -61,7 +61,7 @@ io.on("connection", socket => {
     });
     //receives a message from one client and sends it to all other clients so that everyone (in the same room) can see the message
     socket.on("sendMessage", (message, room) => {
-        io.to(room).emit("postMessage", session.username + ": " + message);
+        io.to(room).emit("postMessage", session.username + ": " + message, session.title);
     });
     socket.on("disconnect", () => {
         for (var i = 0; i < rooms.length; i++) {
@@ -365,6 +365,7 @@ app.post("/login", function(req, res) {
             req.session.isAdmin = results[0].is_admin;
             req.session.userImage = results[0].user_image;
             req.session.pass = results[0].password;
+            req.session.title = results[0].title;
             req.session.save(function(err) {
                 // session saved. For analytics, we could record this in a DB
             });
@@ -714,7 +715,7 @@ app.post("/purchaseCart", (req, res) => {
 
 app.post("/shopCheat", (req, res) => {
     connection.query(`UPDATE bby_5_user SET bbscore = ?, xscore = ?, yscore = ?, zscore = ? WHERE ID = ?`,
-    [10000, 10000, 10000, 10000, req.session.userID], (error, results) => {
+    [10000, 10000, 10000, 10000, req.session.userID], (error) => {
         if (error) console.log(error);
     });
     res.send();
@@ -732,16 +733,16 @@ app.get("/getInventoryItems", (req, res) => {
 
 app.post("/useItem", (req, res) => {
     connection.query(req.body.item.query,
-    [req.session.userID], (error, results) => {
+    [req.session.userID], (error) => {
         if (error) {
             console.log(error);
         } else {
             connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
-            [req.session.userID, req.body.item.ID], (error, results) => {
+            [req.session.userID, req.body.item.ID], (error) => {
                 if (error) console.log(error);
             });
             connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
-            [req.session.userID, req.body.item.ID], (error, results) => {
+            [req.session.userID, req.body.item.ID], (error) => {
                 if (error) console.log(error);
             });
         }
@@ -750,11 +751,20 @@ app.post("/useItem", (req, res) => {
 });
 
 app.get("/getUserLevels", (req, res) => {
-    connection.query(`SELECT bblevel, xlevel, ylevel, zlevel FROM BBY_5_user WHERE ID = ?;`,
+    connection.query(`SELECT bblevel, xlevel, ylevel, zlevel, title FROM BBY_5_user WHERE ID = ?;`,
     [req.session.userID], (error, results) => {
         if (error) console.log(error);
         res.send({ levels: results[0] });
     });
+});
+
+app.post("/setTitle", (req, res) => {
+    connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
+    [req.body.title, req.session.userID], (error) => {
+        if (error) console.log(error);
+    });
+    req.session.title = req.body.title;
+    res.send();
 });
 
 // RUN SERVER

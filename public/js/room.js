@@ -18,8 +18,8 @@ form.addEventListener("submit", e => {
 });
 
 //server can send messages to its clients too - use socket.on() to respond
-socket.on("postMessage", message => {
-  displayMessage(message);
+socket.on("postMessage", (message, title) => {
+  displayMessage(message, title);
 });
 
 socket.on("updateUserlist", members => {
@@ -34,9 +34,13 @@ socket.on("announceMessage", message => {
   displayMessage(message);
 });
 
-function displayMessage(message) {
+function displayMessage(message, title) {
   const dialog = document.getElementById("chat-dialog");
-  dialog.innerHTML += "<br>" + message;
+  dialog.innerHTML += "<br>";
+  if (title && title != "None") {
+    dialog.innerHTML += `[${title}] `
+  }
+  dialog.innerHTML += message;
 };
 
 document.getElementById("leaveRoom").addEventListener("click", () => {

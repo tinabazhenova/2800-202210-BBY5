@@ -57,10 +57,15 @@ async function refreshProfile() {
       }
     });
     parsed = await response.json();
+    document.getElementById("userTitle").innerHTML = parsed.levels.title;
     document.getElementById("BLevel").innerHTML = parsed.levels.bblevel;
+    document.getElementById("BTitle").innerHTML = `Lv. ${parsed.levels.bblevel} Boomer`;
     document.getElementById("XLevel").innerHTML = parsed.levels.xlevel;
+    document.getElementById("XTitle").innerHTML = `Lv. ${parsed.levels.xlevel} Gen X`;
     document.getElementById("YLevel").innerHTML = parsed.levels.ylevel;
+    document.getElementById("YTitle").innerHTML = `Lv. ${parsed.levels.ylevel} Millennial`;
     document.getElementById("ZLevel").innerHTML = parsed.levels.zlevel;
+    document.getElementById("ZTitle").innerHTML = `Lv. ${parsed.levels.zlevel} Zoomer`;
     response = await fetch("/getUserPoints", {
       method: "GET",
       headers: {
@@ -78,5 +83,23 @@ async function refreshProfile() {
   }
 }
 
+async function setTitle(newTitle) {
+  try {
+    await fetch("/setTitle", {
+      method: "POST",
+      headers: {
+        "Accept": 'application/json',
+        "Content-Type": 'application/json'
+      },
+      body: JSON.stringify({title: newTitle})
+    });
+    document.getElementById("userTitle").innerHTML = newTitle;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 refreshInventory();
 refreshProfile();
+
+document.getElementById("saveTitle").onclick = () => setTitle(document.getElementById("selectTitle").value);

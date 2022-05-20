@@ -13,6 +13,7 @@ CREATE TABLE BBY_5_user (
   xlevel int DEFAULT 1,
   ylevel int DEFAULT 1,
   zlevel int DEFAULT 1,
+  title VARCHAR(20) DEFAULT "None",
   PRIMARY KEY (ID)
 );
 

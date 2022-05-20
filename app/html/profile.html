@@ -15,15 +15,24 @@
     <div id="profile_name">
       <h1 class="title"></h1>
     </div>
+    <span id="userTitle"></span><br>
+    <select id="selectTitle">
+      <option id="defaultTitle">None</option>
+      <option id="BTitle">B</option>
+      <option id="XTitle">X</option>
+      <option id="YTitle">Y</option>
+      <option id="ZTitle">Z</option>
+    </select>
+    <button id="saveTitle">Save</button>
     <div id="profile-picture">
       <img id="picture_src" width= "400" height="400" src="..." alt="...">
     </div>
-      <form id="upload-images-form" enctype="multipart/form-data" action="/upload" method="POST">
-        <input id="image-upload" type="file" name="image" accept="image/png, image/gif, image/jpeg"
-          multiple="multiple" />
-        <input id="submit" type="submit" value="Submit" />
-      </form>
-      <input id="remove" type="submit" value="Remove" />
+    <form id="upload-images-form" enctype="multipart/form-data" action="/upload" method="POST">
+      <input id="image-upload" type="file" name="image" accept="image/png, image/gif, image/jpeg"
+        multiple="multiple" />
+      <input id="submit" type="submit" value="Submit" />
+    </form>
+    <input id="remove" type="submit" value="Remove" />
     <div id="tables">
       <table id="user_info">
         <tr>          
