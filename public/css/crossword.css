@@ -12,9 +12,28 @@
 }
 
 button {
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color1);
+    border-radius: 20%;
+    width: auto;
+    color: var(--color2);
+    cursor: pointer;
     min-width: 5%;
     margin-bottom: 2%;
-    background-color: var(--color1);
+}
+
+#chatInput {
+    width: 15%;
+    padding: 0.5%;
+    box-sizing: border-box;
+    border: none;
+    background-color: var(--backColor);
+    color: var(--color4);
+    font-weight: bold;
+    font-size: 100%;
+    border: 5px solid var(--color4);
 }
 
 input {
@@ -27,6 +46,7 @@ input {
     font-weight: bold;
     font-size: 100%;
     border: 5px solid var(--color4);
+    justify-content: center;
 }
 
 .crossword_board_grid{

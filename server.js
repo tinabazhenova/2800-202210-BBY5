@@ -208,8 +208,8 @@ function respondWithCrossword(crossword, req, res) {
             } else {
                 letters[arrInd] = results[i].phrase[j];
                 let newNode = rect.cloneNode(true);
-                newNode.setAttribute("grid-row", row);
-                newNode.setAttribute("grid-column", col);
+                newNode.setAttribute("row", row);
+                newNode.setAttribute("col", col);
                 newNode.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
                 newNode.id = null;
                 grid.appendChild(newNode);
