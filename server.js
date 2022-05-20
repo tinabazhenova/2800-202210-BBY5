@@ -198,21 +198,30 @@ function respondWithCrossword(crossword, req, res) {
         // console.log ("checking " + results[i].phrase);
         let col = results[i].col;
         let row = results[i].row;
+        let vert = results[i].vertical;
         for(let j = 0; j < results[i].phrase.length; ++j) {
             // console.log ("    row " + row + ", col " + col);
             let arrInd = row * w + col;
             if(letters[arrInd]) {
-                if(letters[arrInd] !== results[i].phrase[j]) {
+                let wasStarting = letters[arrInd].node.getAttribute("startingVert");
+                if(j == 0 && (wasStarting == null || vert == 0) || wasStarting == null && vert == 0) {
+                    letters[arrInd].node.setAttribute("vertical", vert);
+                }
+                if(letters[arrInd].letter !== results[i].phrase[j]) {
                     console.log("Malformed crossword at row " + row + ", col " + col);
                 }
             } else {
-                letters[arrInd] = results[i].phrase[j];
                 let newNode = rect.cloneNode(true);
+                letters[arrInd] = {letter: results[i].phrase[j], node: newNode};
                 newNode.setAttribute("row", row);
                 newNode.setAttribute("col", col);
+                newNode.setAttribute("vertical", results[i].vertical);
                 newNode.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
                 newNode.id = null;
                 grid.appendChild(newNode);
+            }
+            if(j == 0) {
+                letters[arrInd].node.setAttribute("startingVert", letters[arrInd].node.getAttribute("vertical", vert));
             }
             if(results[i].vertical == 1) {
                 row++;    
