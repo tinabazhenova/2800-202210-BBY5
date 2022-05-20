@@ -4,6 +4,9 @@
     --gridWidth: 3;
 }
 
+body {
+    height: 100vh;
+}
 .wordguess_grid {
     display: grid;
     grid-template-columns: repeat(var(--gridWidth), 1fr);
@@ -166,6 +169,10 @@ input {
 
 
 /* Add animation (fade in the popup) */
+
+#chat-dialog, #chatForm {
+    display: none;
+  }
 
 @-webkit-keyframes fadeIn {
     from {
