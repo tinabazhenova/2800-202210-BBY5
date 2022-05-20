@@ -6,11 +6,11 @@
 }
 
 :root {
-    --color1: rgb(224, 103, 3);
+    --color1: #FF6542;
     --color2: #f2f2f8;
     --color3: rgb(217, 241, 250);
-    --color4: black;
-    --color5: rgb(139, 0, 105);
+    --color4: #564154;
+    --color5: #88498F;
 }
 
 html,
@@ -32,9 +32,10 @@ body {
     align-items: center;
     background: url("/imgs/we1.png") center/cover fixed;
     backdrop-filter: blur(6px);
+    background-size: cover;
 }
 
-button {
+.defaultButton {
     font-family: 'atwriter';
     padding: 12px;
     font-size: 1em;
@@ -58,6 +59,19 @@ input[type='submit'] {
     cursor: pointer;
 }
 
+.user_name {
+    font-size: 36px;
+    text-align: center;
+    color: var(--color5);
+    margin-top: 1%;
+}
+
+#back {
+    width: 10%;
+    margin-left: 1%;
+    margin-top: 1%;
+}
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -68,6 +82,7 @@ input[type='submit'] {
 #templateContent {
     flex-grow: 1;
     text-align: center;
+    overflow: auto;
 }
 
 footer {

@@ -1,41 +1,37 @@
-<head>
-    <link href="/css/main.css" rel="stylesheet" />
-</head>
-
 <div id="menu">
     <div class="menuItem" id="div1">
-        <button id="btn-wordguess">wordguess</button>
+        <button id="wordguess" class="defaultButton">Wordguess</button>
     </div>
 
     <div class="menuItem" id="div2">
-        <button id="btn-wordmatch">wordmatch</button>
+        <button id="wordmatch" class="defaultButton">Wordmatch</button>
     </div>
 
     <div class="menuItem" id="div3">
-        <button id="btn-crossword">crossword</button>
+        <button id="crossword" class="defaultButton">Crossword</button>
     </div>
 
     <div class="menuItem" id="div4">
-        <button id="btn-openModal">Join a Room</button>
+        <button id="openModal" class="defaultButton">Join a Room</button>
     </div>
 
     <div class="menuItem" id="div5">
-        <form action="/profile" method="get">
-            <input type="submit" value="Edit Profile">
-        </form>
+        <button id="shop" class="defaultButton">Shop</button>
+    </div>
+
+    <div class="menuItem" id="div6">
+        <button id="profile" class="defaultButton">Edit Profile</button>
     </div>
 
     <div id="logout">
-        <form action="/logout" method="get">
-            <input type="submit" value="LOGOUT">
-        </form>
+        <button id="logOut" class="defaultButton">Logout</button>
     </div>
 </div>
 
-<div id="roomModalBackground">
-    <div id="roomModalContainer">
+<div id="modalBackground">
+    <div id="modalContainer">
         <form id="findLobbyForm">
-            <label>Enter the code here: </label>
+            <label>Enter the code here:</label><br>
             <input type="text" id="code-input">
             <span id="error"></span>
             <input type="submit" id="btn-joinRoom" value="Join">
@@ -43,5 +39,5 @@
     </div>
 </div>
 
-
+<link href="/css/main.css" rel="stylesheet" />
 <script src="/js/socket-connection.js"></script>
