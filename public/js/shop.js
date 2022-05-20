@@ -10,7 +10,6 @@ async function refreshUserPoints() {
       }
     });
     let parsed = await response.json();
-    console.log(parsed);
     document.getElementById("userPoints").innerHTML = `B: ${parsed.points.bbscore} / X: ${parsed.points.xscore} / Y: ${parsed.points.yscore} / Z: ${parsed.points.zscore}`;
   } catch (error) {
     console.log(error);
@@ -215,13 +214,14 @@ document.getElementById("cheat").onclick = () => cheat();
 
 async function cheat() {
   try {
-    await fetch("/shopCheat", {
+    fetch("/shopCheat", {
       method: "POST",
       headers: {
         "Accept": 'application/json',
         "Content-Type": 'application/json'
       }
     });
+    refreshUserPoints();
   } catch (error) {
     console.log(error);
   }
