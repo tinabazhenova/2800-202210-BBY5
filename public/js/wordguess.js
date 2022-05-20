@@ -138,3 +138,10 @@ function toggleExplanation() {
     var popup = document.getElementById("explanation");
     popup.classList.toggle("show");
 }
+
+function showDetails() {
+    for (var i = 0; i < arguments.length; i++) {
+      var e = document.getElementById(arguments[i]);
+      e.style.display = e.style.display == "block" ? "none" : "block";
+    }
+  }
