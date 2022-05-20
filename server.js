@@ -88,6 +88,7 @@ const storage = multer.diskStorage({
     }
 });
 
+const upload = multer({ storage: storage });
 
 app.set("view engine", "ejs");
 // static path mappings
