@@ -14,6 +14,19 @@
     margin-right: auto;
 }
 
+button{
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color1);
+    border-radius: 20%;
+    width: auto;
+    color: var(--color2);
+    cursor: pointer;
+    min-width: 5%;
+    margin-bottom: 2%;
+}
+
 .rectangle {
     background-color: var(--backColor);
     width: 50px;
@@ -28,12 +41,6 @@
 
 #leaveRoom:hover {
     background-color: var(--color5);
-}
-
-button {
-    min-width: 5%;
-    margin-bottom: 2%;
-    background-color: var(--color1);
 }
 
 input {
