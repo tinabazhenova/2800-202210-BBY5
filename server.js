@@ -673,7 +673,6 @@ app.post("/emptyCart", (req, res) => {
 });
 
 app.post("/purchaseCart", (req, res) => {
-    let points = getUserPoints();
     connection.query(`SELECT bbscore, xscore, yscore, zscore FROM BBY_5_user WHERE ID = ?`,
     [req.session.userID], (error, results) => {
         if (error) console.log(error);
