@@ -1,22 +1,33 @@
-<div id="container">
-    <div id="itemList">
 
-    </div>
-    <div id="shoppingOptions">
-        <button type="button" id="proceedOrder">Proceed</button>
-        <button type="button" id="cencelOrder">Cancel</button>
-    </div>
+<div id="userPoints"></div>
+<div id="itemList"></div>
+<div id="shoppingOptions">
+    <button type="button" id="viewCart">Cart</button>
+    <button type="button" id="cencelOrder">Cancel</button>
+    <button type="button" id="cheat">Get 1000 points</button>
 </div>
 
-<div id="cartBackground">
-    <div id="cartContainer">
-
+<div id="cartContainer">
+    <div id="cartItemList"></div>
+    <div id="cartTotalContainer">
+        <span id="cartTotalTitle">Total:</span>
+        <div id="cartTotalPriceContainer">
+            <span id="cartTotalPriceValueB"></span><br>
+            <span id="cartTotalPriceValueX"></span><br>
+            <span id="cartTotalPriceValueY"></span><br>
+            <span id="cartTotalPriceValueZ"></span>
+        </div>
+    </div>
+    <div id="cartButtonContainer">
+        <button type="button" id="purchaseCart">Purchase</button>
+        <button type="button" id="closeCart">Close</button><br>
+        <span id="cartMessage"></span>
     </div>
 </div>
 
 <div id="modalBackground">
     <div id="modalContainer">
-        <span>Would you like to save your cart for later?</span>
+        <span>Would you like to save your cart for later?</span><br>
         <button type="button" id="saveCart">Save</button>
         <button type="button" id="discardCart">Discard</button>
         <button type="button" id="cancelCancel">Cancel</button>
@@ -25,18 +36,25 @@
 
 <template id="itemTemplate">
     <div class="itemContainer">
-        <img class="itemImage" src="..." alt="...">
-        <h5 class="itemName"></h5>
+        <img class="itemImage" src="..." alt="..."><br>
+        <span class="itemName"></span><br>
+        <span class="itemDescription"></span><br>
+        <span class="itemPrice"></span><br>
+        <input type="button" value="-" class="itemMinus">
+        <input type="number" value="1" class="itemQuantity" step="1" min="1" max="100">
+        <input type="button" value="+" class="itemPlus"><br>
         <button type="button" class="addToCart">Add to cart</button>
     </div>
 </template>
 
 <template id="cartItemTemplate">
     <div class="cartItemContainer">
-        <img class="itemImage" src="..." alt="...">
-        <h5 class="itemName"></h5>
-        <button type="button" class="removeFromCart">Remove</button>
+        <img class="cartItemImage" src="..." alt="...">
+        <span class="cartItemName"></span><br>
+        <span class="cartItemPrice"></span>
+        <button type="button" class="removeFromCart">X</button>
     </div>
 </template>
 
+<link href="/css/shop.css" rel="stylesheet" />
 <script src="/js/shop.js"></script>
