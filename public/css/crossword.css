@@ -33,5 +33,8 @@ input {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     width: min-content;
-    background-color: var(--backColor);
+}
+
+#box0 {
+    visibility: hidden;
 }

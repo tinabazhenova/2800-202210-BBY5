@@ -9,6 +9,7 @@ function ready(callback) {
 }
 
 ready(function() {
+    /*
     let rects = new Array();
     let rect = document.getElementById("box0");
     let crossword = document.getElementById("crossword0");
@@ -36,4 +37,5 @@ ready(function() {
             newFocus[0].focus();
         })
     }
+    */
 })

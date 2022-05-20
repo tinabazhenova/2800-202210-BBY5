@@ -162,7 +162,7 @@ app.get("/wordguess", async function(req, res) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         if (!guessWord) {
-            connection.query(`SELECT phrase, meaning FROM BBY_05_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
+            connection.query(`SELECT phrase, meaning FROM BBY_5_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
                 if (error || !results || !results.length) {
                     console.log(error);
                     let dom = wrap("./app/html/wordguess_wait.html", req.session);
@@ -185,11 +185,90 @@ app.get("/wordguess", async function(req, res) {
     }
 });
 
+function respondWithCrossword(crossword, req, res) {
+    let dom = wrap("./app/html/crossword.html", req.session);
+    let rect = dom.window.document.getElementById("box0");
+    let grid = dom.window.document.getElementById("crossword0");
+    let results = crossword.words;
+    let w = crossword.width;
+    let h = crossword.height;
+
+    let letters = new Array(w * h);
+    for(let i = 0; i < results.length; ++i) {
+        // console.log ("checking " + results[i].phrase);
+        let col = results[i].col;
+        let row = results[i].row;
+        for(let j = 0; j < results[i].phrase.length; ++j) {
+            // console.log ("    row " + row + ", col " + col);
+            let arrInd = row * w + col;
+            if(letters[arrInd]) {
+                if(letters[arrInd] !== results[i].phrase[j]) {
+                    console.log("Malformed crossword at row " + row + ", col " + col);
+                }
+            } else {
+                letters[arrInd] = results[i].phrase[j];
+                let newNode = rect.cloneNode(true);
+                newNode.setAttribute("grid-row", row);
+                newNode.setAttribute("grid-column", col);
+                newNode.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
+                newNode.id = null;
+                grid.appendChild(newNode);
+            }
+            if(results[i].vertical == 1) {
+                row++;    
+            } else {
+                col++;
+            }
+        }
+    }
+    grid.setAttribute("style", `grid-template-columns: repeat(${w}, 1fr);`);
+
+    for(let i = 0; i < crossword.length; ++i) {
+        // console.log(crossword[i]);
+    }
+    rect.setAttribute("visible", false);
+    res.send(dom.serialize());
+}
+
 app.get("/crossword", function(req, res) {
-    let mainDOM = wrap("./app/html/crossword.html", req.session);
-    res.set("Server", "Wazubi Engine");
-    res.set("X-Powered-By", "Wazubi");
-    res.send(mainDOM.serialize());
+    if (req.session.loggedIn) {
+        let crossword = req.session.crossword;
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        if(!crossword){
+            connection.query(`SELECT cr.word_id, cr.row, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 1`, (error, results) => {
+                if (error || !results || !results.length) {
+                    console.log(error);
+                    // Need to handle errors properly
+                    let dom = wrap("./app/html/wordguess_wait.html", req.session);
+                    res.send(dom.serialize());
+
+                } else {
+                    for(let i = 0; i < results.length; ++i) {
+                        results[i].phrase = results[i].phrase.replace(/[\s`'-]/g, "").toUpperCase();
+                    }
+                    let w = 0;
+                    let h = 0;
+                    for(let i = 0; i < results.length; ++i) {
+                        let minw = results[i].col + (results[i].vertical === 1 ? 1 : results[i].phrase.length);
+                        if(minw > w)
+                            w = minw;
+                        let minh = results[i].row + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
+                        if(minh > h)
+                            h = minh;
+                        // console.log(results[i], minw, minh);
+                    }
+                    crossword = {words: results, width: w, height: h};
+                    req.session.crossword = crossword;
+                    respondWithCrossword(crossword, req, res);
+                }
+            });
+        } else {
+            respondWithCrossword(crossword, req, res);
+        }
+    } else {
+        res.redirect("/");
+    }
 })
 
 app.post("/try_word", function(req, res) {
