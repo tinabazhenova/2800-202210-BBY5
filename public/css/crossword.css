@@ -37,7 +37,7 @@ button {
 }
 
 input {
-    width: 50px;
+    width: 40px;
     padding: 0.5%;
     box-sizing: border-box;
     border: none;
@@ -47,6 +47,7 @@ input {
     font-size: 100%;
     border: 5px solid var(--color4);
     justify-content: center;
+    text-transform: uppercase; 
 }
 
 .crossword_board_grid{
