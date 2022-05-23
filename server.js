@@ -212,14 +212,16 @@ function respondWithCrossword(crossword, req, res) {
                     console.log("Malformed crossword at row " + row + ", col " + col);
                 }
             } else {
-                let newNode = rect.cloneNode(true);
-                letters[arrInd] = {letter: results[i].phrase[j], node: newNode};
+                let newNodeContainer = rect.cloneNode(true);
+                let newNode = newNodeContainer.getElementsByTagName("input")[0];
+                let hintNum = newNodeContainer.getElementsByTagName("div")[0];
+                letters[arrInd] = {letter: results[i].phrase[j], node: newNode, hintNumNode: hintNum};
                 newNode.setAttribute("row", row);
                 newNode.setAttribute("col", col);
                 newNode.setAttribute("vertical", results[i].vertical);
-                newNode.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
-                newNode.id = null;
-                grid.appendChild(newNode);
+                newNodeContainer.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
+                newNodeContainer.id = null;
+                grid.appendChild(newNodeContainer);
             }
             if(j == 0) {
                 letters[arrInd].node.setAttribute("startingVert", letters[arrInd].node.getAttribute("vertical", vert));
@@ -232,6 +234,8 @@ function respondWithCrossword(crossword, req, res) {
                     legendDown.appendChild(hint);
                 else
                     legendAcross.appendChild(hint);
+                letters[arrInd].hintNumNode.classList.remove("hintNumInvis");
+                letters[arrInd].hintNumNode.innerHTML = legendNum;
             }
             if(results[i].vertical == 1) {
                 row++;    
@@ -240,6 +244,7 @@ function respondWithCrossword(crossword, req, res) {
             }
         }
     }
+    rect.remove();
     grid.setAttribute("style", `grid-template-columns: repeat(${w}, 1fr);`);
 
     rect.setAttribute("visible", false);
