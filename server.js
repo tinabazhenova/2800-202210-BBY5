@@ -189,13 +189,15 @@ function respondWithCrossword(crossword, req, res) {
     let dom = wrap("./app/html/crossword.html", req.session);
     let rect = dom.window.document.getElementById("box0");
     let grid = dom.window.document.getElementById("crossword0");
+    let legendAcross = dom.window.document.getElementById("legendAcross");
+    let legendDown = dom.window.document.getElementById("legendDown");
     let results = crossword.words;
     let w = crossword.width;
     let h = crossword.height;
+    let legendNum = 0;
 
     let letters = new Array(w * h);
     for(let i = 0; i < results.length; ++i) {
-        // console.log ("checking " + results[i].phrase);
         let col = results[i].col;
         let row = results[i].row_num;
         let vert = results[i].vertical;
@@ -221,6 +223,15 @@ function respondWithCrossword(crossword, req, res) {
             }
             if(j == 0) {
                 letters[arrInd].node.setAttribute("startingVert", letters[arrInd].node.getAttribute("vertical", vert));
+                if(letters[arrInd].legendNum == null) {
+                    letters[arrInd].legendNum = ++legendNum;
+                }
+                let hint = dom.window.document.createElement("div");
+                hint.innerHTML = legendNum + ". " + results[i].meaning;
+                if(vert == 1)
+                    legendDown.appendChild(hint);
+                else
+                    legendAcross.appendChild(hint);
             }
             if(results[i].vertical == 1) {
                 row++;    
@@ -231,9 +242,6 @@ function respondWithCrossword(crossword, req, res) {
     }
     grid.setAttribute("style", `grid-template-columns: repeat(${w}, 1fr);`);
 
-    for(let i = 0; i < crossword.length; ++i) {
-        // console.log(crossword[i]);
-    }
     rect.setAttribute("visible", false);
     res.send(dom.serialize());
 }
@@ -264,8 +272,14 @@ app.get("/crossword", function(req, res) {
                         let minh = results[i].row_num + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
                         if(minh > h)
                             h = minh;
-                        // console.log(results[i], minw, minh);
                     }
+                    
+                    results.sort(function(a, b) {
+                        if(a.row_num == b.row_num)
+                            return a.col - b.col;
+                        return a.row_num - b.row_num;
+                    })
+
                     crossword = {words: results, width: w, height: h};
                     req.session.crossword = crossword;
                     respondWithCrossword(crossword, req, res);
