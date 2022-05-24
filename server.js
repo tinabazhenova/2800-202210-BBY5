@@ -20,6 +20,19 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const moment = require("moment");
 const schedule = require("node-schedule");
+const EventEmitter = require('events');
+
+const mysql = require("mysql2");
+const { runInNewContext } = require("vm");
+const { redirect } = require("express/lib/response");
+const res = require("express/lib/response");
+const connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    port: 3306,
+    user: "root",
+    password: "",
+    database: "COMP2800"
+});
 
 // static path mappings
 app.use("/js", express.static("./public/js"));
@@ -52,7 +65,9 @@ io.on("connection", socket => {
             rooms.push({
                 "code": code,
                 "users": [],
-                "game": game
+                "host": session.username,
+                "game": game,
+                "inGame": false
             });
         }
         socket.join(code);
@@ -60,21 +75,46 @@ io.on("connection", socket => {
         // use emit() to send messages to clients. see the document for detials. 
         io.to(code).emit("updateUserlist", rooms[rooms.length - 1].users);
         io.to(code).emit("announceMessage", session.username + " joined the room.");
+        // prints all recorded chat messages to the client
+        connection.query(`SELECT * FROM BBY_5_chat WHERE room = ?`,
+        [code], (error, results) => {
+            if (error) console.log(error);
+            results.forEach(m => socket.emit("postMessage", m.username + ": " + m.content, m.title));
+        })
+    });
+    socket.on("updateGameStatus", (code, isInGame) => {
+        rooms.some(r => {
+            if (r.code == code) r.inGame = isInGame;
+        });
+        io.to(code).emit("displayGameContainer", isInGame);
     });
     //receives a message from one client and sends it to all other clients so that everyone (in the same room) can see the message
     socket.on("sendMessage", (message, room) => {
-        io.to(room).emit("postMessage", session.username + ": " + message, session.title);
+        connection.query(`INSERT INTO BBY_5_chat VALUES (?, ?, ?, ?, ?)`,
+        [null, session.username, session.title, message, room], (error) => {
+            if (error) console.log(error);
+            io.to(room).emit("postMessage", session.username + ": " + message, session.title);
+        });
+    });
+    socket.on("sendWordguessAttempt", (results, room) => {
+        io.to(room).emit("wordguessAttempted", results);
+    });
+    socket.on("sendWordguessResult", (guessed, meaning, room) => {
+        io.to(room).emit("wordguessCompleted", guessed, meaning);
     });
     socket.on("disconnect", () => {
+        /* I wish I could send the user's current room code as a parameter here but I can't
+        so I had to iterating through the list of rooms to find the room the user was in */
         for (var i = 0; i < rooms.length; i++) {
             if (rooms[i].users.includes(session.username)) {
                 rooms[i].users.splice(rooms[i].users.indexOf(session.username), 1);
-                if (rooms[i].users.length == 0) {
-                    rooms.splice(i, 1);
-                    i--;
-                } else {
-                    io.to(rooms[i].code).emit("updateUserlist", rooms[rooms.length - 1].users);
-                    io.to(rooms[i].code).emit("announceMessage", session.username + " left the room.");
+                io.to(rooms[i].code).emit("updateUserlist", rooms[i].users, rooms[i].host);
+                io.to(rooms[i].code).emit("announceMessage", session.username + " left the room.");
+                /* if the user (that just disconnected from socket) was the host of the room
+                or the last user in that room, remove it from the list */
+                if (rooms[i].host == session.username || rooms[i].users.length == 0) {
+                    io.to(rooms[i].code).emit("disconnectAll");
+                    rooms.slice(i--, 1);
                 }
             }
         }
@@ -122,19 +162,6 @@ app.get("/", function(req, res) {
     }
 });
 
-const mysql = require("mysql2");
-const { runInNewContext } = require("vm");
-const { redirect } = require("express/lib/response");
-const res = require("express/lib/response");
-const { EventEmitter } = require('stream');
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    port: 3306,
-    user: "root",
-    password: "",
-    database: "COMP2800"
-});
-
 const userTable = 'BBY_5_user';
 const itemTable = 'BBY_5_item';
 
@@ -142,11 +169,7 @@ function wrap(filename, session) {
     let template = fs.readFileSync("./app/html/template.html", "utf8");
     let dom = new JSDOM(template);
     dom.window.document.getElementById("templateContent").innerHTML = fs.readFileSync(filename, "utf8");
-    if (session.username == null) {
-        dom.window.document.getElementById("name").innerHTML = "Guest";
-    } else {
-        dom.window.document.getElementById("name").innerHTML = "WELCOME " + session.username.toUpperCase();
-    }
+    dom.window.document.getElementById("name").innerHTML = "WELCOME " + session.username.toUpperCase();
 
   return dom;
 }
@@ -294,7 +317,6 @@ app.get("/crossword", function(req, res) {
 })
 
 app.post("/try_word", function(req, res) {
-    console.log("hardcoded word: {}", guessWord.phrase);
     let hardCodedWord = guessWord.phrase;
     let tempEnteredWord = req.body.word.toUpperCase();
     console.log("entered: " + tempEnteredWord);
@@ -382,8 +404,9 @@ app.post("/login", function(req, res) {
             req.session.userImage = results[0].user_image;
             req.session.pass = results[0].password;
             req.session.title = results[0].title;
-            req.session.save(function(err) {
-                // session saved. For analytics, we could record this in a DB
+            req.session.isGuest = false;
+            req.session.save((error) => {
+                if (error) console.log(error);
             });
 
         // all we are doing as a server is telling the client that they
@@ -397,16 +420,24 @@ app.post("/login", function(req, res) {
   );
 });
 
+let guests = [];
+
 app.post("/guest_login", function(req, res) {
     req.session.loggedIn = true;
     req.session.isGuest = true;
+    let guestCode = Math.floor((Math.random() * 900)) + 100;
+    while (guests.includes(guestCode)) {
+        guestCode = Math.floor((Math.random() * 900)) + 100;
+    }
+    req.session.username = "Guest_"+ guestCode;
+    req.session.save((error) => {
+        if (error) console.log(error);
+    })
     res.send({});
 });
 // Notice that this is a "POST"
 app.post("/loginAsAdmin", function(req, res) {
     res.setHeader("Content-Type", "application/json");
-
-    console.log("What was sent", req.body.username, req.body.password);
     connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
         if (error || !results || !results.length) {
             console.log(error);
@@ -423,8 +454,9 @@ app.post("/loginAsAdmin", function(req, res) {
             req.session.isAdmin = results[0].is_admin;
             req.session.userImage = results[0].user_image;
             req.session.pass = results[0].password;
-            req.session.save(function(err) {
-                // session saved. For analytics, we could record this in a DB
+            req.session.title = results[0].title;
+            req.session.save((error) => {
+                if (error) console.log(error);
             });
 
         // all we are doing as a server is telling the client that they
@@ -442,16 +474,16 @@ app.post('/upload', upload.single("image"), function(req, res) {
     if (!req.file) {
         console.log("No file upload");
     } else {
-        console.log(req.file.filename)
-        var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename
-        var insertData = `UPDATE ${userTable} SET user_image = ? WHERE ${userTable}.ID = '${req.session.userID}'`
+        console.log(req.file.filename);
+        var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename;
+        var insertData = `UPDATE ${userTable} SET user_image = ? WHERE ${userTable}.ID = '${req.session.userID}'`;
         connection.query(insertData, [imgsrc], (err, result) => {
             if (err) throw err;
             console.log("file uploaded");
             console.log(result);
-        })
-        req.session.userImage = imgsrc
-        res.redirect("/profile")
+        });
+        req.session.userImage = imgsrc;
+        res.redirect("/profile");
     }
 });
 
@@ -607,9 +639,14 @@ app.get("/createLobby", (req, res) => {
     if (req.session.loggedIn) {
         res.setHeader("Content-Type", "application/json");
         let newCode = Math.floor((Math.random() * 900)) + 100;
-        while (rooms.some(r => r.code = newCode)) {
+        while (rooms.some(r => r.code == newCode && rooms[i].users.length > 0)) {
             newCode = Math.floor((Math.random() * 900)) + 100;
         }
+        // delete all chat record from that room and remove the room
+        connection.query(`DELETE FROM BBY_5_chat WHERE room = ?`,
+        [newCode], (error) => {
+            if (error) console.log(error);
+        });
         res.send({ code: newCode });
     } else {
         res.redirect("/");
@@ -618,15 +655,20 @@ app.get("/createLobby", (req, res) => {
 
 app.post("/joinLobby", (req, res) => {
     if (req.session.loggedIn) {
-        let code = req.body.code;
         let gameType = "";
+        let isInGame = false;
         if (rooms.some(r => {
                 gameType = r.game;
-                return r.code == code
+                isInGame = r.inGame;
+                return r.code == req.body.code;
             })) {
-            res.send({ found: true, game: gameType })
+                if (!isInGame) {
+                    res.send({ approved: true, game: gameType })
+                } else {
+                    res.send({ approved: false, errorMessage: "The game is in progress" })
+                }
         } else {
-            res.send({ found: false })
+            res.send({ approved: false, errorMessage: "Room not found" });
         }
   } else {
     res.redirect("/");
@@ -780,20 +822,51 @@ app.get("/getInventoryItems", (req, res) => {
 });
 
 app.post("/useItem", (req, res) => {
-    connection.query(req.body.item.query,
+    let baseTitle;
+    let baseLevel;
+    switch (req.body.item.ID) {
+        case 1:
+            baseTitle = "Boomer";
+            baseLevel = "bblevel";
+            break;
+        case 2:
+            baseTitle = "Gen X";
+            baseLevel = "xlevel";
+            break;
+        case 3:
+            baseTitle = "Millennial";
+            baseLevel = "ylevel";
+            break;
+        case 4:
+            baseTitle = "Zoomer";
+            baseLevel = "zlevel";
+            break;
+        default:
+            console.log("Item ID not found: " + req.body.item.ID);
+    }
+    connection.query(`UPDATE bby_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
     [req.session.userID], (error) => {
         if (error) {
             console.log(error);
-        } else {
-            connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
-            [req.session.userID, req.body.item.ID], (error) => {
-                if (error) console.log(error);
-            });
-            connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
-            [req.session.userID, req.body.item.ID], (error) => {
-                if (error) console.log(error);
-            });
         }
+        if (req.session.title.includes(baseTitle)) {
+            let newTitle = `Lv. ${parseInt(req.session.title.substring(4)) + 1} ${baseTitle}`;
+            connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
+            [newTitle, req.session.userID], (error) => {
+                    if (error) console.log(error);
+                }
+            );
+            req.session.title = newTitle;
+            req.session.save();
+        }
+    });
+    connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
+    [req.session.userID, req.body.item.ID], (error) => {
+        if (error) console.log(error);
+    });
+    connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
+    [req.session.userID, req.body.item.ID], (error) => {
+        if (error) console.log(error);
     });
     res.send();
 });
