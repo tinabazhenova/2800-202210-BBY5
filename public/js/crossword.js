@@ -9,9 +9,10 @@ function ready(callback) {
 }
 
 ready(function() {
-    let rects = document.getElementsByClassName("letterBox");
+    let rects = document.getElementsByClassName("letterContainer");
     for(let i = 0; i < rects.length; i++) {
-        rects[i].addEventListener("click", ev => {
+        let letterBox = rects[i].getElementsByTagName("input")[0];
+        letterBox.addEventListener("click", ev => {
             let self = ev.srcElement;
             self.select();
             let starting = self.getAttribute("startingvert");
@@ -19,7 +20,7 @@ ready(function() {
                 self.setAttribute("vertical", starting);
             }
         })
-        rects[i].addEventListener("input", function(ev) {
+        letterBox.addEventListener("input", function(ev) {
             var self = $(this);
             let row = ev.srcElement.getAttribute("row");
             let col = ev.srcElement.getAttribute("col");

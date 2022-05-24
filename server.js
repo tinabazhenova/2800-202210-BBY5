@@ -189,13 +189,15 @@ function respondWithCrossword(crossword, req, res) {
     let dom = wrap("./app/html/crossword.html", req.session);
     let rect = dom.window.document.getElementById("box0");
     let grid = dom.window.document.getElementById("crossword0");
+    let legendAcross = dom.window.document.getElementById("legendAcross");
+    let legendDown = dom.window.document.getElementById("legendDown");
     let results = crossword.words;
     let w = crossword.width;
     let h = crossword.height;
+    let legendNum = 0;
 
     let letters = new Array(w * h);
     for(let i = 0; i < results.length; ++i) {
-        // console.log ("checking " + results[i].phrase);
         let col = results[i].col;
         let row = results[i].row_num;
         let vert = results[i].vertical;
@@ -210,17 +212,34 @@ function respondWithCrossword(crossword, req, res) {
                     console.log("Malformed crossword at row " + row + ", col " + col);
                 }
             } else {
-                let newNode = rect.cloneNode(true);
-                letters[arrInd] = {letter: results[i].phrase[j], node: newNode};
+                let newNodeContainer = rect.cloneNode(true);
+                let newNode = newNodeContainer.getElementsByTagName("input")[0];
+                let hintNum = newNodeContainer.getElementsByTagName("div")[0];
+                letters[arrInd] = {letter: results[i].phrase[j], node: newNode, hintNumNode: hintNum};
                 newNode.setAttribute("row", row);
                 newNode.setAttribute("col", col);
                 newNode.setAttribute("vertical", results[i].vertical);
-                newNode.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
-                newNode.id = null;
-                grid.appendChild(newNode);
+                newNodeContainer.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
+                newNodeContainer.id = null;
+                grid.appendChild(newNodeContainer);
             }
             if(j == 0) {
                 letters[arrInd].node.setAttribute("startingVert", letters[arrInd].node.getAttribute("vertical", vert));
+                if(letters[arrInd].legendNum == null) {
+                    letters[arrInd].legendNum = ++legendNum;
+                }
+                let hint = dom.window.document.createElement("div");
+                hint.innerHTML = legendNum + ". " + results[i].meaning;
+                if(vert == 1) {
+                    letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
+                    legendDown.appendChild(hint);
+                }
+                else {
+                    letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
+                    legendAcross.appendChild(hint);
+                }
+                letters[arrInd].hintNumNode.classList.remove("hintNumInvis");
+                letters[arrInd].hintNumNode.innerHTML = legendNum;
             }
             if(results[i].vertical == 1) {
                 row++;    
@@ -229,11 +248,9 @@ function respondWithCrossword(crossword, req, res) {
             }
         }
     }
+    rect.remove();
     grid.setAttribute("style", `grid-template-columns: repeat(${w}, 1fr);`);
 
-    for(let i = 0; i < crossword.length; ++i) {
-        // console.log(crossword[i]);
-    }
     rect.setAttribute("visible", false);
     res.send(dom.serialize());
 }
@@ -244,7 +261,7 @@ app.get("/crossword", function(req, res) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         if(!crossword){
-            connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 1`, (error, results) => {
+            connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 2`, (error, results) => {
                 if (error || !results || !results.length) {
                     console.log(error);
                     // Need to handle errors properly
@@ -264,8 +281,14 @@ app.get("/crossword", function(req, res) {
                         let minh = results[i].row_num + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
                         if(minh > h)
                             h = minh;
-                        // console.log(results[i], minw, minh);
                     }
+                    
+                    results.sort(function(a, b) {
+                        if(a.row_num == b.row_num)
+                            return a.col - b.col;
+                        return a.row_num - b.row_num;
+                    })
+
                     crossword = {words: results, width: w, height: h};
                     req.session.crossword = crossword;
                     respondWithCrossword(crossword, req, res);
