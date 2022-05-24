@@ -43,7 +43,6 @@ CREATE TABLE BBY_5_item (
   description VARCHAR(50),
   price int,
   type VARCHAR(1),
-  query VARCHAR(100),
   PRIMARY KEY (ID)
 );
 
@@ -59,6 +58,15 @@ CREATE TABLE BBY_5_has_item (
   item_ID INT,
   quantity INT,
   PRIMARY KEY (user_ID, item_ID)
+);
+
+CREATE TABLE BBY_5_chat (
+  ID int NOT NULL AUTO_INCREMENT,
+  username VARCHAR(50),
+  title VARCHAR(20),
+  content VARCHAR(500),
+  room INT,
+  PRIMARY KEY (ID)
 );
 
 ALTER TABLE BBY_5_cart_item ADD FOREIGN KEY (user_ID) REFERENCES BBY_5_user (ID);

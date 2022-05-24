@@ -39,8 +39,8 @@ async function useItem(item, itemTemplate) {
       },
       body: JSON.stringify({item: item})
     });
-    refreshInventory();
-    refreshProfile();
+    await refreshInventory();
+    await refreshProfile();
   } catch (error) {
     console.log(error);
   }
