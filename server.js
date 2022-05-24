@@ -230,10 +230,14 @@ function respondWithCrossword(crossword, req, res) {
                 }
                 let hint = dom.window.document.createElement("div");
                 hint.innerHTML = legendNum + ". " + results[i].meaning;
-                if(vert == 1)
+                if(vert == 1) {
+                    letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
                     legendDown.appendChild(hint);
-                else
+                }
+                else {
+                    letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
                     legendAcross.appendChild(hint);
+                }
                 letters[arrInd].hintNumNode.classList.remove("hintNumInvis");
                 letters[arrInd].hintNumNode.innerHTML = legendNum;
             }
@@ -257,7 +261,7 @@ app.get("/crossword", function(req, res) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         if(!crossword){
-            connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 1`, (error, results) => {
+            connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 2`, (error, results) => {
                 if (error || !results || !results.length) {
                     console.log(error);
                     // Need to handle errors properly

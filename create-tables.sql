@@ -19,7 +19,7 @@ CREATE TABLE BBY_5_user (
 );
 
 CREATE TABLE BBY_5_master (
-  word_ID int NOT NULL AUTO_INCREMENT,
+  word_ID int NOT NULL,
   phrase VARCHAR(50) NOT NULL,
   meaning VARCHAR(200),
   history VARCHAR(500),
