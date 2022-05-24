@@ -12,7 +12,6 @@ class Matcher {
         let r = document.querySelector(':root');
         r.style.setProperty('--gridWidth', this.word_length);
 
-        //rec.innerHTML = "A";
         for (let i = 1; i < this.word_length * this.guess_attempts; ++i) {
             this.letters[i] = rec.cloneNode(true);
             grid.appendChild(this.letters[i]);
@@ -155,6 +154,8 @@ function showDetails() {
         e.style.display = e.style.display == "block" ? "none" : "block";
     }
 }
+
+// below here are the codes required to run the game online
 
 socket.on("displayGameContainer", (display) => {
     if (display){
