@@ -18,6 +18,8 @@ const { JSDOM } = require("jsdom");
 const { BlockList } = require("net");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
+const moment = require("moment");
+const schedule = require("node-schedule");
 
 // static path mappings
 app.use("/js", express.static("./public/js"));
@@ -124,6 +126,7 @@ const mysql = require("mysql2");
 const { runInNewContext } = require("vm");
 const { redirect } = require("express/lib/response");
 const res = require("express/lib/response");
+const { EventEmitter } = require('stream');
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
     port: 3306,
@@ -156,29 +159,13 @@ function respondWithWord(guessWord, req, res) {
     res.send(dom.serialize());
 }
 
+let guessWord = null;
 app.get("/wordguess", async function(req, res) {
     if (req.session.loggedIn) {
-        let guessWord = req.session.guessWord;
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
-        if (!guessWord) {
-            connection.query(`SELECT phrase, meaning FROM BBY_5_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
-                if (error || !results || !results.length) {
-                    if (error) console.log(error);
-                    let dom = wrap("./app/html/wordguess_wait.html", req.session);
-                    res.send(dom.serialize());
 
-                } else {
-                    req.session.guessWord = guessWord = results[0].phrase.toUpperCase();
-                    req.session.guessMeaning = results[0].meaning;
-                    req.session.save(function(err) {});
-                    respondWithWord(guessWord, req, res);
-                }
-            });
-        } else {
-            respondWithWord(guessWord, req, res);
-        }
-
+        respondWithWord(guessWord.phrase, req, res);
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
@@ -255,6 +242,10 @@ function respondWithCrossword(crossword, req, res) {
     res.send(dom.serialize());
 }
 
+function sanitizeWord(phrase) {
+    return phrase.replace(/[\s`'-]/g, "").toUpperCase();
+}
+
 app.get("/crossword", function(req, res) {
     if (req.session.loggedIn) {
         let crossword = req.session.crossword;
@@ -270,7 +261,7 @@ app.get("/crossword", function(req, res) {
 
                 } else {
                     for(let i = 0; i < results.length; ++i) {
-                        results[i].phrase = results[i].phrase.replace(/[\s`'-]/g, "").toUpperCase();
+                        results[i].phrase = sanitizeWord(results[i].phrase);
                     }
                     let w = 0;
                     let h = 0;
@@ -303,9 +294,10 @@ app.get("/crossword", function(req, res) {
 })
 
 app.post("/try_word", function(req, res) {
-    console.log("hardcoded word: {}", req.session.guessWord);
-    let hardCodedWord = req.session.guessWord;
+    console.log("hardcoded word: {}", guessWord.phrase);
+    let hardCodedWord = guessWord.phrase;
     let tempEnteredWord = req.body.word.toUpperCase();
+    console.log("entered: " + tempEnteredWord);
     let checkResult = Array.apply(null, Array(hardCodedWord.length)).map(function(x, i) {
         let temp = tempEnteredWord[i];
         let result = 0;
@@ -324,7 +316,7 @@ app.post("/try_word", function(req, res) {
             strictMatches++;
     let result = { matches: checkResult };
     if (strictMatches == hardCodedWord.length)
-        result.meaning = req.session.guessMeaning;
+        result.meaning = guessWord.meaning;
     res.send(result);
 })
 
@@ -827,6 +819,106 @@ app.post("/setTitle", (req, res) => {
 
 let port = 8000;
 
-server.listen(port, function() {
-    console.log("Listening on port " + port + "!");
+function wordguessExpiry(prep, word_id, callback) {
+    return function() {
+      return callback(prep, word_id);
+    }
+}
+
+class Preparation extends EventEmitter {
+    perform() {
+        connection.query(`SELECT wg.word_id, start_time, phrase, meaning FROM BBY_5_wordguess as wg, BBY_5_master as master where wg.word_id = master.word_id order by start_time desc limit 1`, (error, results) => {
+            if (error || !results) {
+                if (error) console.log(error);
+            } else
+            if (results.length) {
+                let startDate = new Date(results[0].start_time);
+                results[0].start_date = startDate;
+                let expiryMoment = moment(startDate).add(12, 'h');
+                let expiry = expiryMoment.toDate();
+                let nowMoment = moment(new Date());
+                let now = nowMoment.toDate();
+                if(now.getTime() >= expiry.getTime()) {
+                    this.emit("wordguessCreateAndLaunch", results[0].word_id);
+                } else {
+                    this.beforeReady(results[0]);
+                    this.emit("ready", results[0]);
+                }
+            } else {
+                this.emit("wordguessCreateAndLaunch", 0);
+            }
+        });
+    }
+
+    beforeReady(result) {
+        result.phrase = sanitizeWord(result.phrase);
+        guessWord = result;
+        console.log("Wordguess today: " + guessWord.phrase);
+        this.launchScheduler(result);
+    }
+
+    launchScheduler(result) {
+        let expiryMoment = moment(result.start_date).add(1, 'm');
+        let expiry = expiryMoment.toDate();
+        let nowMoment = moment(new Date());
+        // let now = nowMoment.toDate();
+        let diff = expiryMoment.diff(nowMoment, 'seconds');
+        console.log("Planning wordguess expiry later in " + diff + " seconds at " + expiry);
+        var schJob = schedule.scheduleJob(expiry, wordguessExpiry(this, result.word_id, function(prep, word_id){
+            console.log("Scheduled wordguess expiry was triggered");
+            prep.emit("wordguessUpdate", word_id);
+        }));
+    }
+
+    updateWordguess(word_id, launchAfter) {
+        connection.query(`SELECT word_id, phrase, meaning FROM BBY_5_master WHERE word_id > ${word_id} order by word_id asc limit 1`, (error, results) => {
+            if (error || !results || !results.length) {
+                console.log("Failed to update wordguess");
+                if (error)
+                    console.log(error);
+            } else {
+                this.emit("selectedNewGuessWord", results[0], launchAfter);
+            }
+        });
+    }
+
+    insertWordguess(result, launchAfter) {
+        let thisDate = new Date();
+        let thisMoment = moment(thisDate).format("YYYY-MM-DD HH:mm:ss");
+        console.log("Selected new guessWord, passing result " + result.phrase);
+        console.log("launchAfter: " + launchAfter);
+        result.start_date = thisDate;
+        connection.query(`INSERT into BBY_5_wordguess (word_id, start_time) values (${result.word_id}, "${thisMoment}")`, (error, results, fields) => {
+            if (error) {
+                console.log("Failed to insert new wordguess into the DB: " + error);
+            } else {
+                this.beforeReady(result);
+                if(launchAfter) {
+                    this.emit("ready", result);
+                }
+            }
+        });
+    }
+}
+
+
+
+let prep = new Preparation();
+prep.on("ready", function(result) {
+    server.listen(port, function() {
+        console.log("Listening on port " + port + "!");
+    });
 });
+prep.on("wordguessCreateAndLaunch", function(word_id) {
+    console.log("wordguessCreateAndLaunch");
+    prep.updateWordguess(word_id, true);
+});
+prep.on("wordguessUpdate", function(word_id) {
+    console.log("wordguessUpdate");
+    prep.updateWordguess(word_id, false);
+});
+prep.on("selectedNewGuessWord", function(result, launchAfter) {
+    console.log("wordguessUpdate");
+    prep.insertWordguess(result, launchAfter);
+});
+prep.perform();

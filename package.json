@@ -28,6 +28,8 @@
         "multer": "1.4.4",
         "mysql2": "^2.3.3",
         "socket.io": "^4.5.0",
-        "util": "0.12.4"
+        "util": "0.12.4",
+        "moment": "2.29.3",
+        "node-schedule": "2.1.0"
     }
 }
