@@ -1,47 +1,43 @@
-<head>
-    <link href="/css/main.css" rel="stylesheet" />
-</head>
-
 <div id="menu">
     <div class="menuItem" id="div1">
-        <button id="wordguess">Wordguess</button>
+        <button id="wordguess" class="defaultButton">Wordguess</button>
     </div>
 
     <div class="menuItem" id="div2">
-        <button id="wordmatch">Wordmatch</button>
+        <button id="wordmatch" class="defaultButton">Wordmatch</button>
     </div>
 
     <div class="menuItem" id="div3">
-        <button id="crossword">Crossword</button>
+        <button id="crossword" class="defaultButton">Crossword</button>
     </div>
 
     <div class="menuItem" id="div4">
-        <button id="openModal">Join a Room</button>
+        <button id="openModal" class="defaultButton">Join a Room</button>
     </div>
 
     <div class="menuItem" id="div5">
-        <button id="profile">Edit Profile</button>
+        <button id="shop" class="defaultButton">Shop</button>
     </div>
 
     <div class="menuItem" id="div6">
-        <button id="shop">Shop</button>
+        <button id="profile" class="defaultButton">Edit Profile</button>
     </div>
 
     <div id="logout">
-        <button id="logOut">Logout</button>
+        <button id="logOut" class="defaultButton">Logout</button>
     </div>
 </div>
 
 <div id="modalBackground">
     <div id="modalContainer">
         <form id="findLobbyForm">
-            <label>Enter the code here: </label>
-            <input type="text" id="code-input">
+            <label>Enter the code here:</label><br>
+            <input type="text" id="codeInput">
+            <input type="submit" value="Join"><br>
             <span id="error"></span>
-            <input type="submit" id="btn-joinRoom" value="Join">
         </form>
     </div>
 </div>
 
-
+<link href="/css/main.css" rel="stylesheet" />
 <script src="/js/socket-connection.js"></script>

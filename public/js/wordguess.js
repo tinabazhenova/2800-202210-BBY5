@@ -12,34 +12,49 @@ class Matcher {
         let r = document.querySelector(':root');
         r.style.setProperty('--gridWidth', this.word_length);
 
-        //rec.innerHTML = "A";
         for (let i = 1; i < this.word_length * this.guess_attempts; ++i) {
             this.letters[i] = rec.cloneNode(true);
             grid.appendChild(this.letters[i]);
+            this.letters[i - 1].id = 'rec' + i;
         }
     }
 
     onInput(event) {
-        if (this.position < this.word_length || event.keyCode == 8) {
-            if (event.keyCode >= 65 && event.keyCode <= 90) { //checks if the user entered a letter
-                this.letters[this.word * this.word_length + this.position].innerHTML = event.key; // fill array in a line
-                this.tempEnteredWord += event.key.toUpperCase(); //records a letter into string
-                this.position++; // increase position
-
-            } else if (event.keyCode == 8 && this.position != 0) { // if user hits BS 
-                this.position--; // decrease position
-                this.tempEnteredWord = this.tempEnteredWord.substring(0, this.position);
-                this.letters[this.word * this.word_length + this.position].innerHTML = ''; //rewrite an indec in an array with empty char
+        if (document.getElementById("gameContainer").style.display == "block" && sessionStorage.getItem("isHost")) {
+            if (this.position < this.word_length || event.keyCode == 8) {
+                if (event.keyCode >= 65 && event.keyCode <= 90) { //checks if the user entered a letter
+                    this.letters[this.word * this.word_length + this.position].innerHTML = event.key; // fill array in a line
+                    this.tempEnteredWord += event.key.toUpperCase(); //records a letter into string
+                    this.position++; // increase position
+    
+                } else if (event.keyCode == 8 && this.position != 0) { // if user hits BS 
+                    this.position--; // decrease position
+                    this.tempEnteredWord = this.tempEnteredWord.substring(0, this.position);
+                    this.letters[this.word * this.word_length + this.position].innerHTML = ''; //rewrite an indec in an array with empty char
+                } else {
+                    alert('Enter the letter from A- Z'); //the user entered the worng character
+                }
             } else {
-                alert('Enter the letter from A- Z'); //the user entered the worng character
-            }
-        } else {
-            if (event.keyCode == 13) { //the user hit enter
-                this.guess(this.word, this.letters, this.tempEnteredWord);
-            } else {
-                alert('Please hit enter');
+                if (event.keyCode == 13) { //the user hit enter
+                    this.guess(this.word, this.letters, this.tempEnteredWord);
+                }
             }
         }
+    }
+
+    reset() {
+        this.word = 0;
+        this.tempEnteredWord = '';
+        this.position = 0;
+        Array.from(document.getElementsByClassName("rectangle")).forEach((e) => {
+                e.className = "rectangle";
+                e.innerHTML = "";
+            }
+        );
+        Array.from(document.getElementsByClassName("letter")).forEach((e) => {
+                e.className = "letter";
+            }
+        );
     }
 
     async guess() {
@@ -47,7 +62,6 @@ class Matcher {
             let contents = { word: this.tempEnteredWord };
             let check = await fetch('/try_word', {
                 method: 'POST',
-                //body: JSON.stringify(contents)
                 headers: {
                     "Accept": 'application/json',
                     "Content-Type": 'application/json'
@@ -56,35 +70,30 @@ class Matcher {
             });
             console.log(check.body);
             let parsed = await check.json();
-            console.log(parsed);
+            let socketContents = {keyLetters: [], keyColors: [], attempt: this.word};
             for (let i = 0; i < this.word_length; i++) {
-                let paintedKeyboardLetter = document.getElementById('letter' + this.tempEnteredWord[i]);
+                socketContents.keyLetters.push(this.tempEnteredWord[i]);
                 if (parsed.matches[i] == 2) {
-                    this.letters[this.word * this.word_length + i].classList.add("green");
-                    //keyboard letter painted
-                    paintedKeyboardLetter.classList.remove("originalKey");
-                    paintedKeyboardLetter.classList.add("green");
+                    socketContents.keyColors.push("green");
                 } else if (parsed.matches[i] == 1) {
-                    this.letters[this.word * this.word_length + i].classList.add("yellow");
-                    if (paintedKeyboardLetter.classList.contains("originalKey")) {
-                        paintedKeyboardLetter.classList.remove("originalKey");
-                        paintedKeyboardLetter.classList.add("yellow");
-                    }
+                    socketContents.keyColors.push("yellow");
                 } else {
-                    paintedKeyboardLetter.classList.remove("originalKey");
-                    paintedKeyboardLetter.classList.add("discard");
+                    socketContents.keyColors.push("discard");
                 }
             }
 
-            if (parsed.meaning) {
-                document.getElementById("explanation").innerHTML = "You guessed right! The meaning is: " + parsed.meaning;
+            socket.emit("sendWordguessAttempt", socketContents, code);
 
+            if (parsed.meaning) {
+                socket.emit("sendWordguessResult", true, parsed.meaning, code);
+                document.getElementById("endGame").style.display = "block";
             } else if (this.word < 4) {
                 ++this.word; // we give one more option to enter the word
                 this.position = 0; //start the position from 0
                 this.tempEnteredWord = '';
             } else {
-                alert('Game over');
+                socket.emit("sendWordguessResult", false, parsed.meaning, code);
+                document.getElementById("endGame").style.display = "block";
             }
         } catch (error) {
             console.log(error);
@@ -93,9 +102,9 @@ class Matcher {
 
 }
 
+let matcher = new Matcher();
+
 ready(function() {
-    //alert('LOL');
-    let matcher = new Matcher();
     let elements = document.getElementsByClassName("letter");
     let click = function() {
         let content = this.innerHTML;
@@ -138,3 +147,41 @@ function toggleExplanation() {
     var popup = document.getElementById("explanation");
     popup.classList.toggle("show");
 }
+
+function showDetails() {
+    for (var i = 0; i < arguments.length; i++) {
+        var e = document.getElementById(arguments[i]);
+        e.style.display = e.style.display == "block" ? "none" : "block";
+    }
+}
+
+// below here are the codes required to run the game online
+
+socket.on("displayGameContainer", (display) => {
+    if (display){
+      document.getElementById("startGame").style.display = "none";
+      document.getElementById("gameContainer").style.display = "block";
+      matcher.reset();
+    } else {
+      document.getElementById("startGame").style.display = "block";
+      document.getElementById("gameContainer").style.display = "none";
+    }
+});
+
+socket.on("wordguessAttempted", (results) => {
+    console.log(results);
+    for (let i = 0; i < 5; i++) {
+        document.getElementById("rec" + (results.attempt * 5 + i + 1)).classList.add(results.keyColors[i]);
+        document.getElementById("rec" + (results.attempt * 5 + i + 1)).innerHTML = results.keyLetters[i];
+        document.getElementById("letter" + results.keyLetters[i]).classList.remove("originalKey");
+        document.getElementById("letter" + results.keyLetters[i]).classList.add(results.keyColors[i]);
+    }
+});
+
+socket.on("wordguessCompleted", (guessed, meaning) => {
+    if (guessed) {
+        document.getElementById("explanation").innerHTML = "You guessed right! The meaning is: " + meaning;
+    } else {
+        alert('Game over');
+    }
+});

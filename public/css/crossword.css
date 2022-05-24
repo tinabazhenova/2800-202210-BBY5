@@ -1,0 +1,80 @@
+:root {
+    --color7: #779FA1;
+    --backColor: #E0CBA8;
+    --gridWidth: 3;
+}
+#startGame:hover {
+    background-color: var(--color7);
+}
+
+#leaveRoom:hover {
+    background-color: var(--color5);
+}
+
+button {
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color1);
+    border-radius: 20%;
+    width: auto;
+    color: var(--color2);
+    cursor: pointer;
+    min-width: 5%;
+    margin-bottom: 2%;
+}
+
+#chatInput {
+    width: 15%;
+    padding: 0.5%;
+    box-sizing: border-box;
+    border: none;
+    background-color: var(--backColor);
+    color: var(--color4);
+    font-weight: bold;
+    font-size: 100%;
+    border: 5px solid var(--color4);
+}
+
+.letterBox {
+    width: 40px;
+    padding: 0.5%;
+    box-sizing: border-box;
+    border: none;
+    color: var(--color4);
+    font-weight: bold;
+    font-size: 100%;
+    justify-content: center;
+    text-transform: uppercase; 
+    background-color: transparent;
+    margin-left: 20%;
+}
+
+.letterBox:focus{
+    outline: none;
+}
+
+.letterContainer {
+    background-color: var(--backColor);
+    border: solid 2px black;
+    text-align: left;
+}
+
+.crossword_board_grid{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: min-content;
+}
+
+#box0 {
+    visibility: hidden;
+}
+
+.hintNum {
+    font-size: xx-small;
+    padding: 10%;
+}
+
+.hintNumInvis {
+    visibility: hidden;
+}

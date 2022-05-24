@@ -1,63 +1,85 @@
-<link rel="stylesheet" href="/css/wordguess.css">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="/css/room.css" />
+<link rel="stylesheet" href="/css/wordguess.css" />
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>
 <span id="roomInfo">WordGuess</span>
-<div id="userList" style="border:1px solid black"></div>
-<div id="chat-dialog"></div>
-<form id="chatForm">
-    <input type="text" id="chatInput" />
-    <button type="submit" id="send">Send</button>
-</form>
+<div id="userList" style="border: 1px solid black"></div>
 
 <button type="button" id="startGame">Start</button>
-<button type="button" id="leaveRoom">Leave</button>
+<button type="button" id="endGame">Confirm</button>
 
-<div class="wordguess_grid">
+<div id="gameContainer">
+  <div class="wordguess_grid">
     <div class="rectangle"></div>
-</div>
-
-
-<div class="popup" onclick="toggleExplanation()">History
+  </div>
+  <div class="popup" onclick="toggleExplanation()">
+    History
     <span class="popuptext" id="explanation">Guess first</span>
-</div>
-
-<div class="keyboard">
+  </div>
+  <div class="keyboard">
     <div class="row1">
-        <button class="letter">Q</button>
-        <button class="letter">W</button>
-        <button class="letter">E</button>
-        <button class="letter">R</button>
-        <button class="letter">T</button>
-        <button class="letter">Y</button>
-        <button class="letter">U</button>
-        <button class="letter">I</button>
-        <button class="letter">O</button>
-        <button class="letter">P</button>
+      <button class="letter">Q</button>
+      <button class="letter">W</button>
+      <button class="letter">E</button>
+      <button class="letter">R</button>
+      <button class="letter">T</button>
+      <button class="letter">Y</button>
+      <button class="letter">U</button>
+      <button class="letter">I</button>
+      <button class="letter">O</button>
+      <button class="letter">P</button>
     </div>
     <div class="row2">
-        <button class="letter">A</button>
-        <button class="letter">S</button>
-        <button class="letter">D</button>
-        <button class="letter">F</button>
-        <button class="letter">G</button>
-        <button class="letter">H</button>
-        <button class="letter">J</button>
-        <button class="letter">K</button>
-        <button class="letter">L</button>
+      <button class="letter">A</button>
+      <button class="letter">S</button>
+      <button class="letter">D</button>
+      <button class="letter">F</button>
+      <button class="letter">G</button>
+      <button class="letter">H</button>
+      <button class="letter">J</button>
+      <button class="letter">K</button>
+      <button class="letter">L</button>
     </div>
-
+  
     <div class="row3">
-        <button id="enter">Enter</button>
-        <button class="letter">Z</button>
-        <button class="letter">X</button>
-        <button class="letter">C</button>
-        <button class="letter">V</button>
-        <button class="letter">B</button>
-        <button class="letter">N</button>
-        <button class="letter">M</button>
-        <button class="material-icons" id="backspace">backspace</button>
+      <button id="enter">Enter</button>
+      <button class="letter">Z</button>
+      <button class="letter">X</button>
+      <button class="letter">C</button>
+      <button class="letter">V</button>
+      <button class="letter">B</button>
+      <button class="letter">N</button>
+      <button class="letter">M</button>
+      <button class="material-icons" id="backspace">backspace</button>
     </div>
+  </div>
 </div>
 
-<script src="/socket.io/socket.io.js" integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<div>
+  <button onclick="showDetails('chat-dialog', 'chatForm')" class="chatButton">
+    Chat
+  </button>
+  <div id="chatDialog"></div>
+  <form id="chatForm">
+    <input type="text" id="chatInput" />
+    <button type="submit" id="chatSend">Send</button>
+  </form>
+</div>
+
+<div id="modalBackground">
+  <div id="modalContainer">
+      <span>The host has left the room.</span>
+      <button onclick="window.location.href = '/main'">Leave</button>
+  </div>
+</div>
+
+<script
+  src="/socket.io/socket.io.js"
+  integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
 <script src="/js/room.js"></script>
 <script src="/js/wordguess.js"></script>

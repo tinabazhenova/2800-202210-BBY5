@@ -1,10 +1,15 @@
 const socket = io();
 
-let code = sessionStorage.getItem("code")
+let code = sessionStorage.getItem("code");
 let game = sessionStorage.getItem("game");
 document.getElementById("roomInfo").innerHTML = game + " " + code;
 
 socket.emit("joinRoom", code, game);
+
+/* when a user enters a room, set sessionStorage to true
+so that they cannot join another room in another browser
+and vice versa */
+//window.onload = () => alert("hi");
 
 const form = document.getElementById("chatForm");
 
@@ -12,14 +17,14 @@ const form = document.getElementById("chatForm");
 form.addEventListener("submit", e => {
   e.preventDefault();
   const input = document.getElementById("chatInput");
-  const message = input.value;
-  socket.emit("sendMessage", message, code);
+  const message = input.value.trim();
+  if (message) socket.emit("sendMessage", message, code);
   input.value = "";
 });
 
 //server can send messages to its clients too - use socket.on() to respond
-socket.on("postMessage", message => {
-  displayMessage(message);
+socket.on("postMessage", (message, title) => {
+  displayMessage(message, title);
 });
 
 socket.on("updateUserlist", members => {
@@ -34,11 +39,24 @@ socket.on("announceMessage", message => {
   displayMessage(message);
 });
 
-function displayMessage(message) {
-  const dialog = document.getElementById("chat-dialog");
-  dialog.innerHTML += "<br>" + message;
+socket.on("disconnectAll", () => {
+  document.getElementById("modalBackground").style.display = "block";
+});
+
+function displayMessage(message, title) {
+  const dialog = document.getElementById("chatDialog");
+  dialog.innerHTML += "<br>";
+  if (title && title != "None") {
+    dialog.innerHTML += `[${title}] `
+  }
+  dialog.innerHTML += message;
 };
 
-document.getElementById("leaveRoom").addEventListener("click", () => {
-  window.location.href = "/main";
-});
+document.getElementById("startGame").onclick = () => {
+  socket.emit("updateGameStatus", code, true);
+};
+
+document.getElementById("endGame").onclick = () => {
+  socket.emit("updateGameStatus", code, false);
+  document.getElementById("endGame").style.display = "none";
+};
