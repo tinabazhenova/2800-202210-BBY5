@@ -187,7 +187,10 @@ let modal = document.getElementById("modalBackground");
 let cart = document.getElementById("cartContainer");
 
 document.getElementById("viewCart").onclick = () => cart.style.display = "block";
-document.getElementById("closeCart").onclick = () => cart.style.display = "none";
+document.getElementById("closeCart").onclick = () => {
+  cart.style.display = "none";
+  document.getElementById("cartMessage").innerHTML = "";
+}
 document.getElementById("purchaseCart").onclick = () => purchaseCart();
 
 document.getElementById("cencelOrder").onclick = () => {

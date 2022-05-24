@@ -27,7 +27,11 @@ INSERT INTO BBY_5_crossword(crossword_id, word_id, row_num, col, vertical) VALUE
 INSERT INTO BBY_5_crossword(crossword_id, word_id, row_num, col, vertical) VALUES(1, 4, 3, 3, 1);
 INSERT INTO BBY_5_crossword(crossword_id, word_id, row_num, col, vertical) VALUES(1, 6, 6, 1, 0);
 
-INSERT INTO BBY_5_item (ID, name, description, price, type, query) VALUES (1, 'B upgrade coupon', 'Upgrades your B title by 1 level.', 2000, 'B', 'UPDATE bby_5_user SET bblevel = bblevel + 1 WHERE ID = ?');
-INSERT INTO BBY_5_item (ID, name, description, price, type, query) VALUES (2, 'X upgrade coupon', 'Upgrades your X title by 1 level.', 2000, 'X', 'UPDATE bby_5_user SET xlevel = xlevel + 1 WHERE ID = ?');
-INSERT INTO BBY_5_item (ID, name, description, price, type, query) VALUES (3, 'Y upgrade coupon', 'Upgrades your Y title by 1 level.', 2000, 'Y', 'UPDATE bby_5_user SET ylevel = ylevel + 1 WHERE ID = ?');
-INSERT INTO BBY_5_item (ID, name, description, price, type, query) VALUES (4, 'Z upgrade coupon', 'Upgrades your Z title by 1 level.', 2000, 'Z', 'UPDATE bby_5_user SET zlevel = zlevel + 1 WHERE ID = ?');
+INSERT INTO BBY_5_item (ID, name, description, price, type, query) VALUES (1, 'B upgrade coupon', 'Upgrades your B title by 1 level.', 2000, 'B');
+INSERT INTO BBY_5_item (ID, name, description, price, type, query) VALUES (2, 'X upgrade coupon', 'Upgrades your X title by 1 level.', 2000, 'X');
+INSERT INTO BBY_5_item (ID, name, description, price, type, query) VALUES (3, 'Y upgrade coupon', 'Upgrades your Y title by 1 level.', 2000, 'Y');
+INSERT INTO BBY_5_item (ID, name, description, price, type, query) VALUES (4, 'Z upgrade coupon', 'Upgrades your Z title by 1 level.', 2000, 'Z');
+
+use comp2800
+update bby_5_user set title = "None" where user_name = "donna";
+update bby_5_user set bblevel = 1 where user_name = "donna";

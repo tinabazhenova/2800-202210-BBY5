@@ -170,10 +170,6 @@ input {
 
 /* Add animation (fade in the popup) */
 
-#chat-dialog, #chatForm {
-    display: none;
-  }
-
 @-webkit-keyframes fadeIn {
     from {
         opacity: 0;
