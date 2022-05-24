@@ -37,6 +37,12 @@ CREATE TABLE BBY_5_crossword (
   primary key (crossword_id, word_id)
 );
 
+CREATE TABLE BBY_5_wordguess (
+  word_id int not null,
+  start_time datetime not null,
+  primary key (word_id)
+);
+
 CREATE TABLE BBY_5_item (
   ID int NOT NULL AUTO_INCREMENT,
   name VARCHAR(50),
