@@ -825,6 +825,9 @@ function wordguessExpiry(prep, word_id, callback) {
     }
 }
 
+const wordguessExpiryPeriod = 12;
+const wordguessExpiryUnit = 'h';
+
 class Preparation extends EventEmitter {
     perform() {
         connection.query(`SELECT wg.word_id, start_time, phrase, meaning FROM BBY_5_wordguess as wg, BBY_5_master as master where wg.word_id = master.word_id order by start_time desc limit 1`, (error, results) => {
@@ -834,7 +837,7 @@ class Preparation extends EventEmitter {
             if (results.length) {
                 let startDate = new Date(results[0].start_time);
                 results[0].start_date = startDate;
-                let expiryMoment = moment(startDate).add(12, 'h');
+                let expiryMoment = moment(startDate).add(wordguessExpiryPeriod, wordguessExpiryUnit);
                 let expiry = expiryMoment.toDate();
                 let nowMoment = moment(new Date());
                 let now = nowMoment.toDate();
@@ -858,7 +861,7 @@ class Preparation extends EventEmitter {
     }
 
     launchScheduler(result) {
-        let expiryMoment = moment(result.start_date).add(1, 'm');
+        let expiryMoment = moment(result.start_date).add(wordguessExpiryPeriod, wordguessExpiryUnit);
         let expiry = expiryMoment.toDate();
         let nowMoment = moment(new Date());
         // let now = nowMoment.toDate();
