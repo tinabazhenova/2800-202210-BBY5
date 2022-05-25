@@ -229,3 +229,5 @@ async function cheat() {
     console.log(error);
   }
 }
+
+document.getElementById("back").style.visibility = "hidden";
