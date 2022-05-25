@@ -103,8 +103,8 @@ io.on("connection", socket => {
     socket.on("sendWordguessAttempted", (results, room) => {
         io.to(room).emit("wordguessAttempted", results);
     });
-    socket.on("sendWordguessResult", (guessed, meaning, room) => {
-        io.to(room).emit("wordguessCompleted", guessed, meaning);
+    socket.on("sendWordguessResult", (guessed, word, room) => {
+        io.to(room).emit("wordguessCompleted", guessed, word);
     });
     socket.on("sendWordmatchFetched", (results, room) => {
         io.to(room).emit("wordmatchFetched", results);
@@ -350,7 +350,7 @@ app.post("/try_word", function(req, res) {
     for (let i = 0; i < checkResult.length; ++i)
         if (checkResult[i] == 2)
             strictMatches++;
-    let result = { matches: checkResult };
+    let result = { matches: checkResult, word: guessWord };
     if (strictMatches == hardCodedWord.length)
         result.meaning = guessWord.meaning;
     res.send(result);
@@ -920,7 +920,7 @@ const wordguessExpiryUnit = 'h';
 
 class Preparation extends EventEmitter {
     perform() {
-        connection.query(`SELECT wg.word_id, start_time, phrase, meaning FROM BBY_5_wordguess as wg, BBY_5_master as master where wg.word_id = master.word_id order by start_time desc limit 1`, (error, results) => {
+        connection.query(`SELECT wg.word_id, start_time, phrase, meaning, value, generation FROM BBY_5_wordguess as wg, BBY_5_master as master where wg.word_id = master.word_id order by start_time desc limit 1`, (error, results) => {
             if (error || !results) {
                 if (error) console.log(error);
             } else
