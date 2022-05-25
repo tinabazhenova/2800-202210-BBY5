@@ -15,7 +15,7 @@ class Matcher {
         for (let i = 1; i < this.word_length * this.guess_attempts; ++i) {
             this.letters[i] = rec.cloneNode(true);
             grid.appendChild(this.letters[i]);
-            this.letters[i - 1].id = 'rec' + i;
+            this.letters[i].id = 'rec' + (i + 1);
         }
     }
 
@@ -86,14 +86,14 @@ class Matcher {
 
             if (parsed.meaning) {
                 socket.emit("sendWordguessResult", true, parsed.meaning, code);
-                document.getElementById("endGame").style.display = "block";
+                document.getElementById("endGame").style.display = "inline-block";
             } else if (this.word < 4) {
                 ++this.word; // we give one more option to enter the word
                 this.position = 0; //start the position from 0
                 this.tempEnteredWord = '';
             } else {
                 socket.emit("sendWordguessResult", false, parsed.meaning, code);
-                document.getElementById("endGame").style.display = "block";
+                document.getElementById("endGame").style.display = "inline-block";
             }
         } catch (error) {
             console.log(error);
@@ -163,7 +163,7 @@ socket.on("displayGameContainer", (display) => {
       document.getElementById("gameContainer").style.display = "block";
       matcher.reset();
     } else {
-      document.getElementById("startGame").style.display = "block";
+      document.getElementById("startGame").style.display = "inline-block";
       document.getElementById("gameContainer").style.display = "none";
     }
 });
