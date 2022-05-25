@@ -240,15 +240,19 @@ function respondWithCrossword(crossword, req, res) {
                 let hint = dom.window.document.createElement("div");
                 hint.innerHTML = legendNum + ". " + results[i].meaning;
                 if(vert == 1) {
-                    letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
                     legendDown.appendChild(hint);
                 }
                 else {
-                    letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
                     legendAcross.appendChild(hint);
                 }
                 letters[arrInd].hintNumNode.classList.remove("hintNumInvis");
                 letters[arrInd].hintNumNode.innerHTML = legendNum;
+            }
+            if(vert == 1) {
+                letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
+            }
+            else {
+                letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
             }
             if(results[i].vertical == 1) {
                 row++;    

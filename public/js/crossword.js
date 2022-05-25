@@ -8,6 +8,29 @@ function ready(callback) {
     }
 }
 
+function getNewCoord(coord, inputType) {
+    console.log(inputType);
+    if (inputType == "insertText") {
+        return coord + 1;
+    } else if (inputType == "deleteContentBackward") {
+        if(coord > 0)
+            return coord - 1;
+        return coord;    
+    }
+}
+
+function moveToCoord(row, col, vert) {
+    let str = 'input[row="' + row + '"][col="' + col + '"]';
+    let newFocus = $(str);
+    if(newFocus.length == 1) {
+        newFocus[0].setAttribute("vertical", vert);
+        newFocus[0].focus();
+        newFocus[0].select();
+        return true;
+    }
+    return false;
+}
+
 ready(function() {
     let rects = document.getElementsByClassName("letterContainer");
     for(let i = 0; i < rects.length; i++) {
@@ -21,24 +44,23 @@ ready(function() {
             }
         })
         letterBox.addEventListener("input", function(ev) {
-            var self = $(this);
-            let row = ev.srcElement.getAttribute("row");
-            let col = ev.srcElement.getAttribute("col");
+            // var self = $(this);
+            console.log("inputType: " + ev.inputType);
+            let row = parseInt(ev.srcElement.getAttribute("row"));
+            let col = parseInt(ev.srcElement.getAttribute("col"));
+            console.log(row);
+            console.log(col);
             let vert = ev.srcElement.getAttribute("vertical");
             if(vert == 0) {
-                col++;
+                col = getNewCoord(col, ev.inputType);
             } else {
-                row++;
+                row = getNewCoord(row, ev.inputType);
             }
-            let str = 'input[row="' + row + '"][col="' + col + '"]';
-            console.log(str);
-            let newFocus = $(str);
-            console.log(newFocus);
-            if(newFocus.length == 1) {
-                newFocus[0].setAttribute("vertical", vert);
-                newFocus[0].focus();
-                newFocus[0].select();
+            if(ev.inputType == "deleteContentBackward") {
+                ev.srcElement.value = " ";
             }
+            moveToCoord(row, col, vert);
+
         })
     }
 })
