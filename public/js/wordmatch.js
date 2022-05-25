@@ -1,5 +1,5 @@
 let gameCount = 0;
-let gamePlays = 3;
+let gamePlays = 5;
 
 document.getElementById("start").onclick = () => {
   startGame();
@@ -102,7 +102,7 @@ function startWordMatch() {
           let randomAnswerBtn = "";
 
           randomAnswerBtn = document.getElementById("btn" + randomNumber);
-          console.log("The answer is: " + randomAnswerBtn);
+          console.log(randomAnswerBtn);
           randomAnswerBtn.innerHTML = data.rows[0].meaning;
 
           randomAnswerBtn.onclick = () => {
@@ -114,9 +114,7 @@ function startWordMatch() {
             //if div is empty (has no answer) then a random meaning is placed there
             if (document.getElementById("btn" + (j - 1)) != randomAnswerBtn) {
               let i = document.getElementById("btn" + (j - 1));
-
               i.innerHTML = data.rows[j - 1].meaning;
-
               i.onclick = () => wrongAnswer(i);
             }
           }
@@ -137,9 +135,16 @@ let currentXScore = 0;
 let currentYScore = 0;
 let currentZScore = 0;
 
+// function toggleExplanation() {
+//   var popup = document.getElementById("explanation");
+//   popup.classList.toggle("show");
+// }
+
 function correctAnswer(btnDiv, values) {
   btnDiv.classList.add("correct"); //adds css for correct answer to change div background color to green
   btnDiv.classList.remove("incorrect");
+  btnDiv.classList.add("popup");
+
 
   document.getElementById("div9").classList.remove("hide");
   document.getElementById("div10").classList.remove("hide");
