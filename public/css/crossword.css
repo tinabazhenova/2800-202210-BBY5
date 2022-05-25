@@ -41,14 +41,22 @@ button {
 }
 
 @media (min-width: 720px) {
-.crossword {
-    display: flex;
-    flex-direction: horizontal;
+    .crossword {
+        display: flex;
+        flex-direction: horizontal;
+    }
+    .letterBox {
+        width: 40px;
+    }
 }
+
+@media (max-width: 720px) {
+    .letterBox {
+        width: 20px;
+    }
 }
 
 .letterBox {
-    width: 40px;
     padding: 0.5%;
     box-sizing: border-box;
     border: none;
@@ -75,6 +83,7 @@ button {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     width: min-content;
+    height: min-content;
 }
 
 #box0 {
