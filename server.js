@@ -115,6 +115,9 @@ io.on("connection", socket => {
     socket.on("sendWordmatchWrong", (e, room) => {
         io.to(room).emit("wordmatchWrong", e);
     });
+    socket.on("sendWordmatchFinished", (results, room) => {
+        io.to(room).emit("wordmatchFinished", results);
+    });
     socket.on("disconnect", () => {
         /* I wish I could send the user's current room code as a parameter here but I can't
         so I had to iterating through the list of rooms to find the room the user was in */
@@ -709,7 +712,7 @@ app.get("/startWordMatch", function (req, res) {
     );
   });
   
-app.post("/addUserPoints", function(req, res) { 
+app.post("/addUserPoints", function(req, res) {
     connection.query(`UPDATE BBY_5_user SET bbscore = bbscore + ?, xscore = xscore + ?, yscore = yscore + ?,
      zscore = zscore + ? WHERE ID = ?`,
     [req.body.bb, req.body.x, req.body.y, req.body.z, req.session.userID], (error, results) => {

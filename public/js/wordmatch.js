@@ -40,7 +40,7 @@ socket.on("wordmatchFinished", (results) => {
   document.getElementById("resultsText").innerHTML = `Points earned<br>B-points: ${results.B}<br>X-points: ${results.X}<br>Y-points: ${results.Y}<br>Z-points: ${results.Z}`;
 
   addUserPoints(results.B, results.X, results.Y, results.Z);
-
+  
   document.getElementById("div9").innerHTML =
     "Current BB Points: " + 0;
   document.getElementById("div10").innerHTML =
@@ -49,6 +49,10 @@ socket.on("wordmatchFinished", (results) => {
     "Current Y Points: " + 0;
   document.getElementById("div12").innerHTML =
     "Current Z Points: " + 0;
+  document.getElementById("div9").classList.add("hide");
+  document.getElementById("div10").classList.add("hide");
+  document.getElementById("div11").classList.add("hide");
+  document.getElementById("div12").classList.add("hide");
 });
 
 async function addUserPoints(bb, x, y, z) {
@@ -178,7 +182,7 @@ socket.on("wordmatchCorrect", (btnDiv, values) => {
     document.getElementById("btn3").disabled = true;
     document.getElementById("btn4").disabled = true;
   
-    document.getElementById("continueGame").classList.remove("hide");
+    if (sessionStorage.getItem("isHost")) document.getElementById("continueGame").classList.remove("hide");
 });
 
 socket.on("wordmatchWrong", (e) => {
@@ -189,19 +193,15 @@ socket.on("wordmatchWrong", (e) => {
   document.getElementById("btn3").disabled = true;
   document.getElementById("btn4").disabled = true;
 
-  document.getElementById("continueGame").classList.remove("hide");
+  if (sessionStorage.getItem("isHost")) document.getElementById("continueGame").classList.remove("hide");
 });
 
 function correctAnswer(btnDiv, values) {
-  if (sessionStorage.getItem("isHost")) {
-    socket.emit("sendWordmatchCorrect", btnDiv, values, code);
-  }
+  if (sessionStorage.getItem("isHost")) socket.emit("sendWordmatchCorrect", btnDiv, values, code);
 }
 
 function wrongAnswer(e) {
-  if (sessionStorage.getItem("isHost")) {
-    socket.emit("sendWordmatchWrong", e, code);
-  }
+  if (sessionStorage.getItem("isHost")) socket.emit("sendWordmatchWrong", e, code);
 }
 
 function showDetails() {
