@@ -323,6 +323,13 @@ app.get("/crossword", function(req, res) {
     }
 })
 
+app.post("/try_crossword", function(req, res) {
+    let word = req.body.word.toUpperCase();
+    console.log("entered: " + word);
+    let result = { match: false };
+    res.send(result);
+})
+
 app.post("/try_word", function(req, res) {
     let hardCodedWord = guessWord.phrase;
     let tempEnteredWord = req.body.word.toUpperCase();

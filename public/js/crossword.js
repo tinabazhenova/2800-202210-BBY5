@@ -40,6 +40,20 @@ function ingestWordInfo(letterBox, dir) {
     }
 }
 
+async function guess(wordId, word) {    
+    let contents = { wordId: wordId, word: word };
+    let check = await fetch('/try_crossword', {
+        method: 'POST',
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify(contents)
+    });
+    let parsed = await check.json();
+    console.log(parsed);
+}
+
 function editWord(dir, ev) {
     let letterBox = ev.srcElement;
     let wordId = parseInt(letterBox.getAttribute("wordId" + dir));
@@ -56,7 +70,10 @@ function editWord(dir, ev) {
             filledCount++;
         }
         if (filledCount == wordArr.length) {
-            console.log("time to check");
+            let word = "";
+            for(let i = 0; i < wordArr.length; ++i)
+                word += wordArr[i];
+            guess(wordId, word);
         }
     }
 }
