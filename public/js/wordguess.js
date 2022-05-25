@@ -68,7 +68,6 @@ class Matcher {
                 },
                 body: JSON.stringify(contents)
             });
-            console.log(check.body);
             let parsed = await check.json();
             let socketContents = {keyLetters: [], keyColors: [], attempt: this.word};
             for (let i = 0; i < this.word_length; i++) {
