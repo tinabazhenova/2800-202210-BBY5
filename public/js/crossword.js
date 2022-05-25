@@ -1,3 +1,5 @@
+let gWords = {}
+
 function ready(callback) {
     if (document.readyState != "loading") {
         callback();
@@ -9,7 +11,6 @@ function ready(callback) {
 }
 
 function getNewCoord(coord, inputType) {
-    console.log(inputType);
     if (inputType == "insertText") {
         return coord + 1;
     } else if (inputType == "deleteContentBackward") {
@@ -31,10 +32,41 @@ function moveToCoord(row, col, vert) {
     return false;
 }
 
+function ingestWordInfo(letterBox, dir) {
+    let wordLen = parseInt(letterBox.getAttribute("wordLen" + dir));
+    if (wordLen) {
+        let wordId = parseInt(letterBox.getAttribute("wordId" + dir));
+        gWords[wordId] = new Array(wordLen);
+    }
+}
+
+function editWord(dir, ev) {
+    let letterBox = ev.srcElement;
+    let wordId = parseInt(letterBox.getAttribute("wordId" + dir));
+    if (!wordId)
+        return;
+    let wordCoord = parseInt(letterBox.getAttribute("wordCoord" + dir));
+    if (ev.inputType == "deleteContentBackward") {
+        gWords[wordId][wordCoord] = null;
+    } else if (ev.inputType == "insertText") {
+        let wordArr = gWords[wordId];
+        wordArr[wordCoord] = ev.data;
+        let filledCount = 0;
+        for(let i = 0; i < wordArr.length && wordArr[i] != null; ++i) {
+            filledCount++;
+        }
+        if (filledCount == wordArr.length) {
+            console.log("time to check");
+        }
+    }
+}
+
 ready(function() {
     let rects = document.getElementsByClassName("letterContainer");
     for(let i = 0; i < rects.length; i++) {
         let letterBox = rects[i].getElementsByTagName("input")[0];
+        ingestWordInfo(letterBox, "Horiz");
+        ingestWordInfo(letterBox, "Vert");
         letterBox.addEventListener("click", ev => {
             let self = ev.srcElement;
             self.select();
@@ -44,12 +76,10 @@ ready(function() {
             }
         })
         letterBox.addEventListener("input", function(ev) {
-            // var self = $(this);
-            console.log("inputType: " + ev.inputType);
             let row = parseInt(ev.srcElement.getAttribute("row"));
             let col = parseInt(ev.srcElement.getAttribute("col"));
-            console.log(row);
-            console.log(col);
+            editWord("Horiz", ev);
+            editWord("Vert", ev);
             let vert = ev.srcElement.getAttribute("vertical");
             if(vert == 0) {
                 col = getNewCoord(col, ev.inputType);

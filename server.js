@@ -240,9 +240,11 @@ function respondWithCrossword(crossword, req, res) {
                 let hint = dom.window.document.createElement("div");
                 hint.innerHTML = legendNum + ". " + results[i].meaning;
                 if(vert == 1) {
+                    letters[arrInd].node.setAttribute("wordLenVert", results[i].phrase.length);
                     legendDown.appendChild(hint);
                 }
                 else {
+                    letters[arrInd].node.setAttribute("wordLenHoriz", results[i].phrase.length);
                     legendAcross.appendChild(hint);
                 }
                 letters[arrInd].hintNumNode.classList.remove("hintNumInvis");
@@ -250,9 +252,11 @@ function respondWithCrossword(crossword, req, res) {
             }
             if(vert == 1) {
                 letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
+                letters[arrInd].node.setAttribute("wordCoordVert", j);
             }
             else {
                 letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
+                letters[arrInd].node.setAttribute("wordCoordHoriz", j);
             }
             if(results[i].vertical == 1) {
                 row++;    
