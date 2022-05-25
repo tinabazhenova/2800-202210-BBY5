@@ -30,7 +30,7 @@ const connection = mysql.createConnection({
     host: process.env.DB_HOST,
     port: 3306,
     user: "root",
-    password: "",
+    password: process.env.DB_PASSWORD,
     database: "COMP2800"
 });
 
@@ -884,7 +884,7 @@ app.post("/setTitle", (req, res) => {
 
 // RUN SERVER
 
-let port = 8000;
+let port = process.env.PORT || 8000;
 
 function wordguessExpiry(prep, word_id, callback) {
     return function() {
