@@ -1,51 +1,43 @@
 async function createLobby(game) {
-    if (!sessionStorage.getItem("inRoom")) {
-        try {
-            let response = await fetch("/createLobby", {
-                method: "GET",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            });
-            let parsed = await response.json();
-            sessionStorage.setItem("code", parsed.code);
-            sessionStorage.setItem("game", game);
-            sessionStorage.setItem("isHost", true);
-            window.location.href = "/" + game;
-        } catch (error) {
-            console.log(error);
-        }
-    } else {
-        alert("You are already in a room");
+    try {
+        let response = await fetch("/createLobby", {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        });
+        let parsed = await response.json();
+        sessionStorage.setItem("code", parsed.code);
+        sessionStorage.setItem("game", game);
+        sessionStorage.setItem("isHost", true);
+        window.location.href = "/" + game;
+    } catch (error) {
+        console.log(error);
     }
 }
 
 async function joinLobby(code) {
-    if (!sessionStorage.getItem("inRoom")) {
-        try {
-            let response = await fetch("/joinLobby", {
-                method: "POST",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({code: code}),
-            });
-            let parsed = await response.json();
-            let game = parsed.game;
-            sessionStorage.setItem("game", game);
-            sessionStorage.setItem("isHost", false);
-            if (parsed.approved) {
-                window.location.href = "/" + game;
-            } else {
-                document.getElementById("error").innerHTML = parsed.errorMessage;
-            }
-        } catch (error) {
-            console.log(error);
+    try {
+        let response = await fetch("/joinLobby", {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({code: code}),
+        });
+        let parsed = await response.json();
+        sessionStorage.setItem("code", code);
+        sessionStorage.setItem("game", parsed.game);
+        sessionStorage.setItem("isHost", false);
+        if (parsed.approved) {
+            window.location.href = "/" + parsed.game;
+        } else {
+            document.getElementById("error").innerHTML = parsed.errorMessage;
         }
-    } else {
-        document.getElementById("error").innerHTML = "You are already in a room";
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -93,3 +85,5 @@ document.getElementById("findLobbyForm").addEventListener("submit", (e) => {
 document.getElementById("shop").addEventListener("click", (e) => {
     window.location.href = "/shop";
 });
+
+document.getElementById("back").style.visibility = "hidden";

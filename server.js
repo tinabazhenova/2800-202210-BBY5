@@ -55,7 +55,6 @@ const sharedsession = require("express-socket.io-session");
 io.use(sharedsession(session));
 io.on("connection", socket => {
     var session = socket.handshake.session;
-    console.log(session.username + " socket connection successful");
     //socket.on functions are used to determine how to respond to upcoming messages
     socket.on("joinRoom", (code, game) => {
         /* socket.join() function is used to let users join a room
@@ -82,8 +81,13 @@ io.on("connection", socket => {
             results.forEach(m => socket.emit("postMessage", m.username + ": " + m.content, m.title));
         })
     });
+    socket.on("preventDuplicates", (code) => {
+        rooms.forEach(r => {
+            if (r.code == code) io.to(r.code).emit("forceDisconnect", "You joined a room in another tab", session.username);
+        });
+    });
     socket.on("updateGameStatus", (code, isInGame) => {
-        rooms.some(r => {
+        rooms.forEach(r => {
             if (r.code == code) r.inGame = isInGame;
         });
         io.to(code).emit("displayGameContainer", isInGame);
@@ -96,11 +100,23 @@ io.on("connection", socket => {
             io.to(room).emit("postMessage", session.username + ": " + message, session.title);
         });
     });
-    socket.on("sendWordguessAttempt", (results, room) => {
+    socket.on("sendWordguessAttempted", (results, room) => {
         io.to(room).emit("wordguessAttempted", results);
     });
-    socket.on("sendWordguessResult", (guessed, meaning, room) => {
-        io.to(room).emit("wordguessCompleted", guessed, meaning);
+    socket.on("sendWordguessResult", (guessed, word, room) => {
+        io.to(room).emit("wordguessCompleted", guessed, word);
+    });
+    socket.on("sendWordmatchFetched", (results, room) => {
+        io.to(room).emit("wordmatchFetched", results);
+    });
+    socket.on("sendWordmatchCorrect", (btnDiv, values, room) => {
+        io.to(room).emit("wordmatchCorrect", btnDiv, values);
+    });
+    socket.on("sendWordmatchWrong", (e, room) => {
+        io.to(room).emit("wordmatchWrong", e);
+    });
+    socket.on("sendWordmatchFinished", (results, room) => {
+        io.to(room).emit("wordmatchFinished", results);
     });
     socket.on("disconnect", () => {
         /* I wish I could send the user's current room code as a parameter here but I can't
@@ -113,7 +129,7 @@ io.on("connection", socket => {
                 /* if the user (that just disconnected from socket) was the host of the room
                 or the last user in that room, remove it from the list */
                 if (rooms[i].host == session.username || rooms[i].users.length == 0) {
-                    io.to(rooms[i].code).emit("disconnectAll");
+                    io.to(rooms[i].code).emit("forceDisconnect", "The host has left the room");
                     rooms.slice(i--, 1);
                 }
             }
@@ -333,7 +349,6 @@ app.post("/try_crossword", function(req, res) {
 app.post("/try_word", function(req, res) {
     let hardCodedWord = guessWord.phrase;
     let tempEnteredWord = req.body.word.toUpperCase();
-    console.log("entered: " + tempEnteredWord);
     let checkResult = Array.apply(null, Array(hardCodedWord.length)).map(function(x, i) {
         let temp = tempEnteredWord[i];
         let result = 0;
@@ -350,7 +365,7 @@ app.post("/try_word", function(req, res) {
     for (let i = 0; i < checkResult.length; ++i)
         if (checkResult[i] == 2)
             strictMatches++;
-    let result = { matches: checkResult };
+    let result = { matches: checkResult, word: guessWord };
     if (strictMatches == hardCodedWord.length)
         result.meaning = guessWord.meaning;
     res.send(result);
@@ -434,11 +449,11 @@ app.post("/login", function(req, res) {
   );
 });
 
+let guest = 10;
 app.post("/guest_login", function(req, res) {
     req.session.loggedIn = true;
     req.session.isGuest = true;
-    let guestCode = Math.floor((Math.random() * 9000)) + 1000;
-    req.session.username = "Guest_"+ guestCode;
+    req.session.username = "Guest_" + (guest++);
     req.session.save((error) => {
         if (error) console.log(error);
     })
@@ -481,14 +496,14 @@ app.post("/loginAsAdmin", function(req, res) {
 
 app.post('/upload', upload.single("image"), function(req, res) {
     if (!req.file) {
-        console.log("No file upload");
+        console.log("No file uploaded");
     } else {
         console.log(req.file.filename);
         var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename;
         var insertData = `UPDATE ${userTable} SET user_image = ? WHERE ${userTable}.ID = '${req.session.userID}'`;
         connection.query(insertData, [imgsrc], (err, result) => {
             if (err) throw err;
-            console.log("file uploaded");
+            console.log("File uploaded");
             console.log(result);
         });
         req.session.userImage = imgsrc;
@@ -712,6 +727,14 @@ app.get("/startWordMatch", function (req, res) {
     );
   });
   
+app.post("/addUserPoints", function(req, res) {
+    connection.query(`UPDATE BBY_5_user SET bbscore = bbscore + ?, xscore = xscore + ?, yscore = yscore + ?,
+     zscore = zscore + ? WHERE ID = ?`,
+    [req.body.bb, req.body.x, req.body.y, req.body.z, req.session.userID], (error, results) => {
+        if (error) console.log(error);
+    });
+});
+
 app.get("/shop", function(req, res) {
     if (req.session.loggedIn && !req.session.isGuest) {
         let dom = wrap("./app/html/shop.html", req.session);
@@ -912,7 +935,7 @@ const wordguessExpiryUnit = 'h';
 
 class Preparation extends EventEmitter {
     perform() {
-        connection.query(`SELECT wg.word_id, start_time, phrase, meaning FROM BBY_5_wordguess as wg, BBY_5_master as master where wg.word_id = master.word_id order by start_time desc limit 1`, (error, results) => {
+        connection.query(`SELECT wg.word_id, start_time, phrase, meaning, value, generation FROM BBY_5_wordguess as wg, BBY_5_master as master where wg.word_id = master.word_id order by start_time desc limit 1`, (error, results) => {
             if (error || !results) {
                 if (error) console.log(error);
             } else

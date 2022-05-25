@@ -11,8 +11,9 @@
 <button type="button" id="endGame">Confirm</button>
 
 <div id="gameContainer">
+  <span id="resultsText"></span><br>
   <div class="wordguess_grid">
-    <div class="rectangle"></div>
+    <div class="rectangle" id="rec1"></div>
   </div>
   <div class="popup" onclick="toggleExplanation()">
     History
@@ -70,7 +71,7 @@
 
 <div id="modalBackground">
   <div id="modalContainer">
-      <span>The host has left the room.</span>
+      <span id="modalText"></span>
       <button onclick="window.location.href = '/main'">Leave</button>
   </div>
 </div>
