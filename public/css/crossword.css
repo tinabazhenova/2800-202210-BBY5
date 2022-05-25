@@ -36,6 +36,17 @@ button {
     border: 5px solid var(--color4);
 }
 
+.match {
+    background-color: lime;
+}
+
+@media (min-width: 720px) {
+.crossword {
+    display: flex;
+    flex-direction: horizontal;
+}
+}
+
 .letterBox {
     width: 40px;
     padding: 0.5%;

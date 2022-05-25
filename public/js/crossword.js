@@ -51,7 +51,15 @@ async function guess(wordId, word) {
         body: JSON.stringify(contents)
     });
     let parsed = await check.json();
-    console.log(parsed);
+    let match = parsed.match;
+    if(match) {
+        console.log("MATCH");
+        let str = `.hint[wordId="${wordId}"]`;
+        let hint = $(str)[0];
+        hint.classList.add("match");
+    }
+    else 
+        console.log("MISMATCH");
 }
 
 function editWord(dir, ev) {

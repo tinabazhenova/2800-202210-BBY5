@@ -256,6 +256,8 @@ function respondWithCrossword(crossword, req, res) {
                     letters[arrInd].legendNum = ++legendNum;
                 }
                 let hint = dom.window.document.createElement("div");
+                hint.classList.add("hint");
+                hint.setAttribute("wordId", results[i].word_id);
                 hint.innerHTML = legendNum + ". " + results[i].meaning;
                 if(vert == 1) {
                     letters[arrInd].node.setAttribute("wordLenVert", results[i].phrase.length);
