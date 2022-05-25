@@ -4,6 +4,9 @@
   font-weight: normal;
   font-style: normal;
 }
+:root {
+  --color6: #2ACF01;
+}
 body{
   font-family: 'atwriter';
   margin: 0;
@@ -22,7 +25,6 @@ body{
 }
 
 h1{
-  /* position: absolute; */
   white-space: nowrap;
   animation: anim 10s linear infinite ;
 }
@@ -57,7 +59,19 @@ h1{
 }
 
 input[type='submit'] {
-  /* position: center; */
+  font-family: 'atwriter';
+  padding: 12px;
+  font-size: 1em;
+  background-color: var(--color1);
+  border-radius: 25px;
+  min-width: 40%;
+  width: auto;
+  color: var(--color2);
+  cursor: pointer;
+  margin: 10px;
+}
+
+button[type='submit'] {
   font-family: 'atwriter';
   padding: 12px;
   font-size: 1.2em;
@@ -68,27 +82,18 @@ input[type='submit'] {
   cursor: pointer;
 }
 
-button[type='submit'] {
-  /* position: center; */
-  font-family: 'atwriter';
-  padding: 12px;
-  font-size: 1.2em;
-  background-color: rgb(139, 0, 105);
-  border: 3px solid #f2f2f8;
-  border-radius: 3px;
-  color: #f2f2f8;
-  cursor: pointer;
+input[value='LOGOUT'] {
+  background-color: var(--color6);
 }
 
 .center{
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 footer {
-  /* grid-row-start: 2;
-  grid-row-end: 3; */
   background-color: rgb(217, 241, 250);
   color: black;
   text-align: center;
@@ -156,4 +161,8 @@ th, td {
 
 .addToCart:hover {
   background-color: grey;
+}
+
+#profile-picture{
+  margin: 20px;
 }
