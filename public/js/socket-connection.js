@@ -85,3 +85,5 @@ document.getElementById("findLobbyForm").addEventListener("submit", (e) => {
 document.getElementById("shop").addEventListener("click", (e) => {
     window.location.href = "/shop";
 });
+
+document.getElementById("back").style.visibility = "hidden";
