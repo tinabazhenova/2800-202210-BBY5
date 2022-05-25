@@ -82,7 +82,7 @@ class Matcher {
                 }
             }
 
-            socket.emit("sendWordguessAttempt", socketContents, code);
+            socket.emit("sendWordguessAttempted", socketContents, code);
 
             if (parsed.meaning) {
                 socket.emit("sendWordguessResult", true, parsed.meaning, code);

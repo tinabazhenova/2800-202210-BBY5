@@ -4,12 +4,8 @@ let code = sessionStorage.getItem("code");
 let game = sessionStorage.getItem("game");
 document.getElementById("roomInfo").innerHTML = game + " " + code;
 
+socket.emit("preventDuplicates", code);
 socket.emit("joinRoom", code, game);
-
-/* when a user enters a room, set sessionStorage to true
-so that they cannot join another room in another browser
-and vice versa */
-//window.onload = () => alert("hi");
 
 const form = document.getElementById("chatForm");
 
@@ -39,8 +35,12 @@ socket.on("announceMessage", message => {
   displayMessage(message);
 });
 
-socket.on("disconnectAll", () => {
-  document.getElementById("modalBackground").style.display = "block";
+socket.on("forceDisconnect", (message, username) => {
+  if (!username || (username && username.toUpperCase() == document.getElementById("name").innerHTML.substring(7))) {
+    socket.disconnect();
+    document.getElementById("modalBackground").style.display = "block";
+    document.getElementById("modalText").innerHTML = message;
+  }
 });
 
 function displayMessage(message, title) {
