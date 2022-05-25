@@ -646,6 +646,14 @@ app.get("/startWordMatch", function (req, res) {
     );
   });
   
+app.post("/addUserPoints", function(req, res) { 
+    connection.query(`UPDATE BBY_5_user SET bbscore = bbscore + ?, xscore = xscore + ?, yscore = yscore + ?,
+     zscore = zscore + ? WHERE ID = ?`,
+    [req.body.bb, req.body.x, req.body.y, req.body.z, req.session.userID], (error, results) => {
+        if (error) console.log(error);
+    });
+});
+
 app.get("/shop", function(req, res) {
     if (req.session.loggedIn && !req.session.isGuest) {
         let dom = wrap("./app/html/shop.html", req.session);
