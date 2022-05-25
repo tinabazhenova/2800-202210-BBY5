@@ -18,6 +18,21 @@ const { JSDOM } = require("jsdom");
 const { BlockList } = require("net");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
+const moment = require("moment");
+const schedule = require("node-schedule");
+const EventEmitter = require('events');
+
+const mysql = require("mysql2");
+const { runInNewContext } = require("vm");
+const { redirect } = require("express/lib/response");
+const res = require("express/lib/response");
+const connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    port: 3306,
+    user: "root",
+    password: process.env.DB_PASSWORD,
+    database: "COMP2800"
+});
 
 // static path mappings
 app.use("/js", express.static("./public/js"));
@@ -50,7 +65,9 @@ io.on("connection", socket => {
             rooms.push({
                 "code": code,
                 "users": [],
-                "game": game
+                "host": session.username,
+                "game": game,
+                "inGame": false
             });
         }
         socket.join(code);
@@ -58,21 +75,46 @@ io.on("connection", socket => {
         // use emit() to send messages to clients. see the document for detials. 
         io.to(code).emit("updateUserlist", rooms[rooms.length - 1].users);
         io.to(code).emit("announceMessage", session.username + " joined the room.");
+        // prints all recorded chat messages to the client
+        connection.query(`SELECT * FROM BBY_5_chat WHERE room = ?`,
+        [code], (error, results) => {
+            if (error) console.log(error);
+            results.forEach(m => socket.emit("postMessage", m.username + ": " + m.content, m.title));
+        })
+    });
+    socket.on("updateGameStatus", (code, isInGame) => {
+        rooms.some(r => {
+            if (r.code == code) r.inGame = isInGame;
+        });
+        io.to(code).emit("displayGameContainer", isInGame);
     });
     //receives a message from one client and sends it to all other clients so that everyone (in the same room) can see the message
     socket.on("sendMessage", (message, room) => {
-        io.to(room).emit("postMessage", session.username + ": " + message, session.title);
+        connection.query(`INSERT INTO BBY_5_chat VALUES (?, ?, ?, ?, ?)`,
+        [null, session.username, session.title, message, room], (error) => {
+            if (error) console.log(error);
+            io.to(room).emit("postMessage", session.username + ": " + message, session.title);
+        });
+    });
+    socket.on("sendWordguessAttempt", (results, room) => {
+        io.to(room).emit("wordguessAttempted", results);
+    });
+    socket.on("sendWordguessResult", (guessed, meaning, room) => {
+        io.to(room).emit("wordguessCompleted", guessed, meaning);
     });
     socket.on("disconnect", () => {
+        /* I wish I could send the user's current room code as a parameter here but I can't
+        so I had to iterating through the list of rooms to find the room the user was in */
         for (var i = 0; i < rooms.length; i++) {
             if (rooms[i].users.includes(session.username)) {
                 rooms[i].users.splice(rooms[i].users.indexOf(session.username), 1);
-                if (rooms[i].users.length == 0) {
-                    rooms.splice(i, 1);
-                    i--;
-                } else {
-                    io.to(rooms[i].code).emit("updateUserlist", rooms[rooms.length - 1].users);
-                    io.to(rooms[i].code).emit("announceMessage", session.username + " left the room.");
+                io.to(rooms[i].code).emit("updateUserlist", rooms[i].users, rooms[i].host);
+                io.to(rooms[i].code).emit("announceMessage", session.username + " left the room.");
+                /* if the user (that just disconnected from socket) was the host of the room
+                or the last user in that room, remove it from the list */
+                if (rooms[i].host == session.username || rooms[i].users.length == 0) {
+                    io.to(rooms[i].code).emit("disconnectAll");
+                    rooms.slice(i--, 1);
                 }
             }
         }
@@ -108,7 +150,6 @@ app.use(
 
 app.use(session);
 app.get("/", function(req, res) {
-
     if (req.session.loggedIn) {
         res.redirect("/main");
     } else {
@@ -120,18 +161,6 @@ app.get("/", function(req, res) {
     }
 });
 
-const mysql = require("mysql2");
-const { runInNewContext } = require("vm");
-const { redirect } = require("express/lib/response");
-const res = require("express/lib/response");
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    port: 3306,
-    user: "root",
-    password: "",
-    database: "COMP2800"
-});
-
 const userTable = 'BBY_5_user';
 const itemTable = 'BBY_5_item';
 
@@ -139,11 +168,7 @@ function wrap(filename, session) {
     let template = fs.readFileSync("./app/html/template.html", "utf8");
     let dom = new JSDOM(template);
     dom.window.document.getElementById("templateContent").innerHTML = fs.readFileSync(filename, "utf8");
-    if (session.username == null) {
-        dom.window.document.getElementById("name").innerHTML = "Guest";
-    } else {
-        dom.window.document.getElementById("name").innerHTML = "WELCOME " + session.username.toUpperCase();
-    }
+    dom.window.document.getElementById("name").innerHTML = "WELCOME " + session.username.toUpperCase();
 
   return dom;
 }
@@ -156,29 +181,13 @@ function respondWithWord(guessWord, req, res) {
     res.send(dom.serialize());
 }
 
+let guessWord = null;
 app.get("/wordguess", async function(req, res) {
     if (req.session.loggedIn) {
-        let guessWord = req.session.guessWord;
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
-        if (!guessWord) {
-            connection.query(`SELECT phrase, meaning FROM BBY_5_master WHERE LENGTH(PHRASE) >= 3 AND LENGTH(PHRASE) < 9`, (error, results) => {
-                if (error || !results || !results.length) {
-                    if (error) console.log(error);
-                    let dom = wrap("./app/html/wordguess_wait.html", req.session);
-                    res.send(dom.serialize());
 
-                } else {
-                    req.session.guessWord = guessWord = results[0].phrase.toUpperCase();
-                    req.session.guessMeaning = results[0].meaning;
-                    req.session.save(function(err) {});
-                    respondWithWord(guessWord, req, res);
-                }
-            });
-        } else {
-            respondWithWord(guessWord, req, res);
-        }
-
+        respondWithWord(guessWord.phrase, req, res);
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
@@ -189,13 +198,15 @@ function respondWithCrossword(crossword, req, res) {
     let dom = wrap("./app/html/crossword.html", req.session);
     let rect = dom.window.document.getElementById("box0");
     let grid = dom.window.document.getElementById("crossword0");
+    let legendAcross = dom.window.document.getElementById("legendAcross");
+    let legendDown = dom.window.document.getElementById("legendDown");
     let results = crossword.words;
     let w = crossword.width;
     let h = crossword.height;
+    let legendNum = 0;
 
     let letters = new Array(w * h);
     for(let i = 0; i < results.length; ++i) {
-        // console.log ("checking " + results[i].phrase);
         let col = results[i].col;
         let row = results[i].row_num;
         let vert = results[i].vertical;
@@ -210,17 +221,34 @@ function respondWithCrossword(crossword, req, res) {
                     console.log("Malformed crossword at row " + row + ", col " + col);
                 }
             } else {
-                let newNode = rect.cloneNode(true);
-                letters[arrInd] = {letter: results[i].phrase[j], node: newNode};
+                let newNodeContainer = rect.cloneNode(true);
+                let newNode = newNodeContainer.getElementsByTagName("input")[0];
+                let hintNum = newNodeContainer.getElementsByTagName("div")[0];
+                letters[arrInd] = {letter: results[i].phrase[j], node: newNode, hintNumNode: hintNum};
                 newNode.setAttribute("row", row);
                 newNode.setAttribute("col", col);
                 newNode.setAttribute("vertical", results[i].vertical);
-                newNode.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
-                newNode.id = null;
-                grid.appendChild(newNode);
+                newNodeContainer.setAttribute("style", `grid-row: ${row + 1}; grid-column: ${col + 1};`);
+                newNodeContainer.id = null;
+                grid.appendChild(newNodeContainer);
             }
             if(j == 0) {
                 letters[arrInd].node.setAttribute("startingVert", letters[arrInd].node.getAttribute("vertical", vert));
+                if(letters[arrInd].legendNum == null) {
+                    letters[arrInd].legendNum = ++legendNum;
+                }
+                let hint = dom.window.document.createElement("div");
+                hint.innerHTML = legendNum + ". " + results[i].meaning;
+                if(vert == 1) {
+                    letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
+                    legendDown.appendChild(hint);
+                }
+                else {
+                    letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
+                    legendAcross.appendChild(hint);
+                }
+                letters[arrInd].hintNumNode.classList.remove("hintNumInvis");
+                letters[arrInd].hintNumNode.innerHTML = legendNum;
             }
             if(results[i].vertical == 1) {
                 row++;    
@@ -229,13 +257,15 @@ function respondWithCrossword(crossword, req, res) {
             }
         }
     }
+    rect.remove();
     grid.setAttribute("style", `grid-template-columns: repeat(${w}, 1fr);`);
 
-    for(let i = 0; i < crossword.length; ++i) {
-        // console.log(crossword[i]);
-    }
     rect.setAttribute("visible", false);
     res.send(dom.serialize());
+}
+
+function sanitizeWord(phrase) {
+    return phrase.replace(/[\s`'-]/g, "").toUpperCase();
 }
 
 app.get("/crossword", function(req, res) {
@@ -244,7 +274,7 @@ app.get("/crossword", function(req, res) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         if(!crossword){
-            connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 1`, (error, results) => {
+            connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 2`, (error, results) => {
                 if (error || !results || !results.length) {
                     console.log(error);
                     // Need to handle errors properly
@@ -253,7 +283,7 @@ app.get("/crossword", function(req, res) {
 
                 } else {
                     for(let i = 0; i < results.length; ++i) {
-                        results[i].phrase = results[i].phrase.replace(/[\s`'-]/g, "").toUpperCase();
+                        results[i].phrase = sanitizeWord(results[i].phrase);
                     }
                     let w = 0;
                     let h = 0;
@@ -264,8 +294,14 @@ app.get("/crossword", function(req, res) {
                         let minh = results[i].row_num + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
                         if(minh > h)
                             h = minh;
-                        // console.log(results[i], minw, minh);
                     }
+                    
+                    results.sort(function(a, b) {
+                        if(a.row_num == b.row_num)
+                            return a.col - b.col;
+                        return a.row_num - b.row_num;
+                    })
+
                     crossword = {words: results, width: w, height: h};
                     req.session.crossword = crossword;
                     respondWithCrossword(crossword, req, res);
@@ -280,9 +316,9 @@ app.get("/crossword", function(req, res) {
 })
 
 app.post("/try_word", function(req, res) {
-    console.log("hardcoded word: {}", req.session.guessWord);
-    let hardCodedWord = req.session.guessWord;
+    let hardCodedWord = guessWord.phrase;
     let tempEnteredWord = req.body.word.toUpperCase();
+    console.log("entered: " + tempEnteredWord);
     let checkResult = Array.apply(null, Array(hardCodedWord.length)).map(function(x, i) {
         let temp = tempEnteredWord[i];
         let result = 0;
@@ -301,7 +337,7 @@ app.post("/try_word", function(req, res) {
             strictMatches++;
     let result = { matches: checkResult };
     if (strictMatches == hardCodedWord.length)
-        result.meaning = req.session.guessMeaning;
+        result.meaning = guessWord.meaning;
     res.send(result);
 })
 
@@ -367,8 +403,9 @@ app.post("/login", function(req, res) {
             req.session.userImage = results[0].user_image;
             req.session.pass = results[0].password;
             req.session.title = results[0].title;
-            req.session.save(function(err) {
-                // session saved. For analytics, we could record this in a DB
+            req.session.isGuest = false;
+            req.session.save((error) => {
+                if (error) console.log(error);
             });
 
         // all we are doing as a server is telling the client that they
@@ -385,13 +422,16 @@ app.post("/login", function(req, res) {
 app.post("/guest_login", function(req, res) {
     req.session.loggedIn = true;
     req.session.isGuest = true;
+    let guestCode = Math.floor((Math.random() * 9000)) + 1000;
+    req.session.username = "Guest_"+ guestCode;
+    req.session.save((error) => {
+        if (error) console.log(error);
+    })
     res.send({});
 });
 // Notice that this is a "POST"
 app.post("/loginAsAdmin", function(req, res) {
     res.setHeader("Content-Type", "application/json");
-
-    console.log("What was sent", req.body.username, req.body.password);
     connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
         if (error || !results || !results.length) {
             console.log(error);
@@ -408,8 +448,9 @@ app.post("/loginAsAdmin", function(req, res) {
             req.session.isAdmin = results[0].is_admin;
             req.session.userImage = results[0].user_image;
             req.session.pass = results[0].password;
-            req.session.save(function(err) {
-                // session saved. For analytics, we could record this in a DB
+            req.session.title = results[0].title;
+            req.session.save((error) => {
+                if (error) console.log(error);
             });
 
         // all we are doing as a server is telling the client that they
@@ -427,22 +468,22 @@ app.post('/upload', upload.single("image"), function(req, res) {
     if (!req.file) {
         console.log("No file upload");
     } else {
-        console.log(req.file.filename)
-        var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename
-        var insertData = `UPDATE ${userTable} SET user_image = ? WHERE ${userTable}.ID = '${req.session.userID}'`
+        console.log(req.file.filename);
+        var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename;
+        var insertData = `UPDATE ${userTable} SET user_image = ? WHERE ${userTable}.ID = '${req.session.userID}'`;
         connection.query(insertData, [imgsrc], (err, result) => {
             if (err) throw err;
             console.log("file uploaded");
             console.log(result);
-        })
-        req.session.userImage = imgsrc
-        res.redirect("/profile")
+        });
+        req.session.userImage = imgsrc;
+        res.redirect("/profile");
     }
 });
 
 app.get("/profile", function(req, res) {
     // check for a session first!
-    if (req.session.loggedIn) {
+    if (req.session.loggedIn && !req.session.isGuest) {
 
         let profileDOM = wrap("./app/html/profile.html",req.session);
         // let profile = fs.readFileSync("./app/html/profile.html", "utf8");
@@ -451,7 +492,7 @@ app.get("/profile", function(req, res) {
 
         profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
         // profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
-            if (req.session.name== "adult" && req.session.pass== "sk8erboi") {
+            if (req.session.name== "adult" && req.session.pass== "sk8terboi") {
                 profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
                 profileDOM.window.document.querySelector(".banner").style.display = "block";
             } else if(req.session.userImage == "NULL") {
@@ -592,9 +633,14 @@ app.get("/createLobby", (req, res) => {
     if (req.session.loggedIn) {
         res.setHeader("Content-Type", "application/json");
         let newCode = Math.floor((Math.random() * 900)) + 100;
-        while (rooms.some(r => r.code = newCode)) {
+        while (rooms.some(r => r.code == newCode && rooms[i].users.length > 0)) {
             newCode = Math.floor((Math.random() * 900)) + 100;
         }
+        // delete all chat record from that room and remove the room
+        connection.query(`DELETE FROM BBY_5_chat WHERE room = ?`,
+        [newCode], (error) => {
+            if (error) console.log(error);
+        });
         res.send({ code: newCode });
     } else {
         res.redirect("/");
@@ -603,15 +649,20 @@ app.get("/createLobby", (req, res) => {
 
 app.post("/joinLobby", (req, res) => {
     if (req.session.loggedIn) {
-        let code = req.body.code;
         let gameType = "";
+        let isInGame = false;
         if (rooms.some(r => {
                 gameType = r.game;
-                return r.code == code
+                isInGame = r.inGame;
+                return r.code == req.body.code;
             })) {
-            res.send({ found: true, game: gameType })
+                if (!isInGame) {
+                    res.send({ approved: true, game: gameType })
+                } else {
+                    res.send({ approved: false, errorMessage: "The game is in progress" })
+                }
         } else {
-            res.send({ found: false })
+            res.send({ approved: false, errorMessage: "Room not found" });
         }
   } else {
     res.redirect("/");
@@ -773,20 +824,51 @@ app.get("/getInventoryItems", (req, res) => {
 });
 
 app.post("/useItem", (req, res) => {
-    connection.query(req.body.item.query,
+    let baseTitle;
+    let baseLevel;
+    switch (req.body.item.ID) {
+        case 1:
+            baseTitle = "Boomer";
+            baseLevel = "bblevel";
+            break;
+        case 2:
+            baseTitle = "Gen X";
+            baseLevel = "xlevel";
+            break;
+        case 3:
+            baseTitle = "Millennial";
+            baseLevel = "ylevel";
+            break;
+        case 4:
+            baseTitle = "Zoomer";
+            baseLevel = "zlevel";
+            break;
+        default:
+            console.log("Item ID not found: " + req.body.item.ID);
+    }
+    connection.query(`UPDATE bby_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
     [req.session.userID], (error) => {
         if (error) {
             console.log(error);
-        } else {
-            connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
-            [req.session.userID, req.body.item.ID], (error) => {
-                if (error) console.log(error);
-            });
-            connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
-            [req.session.userID, req.body.item.ID], (error) => {
-                if (error) console.log(error);
-            });
         }
+        if (req.session.title.includes(baseTitle)) {
+            let newTitle = `Lv. ${parseInt(req.session.title.substring(4)) + 1} ${baseTitle}`;
+            connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
+            [newTitle, req.session.userID], (error) => {
+                    if (error) console.log(error);
+                }
+            );
+            req.session.title = newTitle;
+            req.session.save();
+        }
+    });
+    connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
+    [req.session.userID, req.body.item.ID], (error) => {
+        if (error) console.log(error);
+    });
+    connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
+    [req.session.userID, req.body.item.ID], (error) => {
+        if (error) console.log(error);
     });
     res.send();
 });
@@ -810,8 +892,111 @@ app.post("/setTitle", (req, res) => {
 
 // RUN SERVER
 
-let port = 8000;
+let port = process.env.PORT || 8000;
 
-server.listen(port, function() {
-    console.log("Listening on port " + port + "!");
+function wordguessExpiry(prep, word_id, callback) {
+    return function() {
+      return callback(prep, word_id);
+    }
+}
+
+const wordguessExpiryPeriod = 12;
+const wordguessExpiryUnit = 'h';
+
+class Preparation extends EventEmitter {
+    perform() {
+        connection.query(`SELECT wg.word_id, start_time, phrase, meaning FROM BBY_5_wordguess as wg, BBY_5_master as master where wg.word_id = master.word_id order by start_time desc limit 1`, (error, results) => {
+            if (error || !results) {
+                if (error) console.log(error);
+            } else
+            if (results.length) {
+                let startDate = new Date(results[0].start_time);
+                results[0].start_date = startDate;
+                let expiryMoment = moment(startDate).add(wordguessExpiryPeriod, wordguessExpiryUnit);
+                let expiry = expiryMoment.toDate();
+                let nowMoment = moment(new Date());
+                let now = nowMoment.toDate();
+                if(now.getTime() >= expiry.getTime()) {
+                    this.emit("wordguessCreateAndLaunch", results[0].word_id);
+                } else {
+                    this.beforeReady(results[0]);
+                    this.emit("ready", results[0]);
+                }
+            } else {
+                this.emit("wordguessCreateAndLaunch", 0);
+            }
+        });
+    }
+
+    beforeReady(result) {
+        result.phrase = sanitizeWord(result.phrase);
+        guessWord = result;
+        console.log("Wordguess today: " + guessWord.phrase);
+        this.launchScheduler(result);
+    }
+
+    launchScheduler(result) {
+        let expiryMoment = moment(result.start_date).add(wordguessExpiryPeriod, wordguessExpiryUnit);
+        let expiry = expiryMoment.toDate();
+        let nowMoment = moment(new Date());
+        // let now = nowMoment.toDate();
+        let diff = expiryMoment.diff(nowMoment, 'seconds');
+        console.log("Planning wordguess expiry later in " + diff + " seconds at " + expiry);
+        var schJob = schedule.scheduleJob(expiry, wordguessExpiry(this, result.word_id, function(prep, word_id){
+            console.log("Scheduled wordguess expiry was triggered");
+            prep.emit("wordguessUpdate", word_id);
+        }));
+    }
+
+    updateWordguess(word_id, launchAfter) {
+        connection.query(`SELECT word_id, phrase, meaning FROM BBY_5_master WHERE word_id > ${word_id} order by word_id asc limit 1`, (error, results) => {
+            if (error || !results || !results.length) {
+                console.log("Failed to update wordguess");
+                if (error)
+                    console.log(error);
+            } else {
+                this.emit("selectedNewGuessWord", results[0], launchAfter);
+            }
+        });
+    }
+
+    insertWordguess(result, launchAfter) {
+        let thisDate = new Date();
+        let thisMoment = moment(thisDate).format("YYYY-MM-DD HH:mm:ss");
+        console.log("Selected new guessWord, passing result " + result.phrase);
+        console.log("launchAfter: " + launchAfter);
+        result.start_date = thisDate;
+        connection.query(`INSERT into BBY_5_wordguess (word_id, start_time) values (${result.word_id}, "${thisMoment}")`, (error, results, fields) => {
+            if (error) {
+                console.log("Failed to insert new wordguess into the DB: " + error);
+            } else {
+                this.beforeReady(result);
+                if(launchAfter) {
+                    this.emit("ready", result);
+                }
+            }
+        });
+    }
+}
+
+
+
+let prep = new Preparation();
+prep.on("ready", function(result) {
+    server.listen(port, function() {
+        console.log("Listening on port " + port + "!");
+    });
 });
+prep.on("wordguessCreateAndLaunch", function(word_id) {
+    console.log("wordguessCreateAndLaunch");
+    prep.updateWordguess(word_id, true);
+});
+prep.on("wordguessUpdate", function(word_id) {
+    console.log("wordguessUpdate");
+    prep.updateWordguess(word_id, false);
+});
+prep.on("selectedNewGuessWord", function(result, launchAfter) {
+    console.log("wordguessUpdate");
+    prep.insertWordguess(result, launchAfter);
+});
+prep.perform();

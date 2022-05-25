@@ -65,7 +65,6 @@ function startWordMatch() {
   const xhr = new XMLHttpRequest();
   xhr.onload = function () {
     if (this.readyState == XMLHttpRequest.DONE) {
-      // 200 means everthing worked
       if (xhr.status === 200) {
         let data = JSON.parse(this.responseText);
         if (data.status == "success") {
@@ -90,21 +89,20 @@ function startWordMatch() {
             .getElementById("btn4")
             .classList.remove("hide", "correct", "incorrect");
 
-          document.getElementById("start").classList.add("hide");
+          document.getElementById("startGame").classList.add("hide");
 
           //Question is placed in div4,
           document.getElementById("div4").classList.remove("hide");
           let genPhrase = document.getElementById("div4");
           genPhrase.innerHTML = "Guess this phrase: " + data.rows[0].phrase;
 
-          // //Answer meaning is placed randomly in button 1-4
+          //Answer meaning is placed randomly in button 1-4
           let randomNumber = Math.floor(Math.random() * 4 + 1);
           let randomAnswerBtn = "";
 
           randomAnswerBtn = document.getElementById("btn" + randomNumber);
           console.log(randomAnswerBtn);
           randomAnswerBtn.innerHTML = data.rows[0].meaning;
-
           randomAnswerBtn.onclick = () => {
             correctAnswer(randomAnswerBtn, data.rows[0]);
           };

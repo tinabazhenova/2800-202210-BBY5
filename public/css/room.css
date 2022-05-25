@@ -1,0 +1,23 @@
+#gameContainer {
+    display: none;
+}
+
+#endGame {
+    display: none;
+}
+
+#chatDialog, #chatForm {
+    display: none;
+}
+  
+#chatSend {
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color5);
+    border-radius: 25px;
+    min-width: 20%;
+    width: auto;
+    color: var(--color2);
+    cursor: pointer;
+}

@@ -10,7 +10,6 @@ async function refreshUserPoints() {
       }
     });
     let parsed = await response.json();
-    console.log(parsed);
     document.getElementById("userPoints").innerHTML = `B: ${parsed.points.bbscore} / X: ${parsed.points.xscore} / Y: ${parsed.points.yscore} / Z: ${parsed.points.zscore}`;
   } catch (error) {
     console.log(error);
@@ -188,7 +187,10 @@ let modal = document.getElementById("modalBackground");
 let cart = document.getElementById("cartContainer");
 
 document.getElementById("viewCart").onclick = () => cart.style.display = "block";
-document.getElementById("closeCart").onclick = () => cart.style.display = "none";
+document.getElementById("closeCart").onclick = () => {
+  cart.style.display = "none";
+  document.getElementById("cartMessage").innerHTML = "";
+}
 document.getElementById("purchaseCart").onclick = () => purchaseCart();
 
 document.getElementById("cencelOrder").onclick = () => {
@@ -215,13 +217,14 @@ document.getElementById("cheat").onclick = () => cheat();
 
 async function cheat() {
   try {
-    await fetch("/shopCheat", {
+    fetch("/shopCheat", {
       method: "POST",
       headers: {
         "Accept": 'application/json',
         "Content-Type": 'application/json'
       }
     });
+    refreshUserPoints();
   } catch (error) {
     console.log(error);
   }

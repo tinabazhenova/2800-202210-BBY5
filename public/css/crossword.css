@@ -36,17 +36,28 @@ button {
     border: 5px solid var(--color4);
 }
 
-input {
-    width: 50px;
+.letterBox {
+    width: 40px;
     padding: 0.5%;
     box-sizing: border-box;
     border: none;
-    background-color: var(--backColor);
     color: var(--color4);
     font-weight: bold;
     font-size: 100%;
-    border: 5px solid var(--color4);
     justify-content: center;
+    text-transform: uppercase; 
+    background-color: transparent;
+    margin-left: 20%;
+}
+
+.letterBox:focus{
+    outline: none;
+}
+
+.letterContainer {
+    background-color: var(--backColor);
+    border: solid 2px black;
+    text-align: left;
 }
 
 .crossword_board_grid{
@@ -56,5 +67,14 @@ input {
 }
 
 #box0 {
+    visibility: hidden;
+}
+
+.hintNum {
+    font-size: xx-small;
+    padding: 10%;
+}
+
+.hintNumInvis {
     visibility: hidden;
 }
