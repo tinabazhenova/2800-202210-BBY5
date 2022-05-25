@@ -1,11 +1,11 @@
-document.getElementById("start").onclick = () => {
+document.getElementById("startGame").onclick = () => {
   let gameCount = 0;
   if (gameCount < 5) {
     gameCount++;
     startWordMatch();
   } else {
-    document.getElementById("start").innerHTML = "END GAME";
-    document.getElementById("start").onclick = () => finishGame();
+    document.getElementById("startGame").innerHTML = "END GAME";
+    document.getElementById("startGame").onclick = () => finishGame();
   }
 };
 
@@ -37,7 +37,7 @@ function startWordMatch() {
             .getElementById("btn4")
             .classList.remove("hide", "correct", "incorrect");
 
-          document.getElementById("start").classList.add("hide");
+          document.getElementById("startGame").classList.add("hide");
 
           //Question is placed in div4,
           document.getElementById("div4").classList.remove("hide");
@@ -123,8 +123,8 @@ function correctAnswer(btnDiv, values) {
   document.getElementById("btn3").disabled = true;
   document.getElementById("btn4").disabled = true;
 
-  document.getElementById("start").classList.remove("hide");
-  document.getElementById("start").innerHTML = "NEXT QUESTION";
+  document.getElementById("startGame").classList.remove("hide");
+  document.getElementById("startGame").innerHTML = "NEXT QUESTION";
 }
 
 function wrongAnswer(e) {
@@ -135,8 +135,8 @@ function wrongAnswer(e) {
   document.getElementById("btn3").disabled = true;
   document.getElementById("btn4").disabled = true;
 
-  document.getElementById("start").classList.remove("hide");
-  document.getElementById("start").innerHTML = "NEXT QUESTION";
+  document.getElementById("startGame").classList.remove("hide");
+  document.getElementById("startGame").innerHTML = "NEXT QUESTION";
 }
 
 // Add scores to user profile

@@ -3,7 +3,7 @@
   <div id="parent">
     <div id="roomInfo"></div>
     <div id="userList" style="border: 1px solid black"></div>
-    <div id="div2"><button id="start" class="defaultButton">START</button></div>
+    <div id="div2"><button id="startGame" class="defaultButton">START</button></div>
     <div id="div3" class="hide">NEXT QUESTION</div>
     <div id="div4" class="hide"><p>GUESS THIS PHRASE: <br></p></div>
     <div id="div5"><button id="btn1" class="hide defaultButton">Answer:</button></div>
@@ -16,8 +16,8 @@
     <div id="div12" class="hide">Current Z Points:</div>
 
     <div id="div13">
-      <button onclick="showDetails('chat-dialog', 'chatForm')" class="chatButton">Chat</button>
-      <div id="chat-dialog"></div>
+      <button onclick="showDetails('chatDialog', 'chatForm')" class="chatButton">Chat</button>
+      <div id="chatDialog"></div>
       <form id="chatForm">
         <input type="text" id="chatInput" />
         <button type="submit" id="send" class="chatButton">Send</button>

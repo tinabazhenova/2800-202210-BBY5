@@ -147,7 +147,6 @@ app.use(
 
 app.use(session);
 app.get("/", function(req, res) {
-
     if (req.session.loggedIn) {
         res.redirect("/main");
     } else {
@@ -428,15 +427,10 @@ app.post("/login", function(req, res) {
   );
 });
 
-let guests = [];
-
 app.post("/guest_login", function(req, res) {
     req.session.loggedIn = true;
     req.session.isGuest = true;
-    let guestCode = Math.floor((Math.random() * 900)) + 100;
-    while (guests.includes(guestCode)) {
-        guestCode = Math.floor((Math.random() * 900)) + 100;
-    }
+    let guestCode = Math.floor((Math.random() * 9000)) + 1000;
     req.session.username = "Guest_"+ guestCode;
     req.session.save((error) => {
         if (error) console.log(error);
@@ -497,7 +491,7 @@ app.post('/upload', upload.single("image"), function(req, res) {
 
 app.get("/profile", function(req, res) {
     // check for a session first!
-    if (req.session.loggedIn) {
+    if (req.session.loggedIn && !req.session.isGuest) {
 
         let profileDOM = wrap("./app/html/profile.html",req.session);
         // let profile = fs.readFileSync("./app/html/profile.html", "utf8");
