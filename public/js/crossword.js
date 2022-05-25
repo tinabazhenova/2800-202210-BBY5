@@ -59,8 +59,8 @@ ready(function() {
             if(ev.inputType == "deleteContentBackward") {
                 ev.srcElement.value = " ";
             }
-            moveToCoord(row, col, vert);
-
+            if (!moveToCoord(row, col, vert))
+                ev.srcElement.select();
         })
     }
 })
