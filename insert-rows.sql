@@ -7,7 +7,7 @@ INSERT INTO BBY_5_user (ID, user_name, first_name, last_name, password, is_admin
 INSERT INTO BBY_5_user (ID, user_name, first_name, last_name, password, is_admin) VALUES (5, 'keith', 'keith', 'tang', 'a123', 0);
 INSERT INTO BBY_5_user (ID, user_name, first_name, last_name, password, is_admin) VALUES (6, 'arnold', 'arnold', 'schwarzenegger ', 'illbeback', 0);
 INSERT INTO BBY_5_user (ID, user_name, first_name, last_name, password, is_admin) VALUES (7, 'sarvmr', 'Naz', 'Mohammadi', 'admin1', 1);
-INSERT INTO BBY_5_user (user_name, first_name, last_name, password, is_admin) VALUES ('adult', 'Steve', 'Buscemi', 'sk8terboi', 0);
+INSERT INTO BBY_5_user (user_name, first_name, last_name, password, is_admin) VALUES ('adult', 'Steve', 'Buscemi', 'sk8erboi', 0);
 INSERT INTO BBY_5_user (user_name, first_name, last_name, password, is_admin) VALUES ('Nerdslayer0', 'Gabriel', 'Fairbairn', 'asdf', 1);
 
 INSERT INTO BBY_5_master (word_ID, phrase, meaning, history, value, generation) VALUES (1, 'Go postal', 'To suddenly behave in a very violent or angry way', 'The expression derives from a series of incidents from 1986 onward with USPS', 200, 'X');

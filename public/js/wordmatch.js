@@ -1,4 +1,5 @@
 let gameCount = 0;
+let gamePlays = 5;
 
 let currentBBScore = 0;
 let currentXScore = 0;
@@ -9,7 +10,6 @@ socket.on("displayGameContainer", (display) => {
   if (display){
     document.getElementById("startGame").style.display = "none";
     document.getElementById("gameContainer").style.display = "inline-block";
-    gameCount = 0;
     startWordMatch();
   } else {
     document.getElementById("resultsContainer").classList.add("hide");
@@ -19,19 +19,62 @@ socket.on("displayGameContainer", (display) => {
 });
 
 document.getElementById("continueGame").onclick = () => {
-  if (gameCount < 2) {
-    gameCount++;
+  if (gameCount < gamePlays) {
     startWordMatch();
   } else {
-    document.getElementById("gameContainer").style.display = "none";
-    document.getElementById("resultsContainer").classList.remove("hide");
-    document.getElementById("resultsText").innerHTML = "Congrats!"
-    document.getElementById("continueGame").classList.add("hide");
-    document.getElementById("endGame").style.display = "inline-block";
+    let socketContents = {B: currentBBScore, X: currentXScore, Y: currentYScore, Z: currentZScore};
+    socket.emit("sendWordmatchFinished", socketContents, code);
+    gameCount = 0;
+    currentBBScore = 0;
+    currentXScore = 0;
+    currentYScore = 0;
+    currentZScore = 0;
   }
-};
+}
+
+socket.on("wordmatchFinished", (results) => {
+  document.getElementById("gameContainer").style.display = "none";
+  document.getElementById("resultsContainer").classList.remove("hide");
+  document.getElementById("continueGame").classList.add("hide");
+  document.getElementById("endGame").style.display = "inline-block";
+  document.getElementById("resultsText").innerHTML = `Points earned<br>B-points: ${results.B}<br>X-points: ${results.X}<br>Y-points: ${results.Y}<br>Z-points: ${results.Z}`;
+
+  addUserPoints(results.B, results.X, results.Y, results.Z);
+
+  document.getElementById("div9").innerHTML =
+    "Current BB Points: " + 0;
+  document.getElementById("div10").innerHTML =
+    "Current X Points: " + 0;
+  document.getElementById("div11").innerHTML =
+    "Current Y Points: " + 0;
+  document.getElementById("div12").innerHTML =
+    "Current Z Points: " + 0;
+});
+
+async function addUserPoints(bb, x, y, z) {
+  try {
+    let response = await fetch("/addUserPoints", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code, bb, x, y, z }),
+    });
+    let parsed = await response.json();
+    if (parsed.approved) {
+      console.log("User scores added!");
+      console.log("body: " + body);
+    } else {
+      console.log("Error: " + error);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 function startWordMatch() {
+  gameCount++;
   const xhr = new XMLHttpRequest();
   xhr.onload = function () {
     if (this.readyState == XMLHttpRequest.DONE) {
@@ -159,11 +202,6 @@ function wrongAnswer(e) {
   if (sessionStorage.getItem("isHost")) {
     socket.emit("sendWordmatchWrong", e, code);
   }
-}
-
-// Add scores to user profile
-function finishGame() {
-  
 }
 
 function showDetails() {
