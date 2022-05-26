@@ -2,7 +2,7 @@
   --color1: #ff6542;
   --color2: #f2f2f8;
   --color3: rgb(217, 241, 250);
-  --color4: black;
+  --color4: #564154;
   --color5: rgb(139, 0, 105);
   --color6: #779FA1;
 }
@@ -16,9 +16,8 @@
 }
 
 .popup {
-  margin-top: 1%;
   position: relative;
-  display: inline-block;
+  display: grid;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -63,39 +62,32 @@
 
 @-webkit-keyframes fadeIn {
   from {
-      opacity: 0;
+    opacity: 0;
   }
+
   to {
-      opacity: 1;
+    opacity: 1;
   }
 }
 
 @keyframes fadeIn {
   from {
-      opacity: 0;
+    opacity: 0;
   }
+
   to {
-      opacity: 1;
+    opacity: 1;
   }
 }
 
-#parent {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(2, 0.5fr) 5fr repeat(2, 0.5fr) 1fr;
-  grid-column-gap: 0px;
-  grid-row-gap: 0px;
-  height: 80vh;
+.answerBtn {
+  width: 80%;
+  overflow-wrap: break-word;
 }
 
 /*Room number*/
 #roomInfo {
   grid-area: 1 / 1 / 2 / 3;
-}
-
-/*chat-info*/
-#userList {
-  grid-area: 2 / 1 / 3 / 3;
 }
 
 /*start*/
@@ -107,13 +99,9 @@
   grid-area: 5 / 1 / 6 / 3;
 }
 
-/*Chat*/
-#chatDiv {
-  grid-area: 6 / 1 / 7 / 3;
-}
-
 #gameContainer {
   grid-area: 4 / 1 / 5 / 3;
+  grid-row-gap: 5px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 0.5fr) repeat(2, 1fr) repeat(5, 0.3fr);
@@ -152,7 +140,7 @@
 }
 
 /*History popup info*/
-#popup {
+.popup {
   grid-area: 5 / 1 / 6 / 3;
   text-align: center;
 }
@@ -181,16 +169,25 @@
   display: none;
 }
 
-#chat-box {
-  display: none;
-}
-
-button {
+/* button {
   background-color: var(--color1);
   color: var(--color2);
   border-radius: 10px;
   min-width: 40%;
   width: auto;
+} */
+
+button {
+  font-family: 'atwriter';
+  padding: 12px;
+  font-size: 1em;
+  background-color: var(--color1);
+  border-radius: 20%;
+  width: auto;
+  color: var(--color2);
+  cursor: pointer;
+  min-width: 5%;
+  margin-bottom: 2%;
 }
 
 .correct {
@@ -201,89 +198,97 @@ button {
   background-color: red;
 }
 
+#resultsText {
+  font-size: 200%;
+}
+
 @media screen and (max-width: 750px) {
   #parent {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(5, 0.5fr) repeat(4, 1fr) repeat(4, 0.3fr) 0.5fr 1fr;
+    grid-template-rows: repeat(2, .5fr) repeat(4, 1fr) repeat(5, .3fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
-    height: 65vh;
+    height: 80vh;
   }
-
+  
   /*Room number*/
   #roomInfo {
     grid-area: 1 / 1 / 2 / 3;
   }
-
-  /*chat-info*/
-  #userList {
-    grid-area: 2 / 1 / 3 / 3;
-  }
-
+  
   /*start*/
   #mainButton {
     grid-area: 3 / 1 / 4 / 3;
   }
-
-  /*next question*/
-  #questionButton {
-    grid-area: 3 / 1 / 4 / 3;
+  
+  #resultsContainer {
+    grid-area: 5 / 1 / 6 / 3;
   }
-
+  
+  #gameContainer {
+    grid-area: 4 / 1 / 5 / 3;
+    display: grid;
+    grid-row-gap: 5px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 0.5fr) repeat(2, auto) repeat(5, 0.3fr);
+  }
+  
+  /*next question - inside game container*/
+  #questionButton {
+    grid-area: 1 / 1 / 2 / 3;
+  }
+  
   /*Guess this phrase*/
   #phrase {
     font-size: 28pt;
-    grid-area: 4 / 1 / 5 / 3;
+    grid-area: 2 / 1 / 3 / 3;
     padding-bottom: 5vh;
   }
-
+  
   /*Answer 1*/
   #answer1 {
-    grid-area: 5 / 1 / 6 / 3;
+    grid-area: 3 / 1 / 4 / 3;
   }
-
+  
   /*Answer 2*/
   #answer2 {
-    grid-area: 6 / 1 / 7 / 3;
+    grid-area: 4 / 1 / 5 / 3;
   }
-
+  
   /*Answer 3*/
   #answer3 {
-    grid-area: 7 / 1 / 8 / 3;
+    grid-area: 5 / 1 / 6 / 3;
   }
-
+  
   /*Answer 4*/
   #answer4 {
-    grid-area: 8 / 1 / 9 / 3;
+    grid-area: 6 / 1 / 7 / 3;
   }
-
+  
+  /*History popup info*/
+  .popup {
+    grid-area: 7 / 1 / 8 / 3;
+    text-align: center;
+  }
+  
   /*z score*/
   #bbPoints {
-    grid-area: 9 / 1 / 10 / 3;
+    grid-area: 8 / 1 / 9 / 3;
   }
-
+  
   /*x score*/
   #xPoints {
-    grid-area: 10 / 1 / 11 / 3;
+    grid-area: 9 / 1 / 10 / 3;
   }
-
+  
   /*y score*/
   #yPoints {
-    grid-area: 11 / 1 / 12 / 3;
+    grid-area: 10 / 1 / 11 / 3;
   }
-
+  
   /*bb score*/
   #zPoints {
-    grid-area: 13 / 1 / 14 / 3;
-  }
-
-  /*Chat*/
-  #chatDiv {
-    grid-area: 14 / 1 / 15 / 3;
-  }
-
-  #resultsContainer {
-    grid-area: 15 / 1 / 16 / 3;
+    grid-area: 11 / 1 / 12 / 3;
   }
 }

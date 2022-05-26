@@ -1,54 +1,77 @@
-.profileButton {
-  font-family: 'atwriter';
-  padding: 12px;
-  font-size: 1em;
-  background-color: var(--color1);
-  border-radius: 25px;
-  width: 200px;
-  color: var(--color2);
-  cursor: pointer;
-  margin: 10px;
+input[type='submit'] {
+    border-radius: 10px;
+    margin-top: 2%;
 }
 
 #picture_src {
-  width: 300px;
-  height: 300px;
-  border: 2px solid grey; 
+    width: 300px;
+    height: 300px;
+    border: 2px solid grey;
 }
 
-.banner{
-  margin-bottom: 3vh;
-  width: 100%;
-  height: 20vh;
-  overflow: hidden;
-  display: none;
+.banner {
+    margin-bottom: 3vh;
+    width: 100%;
+    height: 20vh;
+    overflow: hidden;
+    display: none;
 }
 
-h1{
-  white-space: nowrap;
-  animation: anim 10s linear infinite ;
+h1 {
+    white-space: nowrap;
+    animation: anim 10s linear infinite;
 }
 
-@keyframes anim{
-  0%{transform:translateX(100%);}
-  100%{transform: translateX(-100%);}
-} 
+@keyframes anim {
+    0% {
+        transform: translateX(100%);
+    }
 
-#user_info{
-  margin-left: auto;
-  margin-right: auto;
-  width: 70%;
-  max-width: 500px;
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
-table, th, td {
-  border: 1px solid black;
-  margin: 30px;
-  background-color: rgb(186, 212, 212);
+#user_info {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    max-width: 500px;
 }
 
-th, td {
-  padding: 10px ;
+table,
+th,
+td {
+    border: 1px solid black;
+    margin: 30px;
+    background-color: rgba(224, 203, 168);
+}
+
+th,
+td {
+    padding: 10px;
+}
+
+input[value='LOGOUT'] {
+  background-color: var(--color6);
+}
+
+#title {
+    border: 1px solid grey;
+    background-color: white;
+    padding: 5px;
+    font-size: 125%;
+}
+
+#selectTitle {
+    width: 250px;
+    height: 50px;
+    margin-top: 10px;
+    font-size: 125%;
+}
+
+option {
+    font-size: 50%;
 }
 
 
@@ -72,55 +95,52 @@ option {
 
 /* INVENTORY */
 #inventory {
-  width: 100%;
-  height: 200px;
-  margin: 10px 0;
+    width: 100%;
+    margin: 10px 0;
 }
 
 #itemList {
-  width: 90%;
-  overflow: auto;
-  margin: auto;
+    width: 90%;
+    margin: 5% auto;
 }
 
 .itemContainer {
-  display: block;
-  float: left;
-  border: 1px solid black;
-  background-color: white;
-  width: 99%;
-  height: 40px;
+    display: block;
+    float: left;
+    border: 1px solid black;
+    background-color: white;
+    width: 99%;
+    height: 40px;
 }
 
 .itemImage {
-  width: 30px;
-  height: 30px;
-  float: left;
-  margin-top: 5px;
-  margin-left: 5px;
+    width: 30px;
+    height: 30px;
+    float: left;
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 .itemName {
-  float: left;
-  font-size: 20px;
-  margin-top: 7px;
-  margin-left: 10px;
+    float: left;
+    font-size: 20px;
+    margin-top: 7px;
+    margin-left: 10px;
 }
 
 .itemUse {
-  background-color: transparent;
-  border: 1px solid grey;
-  float: right;
-  width: 45px;
-  height: 30px;
-  margin-top: 5px;
-  margin-right: 5px;
+    border: 1px solid grey;
+    float: right;
+    width: 45px;
+    height: 30px;
+    margin-top: 5px;
+    margin-right: 5px;
 }
 
 .addToCart:hover {
-  background-color: grey;
+    background-color: grey;
 }
 
-#profile-picture{
-  margin: 20px;
+#profile-picture {
+    margin: 20px;
 }

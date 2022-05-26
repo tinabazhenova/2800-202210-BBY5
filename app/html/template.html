@@ -1,33 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <title>Gen We</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/css/template.css" rel="stylesheet" />
     <link href="/css/modal.css" rel="stylesheet" />
     <link href="/imgs/favicon.ico" rel="icon" type="image/x-icon" />
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="wrapper">
-      <div id="back">
-        <button onclick="history.back()" class="defaultButton">Back</button>
-      </div>
-      <div class="user_name" id="name"></div>
+        <div id="back">
+            <button id="backButton" onclick="history.back()" class="defaultButton">Back</button>
+        </div>
+        <div class="user_name" id="name"></div>
 
-      <div id="templateContent"></div>
+        <div id="templateContent"></div>
 
-      <footer>
-        GEN WE PROJECT &amp; &copy;BCIT 2022
-      </footer>
+        <footer>
+            GEN WE PROJECT &amp; &copy;BCIT 2022
+        </footer>
     </div>
+</body>
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"
-      integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-  </body>
 </html>

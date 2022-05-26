@@ -134,10 +134,8 @@ ready(function() {
 function ready(callback) {
     if (document.readyState != "loading") {
         callback();
-        console.log("ready state is 'complete'");
     } else {
         document.addEventListener("DOMContentLoaded", callback);
-        console.log("Listener was invoked");
     }
 }
 
@@ -169,7 +167,6 @@ socket.on("displayGameContainer", (display) => {
 });
 
 socket.on("wordguessAttempted", (results) => {
-    console.log(results);
     for (let i = 0; i < matcher.word_length; i++) {
         document.getElementById("rec" + (results.attempt * matcher.word_length + i + 1)).classList.add(results.keyColors[i]);
         document.getElementById("rec" + (results.attempt * matcher.word_length + i + 1)).innerHTML = results.keyLetters[i];
@@ -180,7 +177,6 @@ socket.on("wordguessAttempted", (results) => {
 
 socket.on("wordguessCompleted", (guessed, word) => {
     document.getElementById("resultsText").style.display = "inline-block";
-    console.log(word);
     if (guessed) {
         let bb = x = y = z = 0;
         if (word.generation == "B") {
@@ -194,7 +190,6 @@ socket.on("wordguessCompleted", (guessed, word) => {
         }
         document.getElementById("resultsText").innerHTML = `You guessed right! You earned ${word.value} ${word.generation}-points.<br>Click the Meaning button to learn this word.`
         document.getElementById("explanation").innerHTML = word.meaning;
-        console.log("points:" + bb, x, y, z);
         addUserPoints(bb, x, y, z);
     } else {
         document.getElementById("resultsText").innerHTML = `You failed!<br>Better luck next time.`
