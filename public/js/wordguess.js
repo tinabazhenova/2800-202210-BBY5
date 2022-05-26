@@ -194,7 +194,7 @@ socket.on("wordguessCompleted", (guessed, word) => {
         }else if (word.generation == "Z") {
             z = word.value;
         }
-        document.getElementById("resultsText").innerHTML = `You guessed right! You earned ${word.value} ${word.generation}-points.<br>Click the history button to learn this word.`
+        document.getElementById("resultsText").innerHTML = `You guessed right! You earned ${word.value} ${word.generation}-points.<br>Click the Meaning button to learn this word.`
         document.getElementById("explanation").innerHTML = word.meaning;
         console.log("points:" + bb, x, y, z);
         addUserPoints(bb, x, y, z);
