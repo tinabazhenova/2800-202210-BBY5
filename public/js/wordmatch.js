@@ -1,5 +1,5 @@
 let gameCount = 0;
-let gamePlays = 2;
+let gamePlays = 5;
 
 let currentBBScore = 0;
 let currentXScore = 0;
