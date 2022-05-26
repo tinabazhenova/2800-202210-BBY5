@@ -99,7 +99,6 @@ class Matcher {
             console.log(error);
         }
     }
-
 }
 
 let matcher = new Matcher();
