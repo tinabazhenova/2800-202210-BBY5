@@ -234,4 +234,4 @@ async function cheat() {
   }
 }
 
-document.getElementById("back").style.visibility = "hidden";
+// document.getElementById("back").style.visibility = "hidden";

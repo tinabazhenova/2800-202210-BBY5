@@ -26,6 +26,7 @@ button {
 
 h3{
     color: var(--color1);
+    margin:1%;
 }
 
 #chatInput {
@@ -47,7 +48,7 @@ h3{
 #crosswordLegend{
     display: flex;
     color: var(--color4);
-    padding-top: 5%;
+    padding-top: 1%;
 
 }
 
@@ -58,12 +59,11 @@ h3{
     border-radius: 20px;
     height: min-content;
     width: 50%;
-    margin: 5%;
-    padding: 5%;
+    margin: 1%;
+    padding: 1%;
 }
 
 .letterBox {
-    /* padding: 0.5%; */
     box-sizing: border-box;
     border: none;
     color: var(--color4);
@@ -72,7 +72,6 @@ h3{
     justify-content: center;
     text-transform: uppercase; 
     background-color: transparent;
-    /* margin-left: 20%; */
 }
 
 .letterBox:focus{
@@ -90,7 +89,7 @@ h3{
     grid-template-columns: repeat(7, 1fr);
     width: min-content;
     height: min-content;
-    margin: 10%
+    margin: 1%
 }
 
 #box0 {
@@ -124,7 +123,7 @@ h3{
 
 @media (max-width: 750px) {
     .crossword_board_grid{
-        margin: 2%;
+        margin: 1%;
     }
 
     .letterBox {
@@ -138,7 +137,7 @@ h3{
     }
 
     .crossword_board_grid{
-        margin-top: 10%;
+        margin-top: 1%;
     }
 
     #crosswordLegend{

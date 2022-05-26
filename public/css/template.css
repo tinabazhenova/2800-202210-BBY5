@@ -73,7 +73,16 @@ input[type='submit'] {
     cursor: pointer;
 }
 
+.wrapper {
+    display: grid;
+    grid-template-columns: .15fr 1fr;
+    grid-template-rows: .08fr 1fr .05fr;
+    width: 100%;
+    height: 98%;
+}
+
 .user_name {
+    grid-area: 1 / 1 / 2 / 3;
     font-size: 36px;
     text-align: center;
     color: var(--color5);
@@ -81,26 +90,22 @@ input[type='submit'] {
 }
 
 #back {
+    grid-area: 1 / 1 / 2 / 2;
     width: 10%;
     margin-left: 1%;
     margin-top: 1%;
-}
-
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 98%;
+    z-index: 5;
 }
 
 #templateContent {
+    grid-area: 2 / 1 / 3 / 3;
     flex-grow: 1;
     text-align: center;
     overflow: auto;
 }
 
 footer {
-    grid-area: 11 / 1 / 12 / 4;
+    grid-area: 3 / 1 / 4 / 3;
     color: var(--color4);
     background-color: var(--color3);
     text-align: center;

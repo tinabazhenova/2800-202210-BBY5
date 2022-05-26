@@ -93,15 +93,6 @@ input[value='LOGOUT'] {
   margin-bottom: 20px;
 }
 
-footer {
-  background-color: rgb(217, 241, 250);
-  color: black;
-  text-align: center;
-  justify-content: center;
-  padding: 10px;
-  font-size: 1.0em;
-}
-
 table, th, td {
   border: 1px solid black;
   margin: 30px;
