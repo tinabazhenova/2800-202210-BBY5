@@ -28,21 +28,13 @@ body {
     background-size: cover;
 }
 
-/* html,
-body {
-    height: 95%;
-    padding: 0%;
-    margin: 0%;
-} */
-
-
 .defaultButton {
     font-family: 'atwriter';
     padding: 12px;
     font-size: 1em;
     background-color: var(--color1);
     border-radius: 10px;
-    min-width: 40%;
+    min-width: 200px;
     width: auto;
     color: var(--color2);
     cursor: pointer;
@@ -66,9 +58,13 @@ input[type='submit'] {
 }
 
 #back {
-    width: 10%;
+    position: fixed;
     margin-left: 1%;
     margin-top: 1%;
+}
+
+#back > button {
+    min-width: 80px;
 }
 
 .wrapper {

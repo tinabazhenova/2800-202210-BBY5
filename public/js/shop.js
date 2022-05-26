@@ -217,21 +217,4 @@ refreshUserPoints();
 refreshShop();
 refreshCart();
 
-document.getElementById("cheat").onclick = () => cheat();
-
-async function cheat() {
-  try {
-    fetch("/shopCheat", {
-      method: "POST",
-      headers: {
-        "Accept": 'application/json',
-        "Content-Type": 'application/json'
-      }
-    });
-    refreshUserPoints();
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 document.getElementById("back").style.visibility = "hidden";
