@@ -1,19 +1,19 @@
-@font-face {
+.profileButton {
   font-family: 'atwriter';
-  src: url('/fonts/atwriter.ttf');
-  font-weight: normal;
-  font-style: normal;
+  padding: 12px;
+  font-size: 1em;
+  background-color: var(--color1);
+  border-radius: 25px;
+  width: 200px;
+  color: var(--color2);
+  cursor: pointer;
+  margin: 10px;
 }
-:root {
-  --color6: #2ACF01;
-}
-body{
-  font-family: 'atwriter';
-  margin: 0;
-  height: 130vh;
-  background-color:#ceecf8;
-  background: url("/imgs/we1.png") center/cover fixed;
-  backdrop-filter: blur(6px);
+
+#picture_src {
+  width: 300px;
+  height: 300px;
+  border: 2px solid grey; 
 }
 
 .banner{
@@ -32,74 +32,13 @@ h1{
 @keyframes anim{
   0%{transform:translateX(100%);}
   100%{transform: translateX(-100%);}
-}
-.container {
-  margin: 0 auto;
-  padding: 0px;
-  position:relative;    
-}
-
-.content{
-  height: 500px;
-}
-
-#profile_name{
-  font-family:'atwriter';
-  font-size:40px;
-  margin-top: 50px;
-  margin-left: 65px;
-  margin-right: 65px;
-  color:rgb(139, 0, 105);
-  text-align:center;
-}
+} 
 
 #user_info{
   margin-left: auto;
   margin-right: auto;
-}
-
-input[type='submit'] {
-  font-family: 'atwriter';
-  padding: 12px;
-  font-size: 1em;
-  background-color: var(--color1);
-  border-radius: 25px;
-  min-width: 40%;
-  width: auto;
-  color: var(--color2);
-  cursor: pointer;
-  margin: 10px;
-}
-
-button[type='submit'] {
-  font-family: 'atwriter';
-  padding: 12px;
-  font-size: 1.2em;
-  background-color: rgb(139, 0, 105);
-  border: 3px solid #f2f2f8;
-  border-radius: 3px;
-  color: #f2f2f8;
-  cursor: pointer;
-}
-
-input[value='LOGOUT'] {
-  background-color: var(--color6);
-}
-
-.center{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-footer {
-  background-color: rgb(217, 241, 250);
-  color: black;
-  text-align: center;
-  justify-content: center;
-  padding: 10px;
-  font-size: 1.0em;
+  width: 70%;
+  max-width: 500px;
 }
 
 table, th, td {
@@ -110,6 +49,25 @@ table, th, td {
 
 th, td {
   padding: 10px ;
+}
+
+
+#title {
+  border: 1px solid grey;
+  background-color: white;
+  padding: 5px;
+  font-size: 125%;
+}
+
+#selectTitle {
+  width: 250px;
+  height: 50px;
+  margin-top: 10px;
+  font-size: 125%;
+}
+
+option {
+  font-size: 50%;
 }
 
 /* INVENTORY */

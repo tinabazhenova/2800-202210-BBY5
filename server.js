@@ -486,15 +486,14 @@ app.get("/profile", function(req, res) {
         let profileDOM = wrap("./app/html/profile.html",req.session);
         // let profile = fs.readFileSync("./app/html/profile.html", "utf8");
         // let profileDOM = new JSDOM(profile);
-        console.log(profileDOM.window.document.getElementById("profile_name").innerHTML);
 
         profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
         // profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
             if (req.session.name== "adult" && req.session.pass== "sk8terboi") {
                 profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
                 profileDOM.window.document.querySelector(".banner").style.display = "block";
-            } else if(req.session.userImage == "NULL") {
-                profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
+            } else if(req.session.userImage == null) {
+                profileDOM.window.document.getElementById("picture_src").src = "/imgs/my-app-dummy.jpg";
             } else {
                 profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
             }
