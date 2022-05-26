@@ -24,6 +24,10 @@ button {
     margin-bottom: 2%;
 }
 
+h3{
+    color: var(--color1);
+}
+
 #chatInput {
     width: 15%;
     padding: 0.5%;
@@ -37,27 +41,29 @@ button {
 }
 
 .match {
-    background-color: lime;
+    color: var(--color7);
 }
 
-@media (min-width: 720px) {
-    .crossword {
-        display: flex;
-        flex-direction: horizontal;
-    }
-    .letterBox {
-        width: 40px;
-    }
+#crosswordLegend{
+    display: flex;
+    color: var(--color4);
+    padding-top: 5%;
+
 }
 
-@media (max-width: 720px) {
-    .letterBox {
-        width: 20px;
-    }
+#legendAcross,
+#legendDown{
+    background-color: rgba(224, 203, 168, .7);
+    text-align:left;
+    border-radius: 20px;
+    height: min-content;
+    width: 50%;
+    margin: 5%;
+    padding: 5%;
 }
 
 .letterBox {
-    padding: 0.5%;
+    /* padding: 0.5%; */
     box-sizing: border-box;
     border: none;
     color: var(--color4);
@@ -66,7 +72,7 @@ button {
     justify-content: center;
     text-transform: uppercase; 
     background-color: transparent;
-    margin-left: 20%;
+    /* margin-left: 20%; */
 }
 
 .letterBox:focus{
@@ -84,6 +90,7 @@ button {
     grid-template-columns: repeat(7, 1fr);
     width: min-content;
     height: min-content;
+    margin: 10%
 }
 
 #box0 {
@@ -92,9 +99,50 @@ button {
 
 .hintNum {
     font-size: xx-small;
-    padding: 10%;
+    height: min-content;
 }
 
 .hintNumInvis {
     visibility: hidden;
+}
+
+
+@media (min-width: 720px) {
+    .crossword {
+        display: flex;
+        flex-direction: row;
+    }
+    .letterBox {
+        width: 40px;
+    }
+
+    #crosswordLegend{
+        flex-direction: row;
+    
+    }
+}
+
+@media (max-width: 720px) {
+    .crossword_board_grid{
+        margin: 2%;
+    }
+
+    .letterBox {
+        width: 4vw;
+        height: 2vh;
+        text-align: center;
+    }
+
+    .hintNum{
+        height:40%;
+    }
+
+    .crossword_board_grid{
+        margin-top: 10%;
+    }
+
+    #crosswordLegend{
+
+        flex-direction: column;
+    }
 }
