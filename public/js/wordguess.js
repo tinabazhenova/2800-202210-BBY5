@@ -15,7 +15,7 @@ class Matcher {
         for (let i = 1; i < this.word_length * this.guess_attempts; ++i) {
             this.letters[i] = rec.cloneNode(true);
             grid.appendChild(this.letters[i]);
-            this.letters[i - 1].id = 'rec' + i;
+            this.letters[i].id = 'rec' + (i + 1);
         }
     }
 
@@ -82,18 +82,18 @@ class Matcher {
                 }
             }
 
-            socket.emit("sendWordguessAttempt", socketContents, code);
+            socket.emit("sendWordguessAttempted", socketContents, code);
 
             if (parsed.meaning) {
-                socket.emit("sendWordguessResult", true, parsed.meaning, code);
-                document.getElementById("endGame").style.display = "block";
+                socket.emit("sendWordguessResult", true, parsed.word, code);
+                document.getElementById("endGame").style.display = "inline-block";
             } else if (this.word < 4) {
                 ++this.word; // we give one more option to enter the word
                 this.position = 0; //start the position from 0
                 this.tempEnteredWord = '';
             } else {
-                socket.emit("sendWordguessResult", false, parsed.meaning, code);
-                document.getElementById("endGame").style.display = "block";
+                socket.emit("sendWordguessResult", false, parsed.word, code);
+                document.getElementById("endGame").style.display = "inline-block";
             }
         } catch (error) {
             console.log(error);
@@ -161,9 +161,11 @@ socket.on("displayGameContainer", (display) => {
     if (display){
       document.getElementById("startGame").style.display = "none";
       document.getElementById("gameContainer").style.display = "block";
+      document.getElementById("resultsText").style.display = "none";
+      document.getElementById("explanation").innerHTML = "Guess first";
       matcher.reset();
     } else {
-      document.getElementById("startGame").style.display = "block";
+      document.getElementById("startGame").style.display = "inline-block";
       document.getElementById("gameContainer").style.display = "none";
     }
 });
@@ -178,10 +180,25 @@ socket.on("wordguessAttempted", (results) => {
     }
 });
 
-socket.on("wordguessCompleted", (guessed, meaning) => {
+socket.on("wordguessCompleted", (guessed, word) => {
+    document.getElementById("resultsText").style.display = "inline-block";
+    console.log(word);
     if (guessed) {
-        document.getElementById("explanation").innerHTML = "You guessed right! The meaning is: " + meaning;
+        let bb = x = y = z = 0;
+        if (word.generation == "B") {
+            bb = word.value;
+        } else if (word.generation == "X") {
+            x = word.value;
+        } else if (word.generation == "Y") {
+            y = word.value;
+        }else if (word.generation == "Z") {
+            z = word.value;
+        }
+        document.getElementById("resultsText").innerHTML = `You guessed right! You earned ${word.value} ${word.generation}-points.<br>Click the history button to learn this word.`
+        document.getElementById("explanation").innerHTML = word.meaning;
+        console.log("points:" + bb, x, y, z);
+        addUserPoints(bb, x, y, z);
     } else {
-        alert('Game over');
+        document.getElementById("resultsText").innerHTML = `You failed!<br>Better luck next time.`
     }
 });
