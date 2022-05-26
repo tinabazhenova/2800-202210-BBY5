@@ -13,17 +13,10 @@
     --color5: #88498F;
 }
 
-html,
-body {
-    height: 100%;
-    padding: 0%;
-    margin: 0%;
-}
-
 body {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto;
     padding: 0%;
     margin: 0;
     font-family: "atwriter";
@@ -35,12 +28,20 @@ body {
     background-size: cover;
 }
 
+/* html,
+body {
+    height: 95%;
+    padding: 0%;
+    margin: 0%;
+} */
+
+
 .defaultButton {
     font-family: 'atwriter';
     padding: 12px;
     font-size: 1em;
     background-color: var(--color1);
-    border-radius: 20%;
+    border-radius: 10px;
     min-width: 40%;
     width: auto;
     color: var(--color2);
@@ -53,7 +54,7 @@ button {
     padding: 12px;
     font-size: 1em;
     background-color: var(--color1);
-    border-radius: 25px;
+    border-radius: 10px;
     min-width: 40%;
     width: auto;
     color: var(--color2);
@@ -76,7 +77,7 @@ input[type='submit'] {
     font-size: 36px;
     text-align: center;
     color: var(--color5);
-    margin-top: 1%;
+    margin-top: 0%;
 }
 
 #back {
@@ -89,7 +90,7 @@ input[type='submit'] {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    height: 98%;
 }
 
 #templateContent {
@@ -103,7 +104,7 @@ footer {
     color: var(--color4);
     background-color: var(--color3);
     text-align: center;
-    padding: 10px;
+    padding: 0px;
     font-size: 0.75em;
     width: 100%;
 }

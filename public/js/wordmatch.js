@@ -9,12 +9,18 @@ let currentZScore = 0;
 socket.on("displayGameContainer", (display) => {
   if (display){
     document.getElementById("startGame").style.display = "none";
-    document.getElementById("gameContainer").style.display = "inline-block";
+    document.getElementById("gameContainer").style.display = "grid";
     startWordMatch();
   } else {
     document.getElementById("resultsContainer").classList.add("hide");
     document.getElementById("startGame").style.display = "inline-block";
     document.getElementById("gameContainer").style.display = "none";
+  }
+});
+
+socket.on("sendWordmatchCorrect", (btnDiv, history) => {
+  if (btnDiv) {
+      document.getElementById("explanation").innerHTML = "Here is some interesting history on the phrase: " + history;
   }
 });
 
@@ -41,18 +47,18 @@ socket.on("wordmatchFinished", (results) => {
 
   addUserPoints(results.B, results.X, results.Y, results.Z);
   
-  document.getElementById("div9").innerHTML =
+  document.getElementById("bbPoints").innerHTML =
     "Current BB Points: " + 0;
-  document.getElementById("div10").innerHTML =
+  document.getElementById("xPoints").innerHTML =
     "Current X Points: " + 0;
-  document.getElementById("div11").innerHTML =
+  document.getElementById("yPoints").innerHTML =
     "Current Y Points: " + 0;
-  document.getElementById("div12").innerHTML =
+  document.getElementById("zPoints").innerHTML =
     "Current Z Points: " + 0;
-  document.getElementById("div9").classList.add("hide");
-  document.getElementById("div10").classList.add("hide");
-  document.getElementById("div11").classList.add("hide");
-  document.getElementById("div12").classList.add("hide");
+  document.getElementById("bbPoints").classList.add("hide");
+  document.getElementById("xPoints").classList.add("hide");
+  document.getElementById("yPoints").classList.add("hide");
+  document.getElementById("zPoints").classList.add("hide");
 });
 
 function startWordMatch() {
@@ -103,8 +109,8 @@ socket.on("wordmatchFetched", (results) => {
   document.getElementById("continueGame").classList.add("hide");
 
   //Question is placed in div4,
-  document.getElementById("div4").classList.remove("hide");
-  let genPhrase = document.getElementById("div4");
+  document.getElementById("questionButton").classList.remove("hide");
+  let genPhrase = document.getElementById("questionButton");
   genPhrase.innerHTML = "Guess this phrase: " + results.data.rows[0].phrase;
 
   let randomAnswerBtn = "";
@@ -128,10 +134,10 @@ socket.on("wordmatchCorrect", (btnDiv, values) => {
     document.getElementById("btn" + btnDiv).classList.add("correct"); //add css for correct answer to change div background color to green
     document.getElementById("btn" + btnDiv).classList.remove("incorrect");
   
-    document.getElementById("div9").classList.remove("hide");
-    document.getElementById("div10").classList.remove("hide");
-    document.getElementById("div11").classList.remove("hide");
-    document.getElementById("div12").classList.remove("hide");
+    document.getElementById("bbPoints").classList.remove("hide");
+    document.getElementById("xPoints").classList.remove("hide");
+    document.getElementById("yPoints").classList.remove("hide");
+    document.getElementById("zPoints").classList.remove("hide");
   
     if (values.generation == "B") {
       currentBBScore += values.value;
@@ -146,13 +152,13 @@ socket.on("wordmatchCorrect", (btnDiv, values) => {
       currentZScore += values.value;
     }
   
-    document.getElementById("div9").innerHTML =
+    document.getElementById("bbPoints").innerHTML =
       "Current BB Points: " + currentBBScore;
-    document.getElementById("div10").innerHTML =
+    document.getElementById("xPoints").innerHTML =
       "Current X Points: " + currentXScore;
-    document.getElementById("div11").innerHTML =
+    document.getElementById("yPoints").innerHTML =
       "Current Y Points: " + currentYScore;
-    document.getElementById("div12").innerHTML =
+    document.getElementById("zPoints").innerHTML =
       "Current Z Points: " + currentZScore;
   
     document.getElementById("btn1").disabled = true;
@@ -174,17 +180,17 @@ socket.on("wordmatchWrong", (e) => {
   if (sessionStorage.getItem("isHost")) document.getElementById("continueGame").classList.remove("hide");
 });
 
-// function toggleExplanation() {
-//   var popup = document.getElementById("explanation");
-//   popup.classList.toggle("show");
-// }
-
 function correctAnswer(btnDiv, values) {
   if (sessionStorage.getItem("isHost")) socket.emit("sendWordmatchCorrect", btnDiv, values, code);
 }
 
 function wrongAnswer(e) {
   if (sessionStorage.getItem("isHost")) socket.emit("sendWordmatchWrong", e, code);
+}
+
+function toggleExplanation() {
+  var popup = document.getElementById("explanation");
+  popup.classList.toggle("show");
 }
 
 function showDetails() {

@@ -1,15 +1,88 @@
 :root {
-  --color1: #FF6542;
+  --color1: #ff6542;
   --color2: #f2f2f8;
   --color3: rgb(217, 241, 250);
   --color4: black;
   --color5: rgb(139, 0, 105);
+  --color6: #779FA1;
+}
+
+#startGame:hover {
+  background-color: var(--color6);
+}
+
+#leaveRoom:hover {
+  background-color: var(--color5);
+}
+
+.popup {
+  margin-top: 1%;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: var(--color4);
+}
+
+/* The actual popup */
+.popup .popuptext {
+  visibility: hidden;
+  width: 40%;
+  background-color: var(--color5);
+  color: var(--color2);
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* popup animation */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--color5) transparent transparent transparent;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
 }
 
 #parent {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(4, 0.5fr) repeat(2, 1fr) repeat(4, 0.3fr) 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, 0.5fr) 5fr repeat(2, 0.5fr) 1fr;
   grid-column-gap: 0px;
   grid-row-gap: 0px;
   height: 80vh;
@@ -26,65 +99,82 @@
 }
 
 /*start*/
-#div2 {
+#mainButton {
   grid-area: 3 / 1 / 4 / 3;
 }
 
-/*next question*/
-#div3 {
-  grid-area: 3 / 1 / 4 / 3;
+#resultsContainer {
+  grid-area: 5 / 1 / 6 / 3;
+}
+
+/*Chat*/
+#chatDiv {
+  grid-area: 6 / 1 / 7 / 3;
+}
+
+#gameContainer {
+  grid-area: 4 / 1 / 5 / 3;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 0.5fr) repeat(2, 1fr) repeat(5, 0.3fr);
+}
+
+/*next question - inside game container*/
+#questionButton {
+  grid-area: 1 / 1 / 2 / 3;
 }
 
 /*Guess this phrase*/
-#div4 {
+#phrase {
   font-size: 28pt;
-  grid-area: 4 / 1 / 5 / 3;
+  grid-area: 2 / 1 / 3 / 3;
   padding-bottom: 5vh;
 }
 
 /*Answer 1*/
-#div5 {
-  grid-area: 5 / 1 / 6 / 2;
+#answer1 {
+  grid-area: 3 / 1 / 4 / 2;
 }
 
 /*Answer 2*/
-#div6 {
-  grid-area: 5 / 2 / 6 / 3;
+#answer2 {
+  grid-area: 3 / 2 / 4 / 3;
 }
 
 /*Answer 3*/
-#div7 {
-  grid-area: 6 / 1 / 7 / 2;
+#answer3 {
+  grid-area: 4 / 1 / 5 / 2;
 }
 
 /*Answer 4*/
-#div8 {
-  grid-area: 6 / 2 / 7 / 3;
+#answer4 {
+  grid-area: 4 / 2 / 5 / 3;
+}
+
+/*History popup info*/
+#popup {
+  grid-area: 5 / 1 / 6 / 3;
+  text-align: center;
 }
 
 /*z score*/
-#div9 {
-  grid-area: 7 / 1 / 8 / 3;
+#bbPoints {
+  grid-area: 6 / 1 / 7 / 3;
 }
 
 /*x score*/
-#div10 {
-  grid-area: 8 / 1 / 9 / 3;
+#xPoints {
+  grid-area: 7 / 1 / 8 / 3;
 }
 
 /*y score*/
-#div11 {
-  grid-area: 9 / 1 / 10 / 3;
+#yPoints {
+  grid-area: 8 / 1 / 9 / 3;
 }
 
 /*bb score*/
-#div12 {
-  grid-area: 10 / 1 / 11 / 3;
-}
-
-/*Chat*/
-#div13 {
-  grid-area: 11 / 1 / 12 / 3;
+#zPoints {
+  grid-area: 9 / 1 / 10 / 3;
 }
 
 .hide {
@@ -98,9 +188,9 @@
 button {
   background-color: var(--color1);
   color: var(--color2);
-  border-radius: 25px;
+  border-radius: 10px;
   min-width: 40%;
-  width: 80%;
+  width: auto;
 }
 
 .correct {
@@ -115,79 +205,85 @@ button {
   #parent {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, .5fr) repeat(4, 1fr) repeat(4, .3fr) 1fr;
+    grid-template-rows: repeat(5, 0.5fr) repeat(4, 1fr) repeat(4, 0.3fr) 0.5fr 1fr;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
-    height: 80vh;
+    height: 65vh;
   }
-  
+
   /*Room number*/
   #roomInfo {
-    grid-area: 1 / 1 / 2 / 2;
+    grid-area: 1 / 1 / 2 / 3;
   }
-  
+
   /*chat-info*/
   #userList {
-    grid-area: 2 / 1 / 3 / 2;
+    grid-area: 2 / 1 / 3 / 3;
   }
-  
+
   /*start*/
-  #div2 {
-    grid-area: 3 / 1 / 4 / 2;
+  #mainButton {
+    grid-area: 3 / 1 / 4 / 3;
   }
-  
+
   /*next question*/
-  #div3 {
-    grid-area: 3 / 1 / 4 / 2;
+  #questionButton {
+    grid-area: 3 / 1 / 4 / 3;
   }
-  
+
   /*Guess this phrase*/
-  #div4 {
-    grid-area: 4 / 1 / 5 / 2;
+  #phrase {
+    font-size: 28pt;
+    grid-area: 4 / 1 / 5 / 3;
+    padding-bottom: 5vh;
   }
-  
+
   /*Answer 1*/
-  #div5 {
-    grid-area: 5 / 1 / 6 / 2;
+  #answer1 {
+    grid-area: 5 / 1 / 6 / 3;
   }
-  
+
   /*Answer 2*/
-  #div6 {
-    grid-area: 6 / 1 / 7 / 2;
+  #answer2 {
+    grid-area: 6 / 1 / 7 / 3;
   }
-  
+
   /*Answer 3*/
-  #div7 {
-    grid-area: 7 / 1 / 8 / 2;
+  #answer3 {
+    grid-area: 7 / 1 / 8 / 3;
   }
-  
+
   /*Answer 4*/
-  #div8 {
-    grid-area: 8 / 1 / 9 / 2;
+  #answer4 {
+    grid-area: 8 / 1 / 9 / 3;
   }
-  
+
   /*z score*/
-  #div9 {
-    grid-area: 9 / 1 / 10 / 2;
+  #bbPoints {
+    grid-area: 9 / 1 / 10 / 3;
   }
-  
+
   /*x score*/
-  #div10 {
-    grid-area: 10 / 1 / 11 / 2;
+  #xPoints {
+    grid-area: 10 / 1 / 11 / 3;
   }
-  
+
   /*y score*/
-  #div11 {
-    grid-area: 11 / 1 / 12 / 2;
+  #yPoints {
+    grid-area: 11 / 1 / 12 / 3;
   }
-  
+
   /*bb score*/
-  #div12 {
-    grid-area: 12 / 1 / 13 / 2;
+  #zPoints {
+    grid-area: 13 / 1 / 14 / 3;
   }
-  
+
   /*Chat*/
-  #div13 {
-    grid-area: 13 / 1 / 14 / 2; 
+  #chatDiv {
+    grid-area: 14 / 1 / 15 / 3;
+  }
+
+  #resultsContainer {
+    grid-area: 15 / 1 / 16 / 3;
   }
 }

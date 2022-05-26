@@ -198,6 +198,8 @@ function respondWithWord(guessWord, req, res) {
 }
 
 let guessWord = null;
+let crossword = null;
+
 app.get("/wordguess", async function(req, res) {
     if (req.session.loggedIn) {
         res.set("Server", "Wazubi Engine");
@@ -254,17 +256,27 @@ function respondWithCrossword(crossword, req, res) {
                     letters[arrInd].legendNum = ++legendNum;
                 }
                 let hint = dom.window.document.createElement("div");
+                hint.classList.add("hint");
+                hint.setAttribute("wordId", results[i].word_id);
                 hint.innerHTML = legendNum + ". " + results[i].meaning;
                 if(vert == 1) {
-                    letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
+                    letters[arrInd].node.setAttribute("wordLenVert", results[i].phrase.length);
                     legendDown.appendChild(hint);
                 }
                 else {
-                    letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
+                    letters[arrInd].node.setAttribute("wordLenHoriz", results[i].phrase.length);
                     legendAcross.appendChild(hint);
                 }
                 letters[arrInd].hintNumNode.classList.remove("hintNumInvis");
                 letters[arrInd].hintNumNode.innerHTML = legendNum;
+            }
+            if(vert == 1) {
+                letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
+                letters[arrInd].node.setAttribute("wordCoordVert", j);
+            }
+            else {
+                letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
+                letters[arrInd].node.setAttribute("wordCoordHoriz", j);
             }
             if(results[i].vertical == 1) {
                 row++;    
@@ -286,49 +298,20 @@ function sanitizeWord(phrase) {
 
 app.get("/crossword", function(req, res) {
     if (req.session.loggedIn) {
-        let crossword = req.session.crossword;
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
-        if(!crossword){
-            connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 2`, (error, results) => {
-                if (error || !results || !results.length) {
-                    console.log(error);
-                    // Need to handle errors properly
-                    let dom = wrap("./app/html/wordguess_wait.html", req.session);
-                    res.send(dom.serialize());
-
-                } else {
-                    for(let i = 0; i < results.length; ++i) {
-                        results[i].phrase = sanitizeWord(results[i].phrase);
-                    }
-                    let w = 0;
-                    let h = 0;
-                    for(let i = 0; i < results.length; ++i) {
-                        let minw = results[i].col + (results[i].vertical === 1 ? 1 : results[i].phrase.length);
-                        if(minw > w)
-                            w = minw;
-                        let minh = results[i].row_num + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
-                        if(minh > h)
-                            h = minh;
-                    }
-                    
-                    results.sort(function(a, b) {
-                        if(a.row_num == b.row_num)
-                            return a.col - b.col;
-                        return a.row_num - b.row_num;
-                    })
-
-                    crossword = {words: results, width: w, height: h};
-                    req.session.crossword = crossword;
-                    respondWithCrossword(crossword, req, res);
-                }
-            });
-        } else {
-            respondWithCrossword(crossword, req, res);
-        }
+        respondWithCrossword(crossword, req, res);
     } else {
         res.redirect("/");
     }
+})
+
+app.post("/try_crossword", function(req, res) {
+    let word = req.body.word.toUpperCase();
+    let word_id = parseInt(req.body.wordId);
+    let correctWord = crossword.words[crossword.wordRecs[word_id]].phrase;
+    let result = { match: word === correctWord };
+    res.send(result);
 })
 
 app.post("/try_word", function(req, res) {
@@ -919,7 +902,47 @@ const wordguessExpiryPeriod = 12;
 const wordguessExpiryUnit = 'h';
 
 class Preparation extends EventEmitter {
-    perform() {
+    performCrossword() {
+        connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 2`, (error, results) => {
+            if (error || !results || !results.length) {
+                console.log(error);
+                // Need to handle errors properly
+                let dom = wrap("./app/html/wordguess_wait.html", req.session);
+                res.send(dom.serialize());
+
+            } else {
+                for(let i = 0; i < results.length; ++i) {
+                    results[i].phrase = sanitizeWord(results[i].phrase);
+                }
+                let w = 0;
+                let h = 0;
+                for(let i = 0; i < results.length; ++i) {
+                    let minw = results[i].col + (results[i].vertical === 1 ? 1 : results[i].phrase.length);
+                    if(minw > w)
+                        w = minw;
+                    let minh = results[i].row_num + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
+                    if(minh > h)
+                        h = minh;
+                }
+                
+                results.sort(function(a, b) {
+                    if(a.row_num == b.row_num)
+                        return a.col - b.col;
+                    return a.row_num - b.row_num;
+                })
+                let wordRecsById = {};
+                for(let i = 0; i < results.length; ++i) {
+                    wordRecsById[parseInt(results[i].word_id)] = i;
+                }
+
+                crossword = {words: results, wordRecs: wordRecsById, width: w, height: h};
+                console.log("Crossword prepared")
+                this.emit("crosswordPrepared");
+            }
+        });
+    }
+
+    performWordguess() {
         connection.query(`SELECT wg.word_id, start_time, phrase, meaning, value, generation FROM BBY_5_wordguess as wg, BBY_5_master as master where wg.word_id = master.word_id order by start_time desc limit 1`, (error, results) => {
             if (error || !results) {
                 if (error) console.log(error);
@@ -994,9 +1017,10 @@ class Preparation extends EventEmitter {
     }
 }
 
-
-
 let prep = new Preparation();
+prep.on("crosswordPrepared", () => {
+    prep.performWordguess();
+});
 prep.on("ready", function(result) {
     server.listen(port, function() {
         console.log("Listening on port " + port + "!");
@@ -1014,4 +1038,4 @@ prep.on("selectedNewGuessWord", function(result, launchAfter) {
     console.log("wordguessUpdate");
     prep.insertWordguess(result, launchAfter);
 });
-prep.perform();
+prep.performCrossword();
