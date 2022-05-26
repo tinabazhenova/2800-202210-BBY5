@@ -11,8 +11,9 @@
 <button type="button" id="endGame">Confirm</button>
 
 <div id="gameContainer">
+  <span id="resultsText"></span><br>
   <div class="wordguess_grid">
-    <div class="rectangle"></div>
+    <div class="rectangle" id="rec1"></div>
   </div>
   <div class="popup" onclick="toggleExplanation()">
     History
@@ -75,11 +76,6 @@
   </div>
 </div>
 
-<script
-  src="/socket.io/socket.io.js"
-  integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-></script>
+<script src="/socket.io/socket.io.js"></script>
 <script src="/js/room.js"></script>
 <script src="/js/wordguess.js"></script>

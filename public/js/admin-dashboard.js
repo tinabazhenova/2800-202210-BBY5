@@ -94,7 +94,6 @@ getUsers();
 
 document.getElementById("add-submit").addEventListener("click", function (e) {
   e.preventDefault();
-
   let formData = {
     first_name: document.getElementById("addfirstname").value,
     last_name: document.getElementById("addlastname").value,
@@ -102,40 +101,55 @@ document.getElementById("add-submit").addEventListener("click", function (e) {
     password: document.getElementById("addpassword").value,
     is_admin: document.getElementById("addisAdmin").value
   };
-
-  document.getElementById("addfirstname").value = "";
-  document.getElementById("addlastname").value = "";
-  document.getElementById("addusername").value = "";
-  document.getElementById("addpassword").value = "";
-  document.getElementById("addisAdmin").value = "";
-
-  const xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    if (this.readyState == XMLHttpRequest.DONE) {
-
-      // 200 means everthing worked
-      if (xhr.status === 200) {
-
-        getUsers();
-        console.log("DB updated.");
-
-      } else {
-
-        // not a 200, could be anything (404, 500, etc.)
-        console.log(this.status);
-
-      }
-
+  let modal = document.getElementById("modalBackground");
+  const addElements = document.querySelectorAll(".req-add");
+  let isAnyEmpty = false;
+  addElements.forEach (function (element) {
+    if (!element.value) isAnyEmpty = true;
+  })
+   if (isAnyEmpty) {
+      modal.style.display = "block"
+      // window.onclick = (event) => {if (event.target == modal) modal.style.display = "none"};
+      document.getElementById("okay").onclick = () => modal.style.display = "none";
     } else {
-      console.log("ERROR", this.status);
+
+      document.getElementById("addfirstname").value = "";
+      document.getElementById("addlastname").value = "";
+      document.getElementById("addusername").value = "";
+      document.getElementById("addpassword").value = "";
+      document.getElementById("addisAdmin").value = "";
+
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        if (this.readyState == XMLHttpRequest.DONE) {
+    
+          // 200 means everthing worked
+          if (xhr.status === 200) {
+    
+    
+            getUsers();
+            console.log("DB updated.");
+    
+          } else {
+    
+            // not a 200, could be anything (404, 500, etc.)
+            console.log(this.status);
+    
+          }
+    
+        } else {
+          console.log("ERROR", this.status);
+        }
+      }
+      xhr.open("POST", "/add-user");
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send("first_name=" + formData.first_name + "&last_name=" + formData.last_name +
+        "&user_name=" + formData.user_name + "&password=" + formData.password +
+        "&is_admin=" + formData.is_admin);
+    
     }
-  }
-  xhr.open("POST", "/add-user");
-  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.send("first_name=" + formData.first_name + "&last_name=" + formData.last_name +
-    "&user_name=" + formData.user_name + "&password=" + formData.password +
-    "&is_admin=" + formData.is_admin);
+      
 
 });
 
@@ -151,40 +165,71 @@ document.getElementById("edit-submit").addEventListener("click", function (e) {
     is_admin: document.getElementById("editisAdmin").value
   };
 
-  const xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    if (this.readyState == XMLHttpRequest.DONE) {
-
-      // 200 means everthing worked
-      if (xhr.status === 200) {
-
-        getUsers();
-        console.log("DB edited.");
-
-      } else {
-
-        // not a 200, could be anything (404, 500, etc.)
-        console.log(this.status);
-
-      }
-
+  let modal = document.getElementById("modalBackground");
+  const editElements = document.querySelectorAll(".req-edit");
+  let isAnyEmpty = false;
+  editElements.forEach (function (element) {
+    if (!element.value) isAnyEmpty = true;
+  })
+   if (isAnyEmpty) {
+      modal.style.display = "block"
+      // window.onclick = (event) => {if (event.target == modal) modal.style.display = "none"};
+      document.getElementById("okay").onclick = () => modal.style.display = "none";
     } else {
-      console.log("ERROR", this.status);
+
+      document.getElementById("id").value = "";
+      document.getElementById("editfirstname").value = "";
+      document.getElementById("editlastname").value = "";
+      document.getElementById("editusername").value = "";
+      document.getElementById("editpassword").value = "";
+      document.getElementById("editisAdmin").value = "";
+
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        if (this.readyState == XMLHttpRequest.DONE) {
+
+          // 200 means everthing worked
+          if (xhr.status === 200) {
+
+            getUsers();
+            console.log("DB edited.");
+
+          } else {
+
+            // not a 200, could be anything (404, 500, etc.)
+            console.log(this.status);
+
+          }
+
+        } else {
+          console.log("ERROR", this.status);
+        }
+      }
+      xhr.open("POST", "/edit-user");
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send("id=" + editData.id + "&first_name=" + editData.first_name + "&last_name=" + editData.last_name +
+        "&user_name=" + editData.user_name + "&password=" + editData.password +
+        "&is_admin=" + editData.is_admin);
     }
-  }
-  xhr.open("POST", "/edit-user");
-  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.send("id=" + editData.id + "&first_name=" + editData.first_name + "&last_name=" + editData.last_name +
-    "&user_name=" + editData.user_name + "&password=" + editData.password +
-    "&is_admin=" + editData.is_admin);
 
 });
 
 document.getElementById("delete-submit").addEventListener("click", function (e) {
-
+  e.preventDefault();
   let deleteData = { user_name: document.getElementById("delusername").value };
-
+  let modal = document.getElementById("modalBackground");
+  const deleteElements = document.getElementById("delusername");
+  let isAnyEmpty = false;
+  if (!deleteElements.value) isAnyEmpty = true;
+  
+  if (isAnyEmpty) {
+    modal.style.display = "block"
+    // window.onclick = (event) => {if (event.target == modal) modal.style.display = "none"};
+    document.getElementById("okay").onclick = () => modal.style.display = "none";
+  } else {
+  
+  document.getElementById("delusername").value = "";
   const xhr = new XMLHttpRequest();
   xhr.onload = function () {
     if (this.readyState == XMLHttpRequest.DONE) {
@@ -210,4 +255,5 @@ document.getElementById("delete-submit").addEventListener("click", function (e) 
   xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   xhr.send("user_name=" + deleteData.user_name);
+  }
 });

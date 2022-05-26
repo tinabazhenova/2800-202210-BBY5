@@ -102,6 +102,7 @@ input[type='submit'] {
 footer {
     grid-area: 11 / 1 / 12 / 4;
     color: var(--color4);
+    background-color: var(--color3);
     text-align: center;
     padding: 0px;
     font-size: 0.75em;

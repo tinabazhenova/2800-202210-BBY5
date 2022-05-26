@@ -60,3 +60,25 @@ document.getElementById("endGame").onclick = () => {
   socket.emit("updateGameStatus", code, false);
   document.getElementById("endGame").style.display = "none";
 };
+
+async function addUserPoints(bb, x, y, z) {
+  try {
+    let response = await fetch("/addUserPoints", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ bb, x, y, z }),
+    });
+    let parsed = await response.json();
+    if (parsed.approved) {
+      console.log("User scores added!");
+      console.log("body: " + body);
+    } else {
+      console.log("Error: " + error);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}

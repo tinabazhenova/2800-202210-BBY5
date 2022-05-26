@@ -43,15 +43,19 @@ function appendToShop(item) {
   itemTemplate.querySelector(".itemPrice").innerHTML = `${item.price} ${item.type}-points`;
   let selector = itemTemplate.querySelector(".itemQuantity");
   itemTemplate.querySelector(".itemMinus").addEventListener("click", () => setQuantity(selector, -1));
+  itemTemplate.querySelector(".itemQuantity").addEventListener("change", () => setQuantity(selector, 0));
   itemTemplate.querySelector(".itemPlus").addEventListener("click", () => setQuantity(selector, 1));
   itemTemplate.querySelector(".addToCart").addEventListener("click", () => addToCart(item, selector));
   document.getElementById("itemList").appendChild(itemTemplate);
 }
 
 function setQuantity(selector, quantity) {
-  let num = selector.value*1 + quantity; // *1 so that it adds numbers instead of concatenating
-  num = Math.min(Math.max(num, 0), 100); // set num >= 0 && num <= 100
+  let num = Math.min(Math.max((selector.value*1 + quantity), 0), 100); // *1 so that it adds numbers instead of concatenating
   selector.value = num;
+}
+
+function cramp(num) {
+  return ;  // set num >= 0 && num <= 100
 }
 
 async function addToCart(item, quantity) {
