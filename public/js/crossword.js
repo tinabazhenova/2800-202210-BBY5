@@ -11,7 +11,7 @@ function ready(callback) {
 }
 
 function getNewCoord(coord, inputType) {
-    if (inputType == "insertText") {
+    if (inputType == "insertText" || inputType == "insertCompositionText") {
         return coord + 1;
     } else if (inputType == "deleteContentBackward") {
         if(coord > 0)
@@ -70,7 +70,7 @@ function editWord(dir, ev) {
     let wordCoord = parseInt(letterBox.getAttribute("wordCoord" + dir));
     if (ev.inputType == "deleteContentBackward") {
         gWords[wordId][wordCoord] = null;
-    } else if (ev.inputType == "insertText") {
+    } else if (ev.inputType == "insertText" || ev.inputType == "insertCompositionText") {
         let wordArr = gWords[wordId];
         wordArr[wordCoord] = ev.data;
         let filledCount = 0;
