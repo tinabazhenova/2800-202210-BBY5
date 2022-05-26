@@ -9,6 +9,10 @@
     grid-column-gap: 20px;
     grid-row-gap: 10px;
     padding: 10%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #menu form {
@@ -40,7 +44,7 @@
 }
 
 #logout {
-    grid-area: 4 / 2 / 5 / 3;
+    grid-area: 4 / 1 / 5 / 3;
 }
 
 #logout button {
