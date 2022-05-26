@@ -1,159 +1,127 @@
-@font-face {
-  font-family: 'atwriter';
-  src: url('/fonts/atwriter.ttf');
-  font-weight: normal;
-  font-style: normal;
-}
-:root {
-  --color6: #2ACF01;
-}
-body{
-  font-family: 'atwriter';
-  margin: 0;
-  height: 130vh;
-  background-color:#ceecf8;
-  background: url("/imgs/we1.png") center/cover fixed;
-  backdrop-filter: blur(6px);
-}
-
-.banner{
-  margin-bottom: 3vh;
-  width: 100%;
-  height: 20vh;
-  overflow: hidden;
-  display: none;
-}
-
-h1{
-  white-space: nowrap;
-  animation: anim 10s linear infinite ;
-}
-
-@keyframes anim{
-  0%{transform:translateX(100%);}
-  100%{transform: translateX(-100%);}
-}
-.container {
-  margin: 0 auto;
-  padding: 0px;
-  position:relative;    
-}
-
-.content{
-  height: 500px;
-}
-
-#profile_name{
-  font-family:'atwriter';
-  font-size:40px;
-  margin-top: 50px;
-  margin-left: 65px;
-  margin-right: 65px;
-  color:rgb(139, 0, 105);
-  text-align:center;
-}
-
-#user_info{
-  margin-left: auto;
-  margin-right: auto;
-}
-
 input[type='submit'] {
-  font-family: 'atwriter';
-  padding: 12px;
-  font-size: 1em;
-  background-color: var(--color1);
-  border-radius: 25px;
-  min-width: 40%;
-  width: auto;
-  color: var(--color2);
-  cursor: pointer;
-  margin: 10px;
+    border-radius: 10px;
+    margin-top: 2%;
 }
 
-button[type='submit'] {
-  font-family: 'atwriter';
-  padding: 12px;
-  font-size: 1.2em;
-  background-color: rgb(139, 0, 105);
-  border: 3px solid #f2f2f8;
-  border-radius: 3px;
-  color: #f2f2f8;
-  cursor: pointer;
+#picture_src {
+    width: 300px;
+    height: 300px;
+    border: 2px solid grey;
+}
+
+.banner {
+    margin-bottom: 3vh;
+    width: 100%;
+    height: 20vh;
+    overflow: hidden;
+    display: none;
+}
+
+h1 {
+    white-space: nowrap;
+    animation: anim 10s linear infinite;
+}
+
+@keyframes anim {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+#user_info {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    max-width: 500px;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+    margin: 30px;
+    background-color: rgba(224, 203, 168);
+}
+
+th,
+td {
+    padding: 10px;
 }
 
 input[value='LOGOUT'] {
   background-color: var(--color6);
 }
 
-.center{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
+#title {
+    border: 1px solid grey;
+    background-color: white;
+    padding: 5px;
+    font-size: 125%;
 }
 
-table, th, td {
-  border: 1px solid black;
-  margin: 30px;
-  background-color: rgb(186, 212, 212);
+#selectTitle {
+    width: 250px;
+    height: 50px;
+    margin-top: 10px;
+    font-size: 125%;
 }
 
-th, td {
-  padding: 10px ;
+option {
+    font-size: 50%;
 }
 
 /* INVENTORY */
 #inventory {
-  width: 100%;
-  height: 200px;
-  margin: 10px 0;
+    width: 100%;
+    margin: 10px 0;
 }
 
 #itemList {
-  width: 90%;
-  overflow: auto;
-  margin: auto;
+    width: 90%;
+    margin: 5% auto;
 }
 
 .itemContainer {
-  display: block;
-  float: left;
-  border: 1px solid black;
-  background-color: white;
-  width: 99%;
-  height: 40px;
+    display: block;
+    float: left;
+    border: 1px solid black;
+    background-color: white;
+    width: 99%;
+    height: 40px;
 }
 
 .itemImage {
-  width: 30px;
-  height: 30px;
-  float: left;
-  margin-top: 5px;
-  margin-left: 5px;
+    width: 30px;
+    height: 30px;
+    float: left;
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 .itemName {
-  float: left;
-  font-size: 20px;
-  margin-top: 7px;
-  margin-left: 10px;
+    float: left;
+    font-size: 20px;
+    margin-top: 7px;
+    margin-left: 10px;
 }
 
 .itemUse {
-  background-color: transparent;
-  border: 1px solid grey;
-  float: right;
-  width: 45px;
-  height: 30px;
-  margin-top: 5px;
-  margin-right: 5px;
+    border: 1px solid grey;
+    float: right;
+    width: 45px;
+    height: 30px;
+    margin-top: 5px;
+    margin-right: 5px;
 }
 
 .addToCart:hover {
-  background-color: grey;
+    background-color: grey;
 }
 
-#profile-picture{
-  margin: 20px;
+#profile-picture {
+    margin: 20px;
 }

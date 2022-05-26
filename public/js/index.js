@@ -1,34 +1,17 @@
-ready(function() {
-
-    console.log("Client script loaded.");
-
-    function ajaxGET(url, callback) {
-
-        const xhr = new XMLHttpRequest();
-        xhr.onload = function() {
-            if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-                //console.log('responseText:' + xhr.responseText);
-                callback(this.responseText);
-
-            } else {
-                console.log(this.status);
-            }
-        }
-        xhr.open("GET", url);
-        xhr.send();
-    }
+ready(function () {
 
     function ajaxPOST(url, callback, data) {
 
         let params = typeof data == 'string' ? data : Object.keys(data).map(
-            function(k) { return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) }
+            function (k) {
+                return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
+            }
         ).join('&');
         console.log("params in ajaxPOST", params);
 
         const xhr = new XMLHttpRequest();
-        xhr.onload = function() {
+        xhr.onload = function () {
             if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-                //console.log('responseText:' + xhr.responseText);
                 callback(this.responseText);
 
             } else {
@@ -42,13 +25,12 @@ ready(function() {
     }
 
     // POST TO THE SERVER
-    document.querySelector("#submit").addEventListener("click", function(e) {
+    document.querySelector("#submit").addEventListener("click", function (e) {
         e.preventDefault();
         let username = document.getElementById("username");
         let password = document.getElementById("password");
         let queryString = "username=" + username.value + "&password=" + password.value;
-        const vars = { "username": username, "password": password }
-        ajaxPOST("/login", function(data) {
+        ajaxPOST("/login", function (data) {
 
             if (data) {
                 let dataParsed = JSON.parse(data);
@@ -63,13 +45,12 @@ ready(function() {
         }, queryString);
     });
 
-    document.querySelector("#admin-submit").addEventListener("click", function(e) {
+    document.querySelector("#admin-submit").addEventListener("click", function (e) {
         e.preventDefault();
         let username = document.getElementById("username");
         let password = document.getElementById("password");
         let queryString = "username=" + username.value + "&password=" + password.value;
-        const vars = { "username": username, "password": password }
-        ajaxPOST("/loginAsAdmin", function(data) {
+        ajaxPOST("/loginAsAdmin", function (data) {
 
             if (data) {
                 let dataParsed = JSON.parse(data);
@@ -84,9 +65,9 @@ ready(function() {
         }, queryString);
     });
 
-    document.querySelector("#guest").addEventListener("click", function(e) {
+    document.querySelector("#guest").addEventListener("click", function (e) {
         e.preventDefault();
-        ajaxPOST("/guest_login", function(data) {
+        ajaxPOST("/guest_login", function (data) {
             window.location.replace("/main");
         }, "");
     });
@@ -98,9 +79,7 @@ ready(function() {
 function ready(callback) {
     if (document.readyState != "loading") {
         callback();
-        console.log("ready state is 'complete'");
     } else {
         document.addEventListener("DOMContentLoaded", callback);
-        console.log("Listener was invoked");
     }
 }

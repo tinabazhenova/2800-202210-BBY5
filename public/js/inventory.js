@@ -57,7 +57,6 @@ async function refreshProfile() {
       }
     });
     parsed = await response.json();
-    document.getElementById("userTitle").innerHTML = parsed.levels.title;
     document.getElementById("BLevel").innerHTML = parsed.levels.bblevel;
     document.getElementById("BTitle").innerHTML = `Lv. ${parsed.levels.bblevel} Boomer`;
     document.getElementById("XLevel").innerHTML = parsed.levels.xlevel;
@@ -66,6 +65,7 @@ async function refreshProfile() {
     document.getElementById("YTitle").innerHTML = `Lv. ${parsed.levels.ylevel} Millennial`;
     document.getElementById("ZLevel").innerHTML = parsed.levels.zlevel;
     document.getElementById("ZTitle").innerHTML = `Lv. ${parsed.levels.zlevel} Zoomer`;
+    document.getElementById("selectTitle").value = parsed.levels.title;
     response = await fetch("/getUserPoints", {
       method: "GET",
       headers: {
@@ -93,7 +93,7 @@ async function setTitle(newTitle) {
       },
       body: JSON.stringify({title: newTitle})
     });
-    document.getElementById("userTitle").innerHTML = newTitle;
+    document.getElementById("selectTitle").value = newTitle;
   } catch (error) {
     console.log(error);
   }

@@ -14,8 +14,12 @@ const multer = require("multer");
 const path = require("path");
 const ejs = require("ejs");
 const fs = require("fs");
-const { JSDOM } = require("jsdom");
-const { BlockList } = require("net");
+const {
+    JSDOM
+} = require("jsdom");
+const {
+    BlockList
+} = require("net");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const moment = require("moment");
@@ -23,8 +27,12 @@ const schedule = require("node-schedule");
 const EventEmitter = require('events');
 
 const mysql = require("mysql2");
-const { runInNewContext } = require("vm");
-const { redirect } = require("express/lib/response");
+const {
+    runInNewContext
+} = require("vm");
+const {
+    redirect
+} = require("express/lib/response");
 const res = require("express/lib/response");
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -72,14 +80,14 @@ io.on("connection", socket => {
         socket.join(code);
         rooms[rooms.length - 1].users.push(session.username);
         // use emit() to send messages to clients. see the document for detials. 
-        io.to(code).emit("updateUserlist", rooms[rooms.length - 1].users);
+        io.to(code).emit("updateUserlist", rooms[rooms.length - 1].users, rooms[rooms.length - 1].host);
         io.to(code).emit("announceMessage", session.username + " joined the room.");
         // prints all recorded chat messages to the client
         connection.query(`SELECT * FROM BBY_5_chat WHERE room = ?`,
-        [code], (error, results) => {
-            if (error) console.log(error);
-            results.forEach(m => socket.emit("postMessage", m.username + ": " + m.content, m.title));
-        })
+            [code], (error, results) => {
+                if (error) console.log(error);
+                results.forEach(m => socket.emit("postMessage", m.username + ": " + m.content, m.title));
+            })
     });
     socket.on("preventDuplicates", (code) => {
         rooms.forEach(r => {
@@ -95,10 +103,10 @@ io.on("connection", socket => {
     //receives a message from one client and sends it to all other clients so that everyone (in the same room) can see the message
     socket.on("sendMessage", (message, room) => {
         connection.query(`INSERT INTO BBY_5_chat VALUES (?, ?, ?, ?, ?)`,
-        [null, session.username, session.title, message, room], (error) => {
-            if (error) console.log(error);
-            io.to(room).emit("postMessage", session.username + ": " + message, session.title);
-        });
+            [null, session.username, session.title, message, room], (error) => {
+                if (error) console.log(error);
+                io.to(room).emit("postMessage", session.username + ": " + message, session.title);
+            });
     });
     socket.on("sendWordguessAttempted", (results, room) => {
         io.to(room).emit("wordguessAttempted", results);
@@ -138,15 +146,17 @@ io.on("connection", socket => {
 });
 
 const storage = multer.diskStorage({
-    destination: function(req, file, callback) {
+    destination: function (req, file, callback) {
         callback(null, "./public/imgs/")
     },
-    filename: function(req, file, callback) {
+    filename: function (req, file, callback) {
         callback(null, "my-app-" + file.originalname.split('/').pop().trim());
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage
+});
 
 app.set("view engine", "ejs");
 // static path mappings
@@ -159,13 +169,13 @@ app.use("/media", express.static("./public/media"));
 // body-parser middleware use
 app.use(bodyparser.json());
 app.use(
-  bodyparser.urlencoded({
-    extended: true,
-  })
+    bodyparser.urlencoded({
+        extended: true,
+    })
 );
 
 app.use(session);
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
     if (req.session.loggedIn) {
         res.redirect("/main");
     } else {
@@ -186,7 +196,7 @@ function wrap(filename, session) {
     dom.window.document.getElementById("templateContent").innerHTML = fs.readFileSync(filename, "utf8");
     dom.window.document.getElementById("name").innerHTML = "WELCOME " + session.username.toUpperCase();
 
-  return dom;
+    return dom;
 }
 
 function respondWithWord(guessWord, req, res) {
@@ -200,14 +210,13 @@ function respondWithWord(guessWord, req, res) {
 let guessWord = null;
 let crossword = null;
 
-app.get("/wordguess", async function(req, res) {
+app.get("/wordguess", async function (req, res) {
     if (req.session.loggedIn) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
 
         respondWithWord(guessWord.phrase, req, res);
     } else {
-        // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
 });
@@ -224,25 +233,26 @@ function respondWithCrossword(crossword, req, res) {
     let legendNum = 0;
 
     let letters = new Array(w * h);
-    for(let i = 0; i < results.length; ++i) {
+    for (let i = 0; i < results.length; ++i) {
         let col = results[i].col;
         let row = results[i].row_num;
         let vert = results[i].vertical;
-        for(let j = 0; j < results[i].phrase.length; ++j) {
+        for (let j = 0; j < results[i].phrase.length; ++j) {
             let arrInd = row * w + col;
-            if(letters[arrInd]) {
+            if (letters[arrInd]) {
                 let wasStarting = letters[arrInd].node.getAttribute("startingVert");
-                if(j == 0 && (wasStarting == null || vert == 0) || wasStarting == null && vert == 0) {
+                if (j == 0 && (wasStarting == null || vert == 0) || wasStarting == null && vert == 0) {
                     letters[arrInd].node.setAttribute("vertical", vert);
-                }
-                if(letters[arrInd].letter !== results[i].phrase[j]) {
-                    console.log("Malformed crossword at row " + row + ", col " + col);
                 }
             } else {
                 let newNodeContainer = rect.cloneNode(true);
                 let newNode = newNodeContainer.getElementsByTagName("input")[0];
                 let hintNum = newNodeContainer.getElementsByTagName("div")[0];
-                letters[arrInd] = {letter: results[i].phrase[j], node: newNode, hintNumNode: hintNum};
+                letters[arrInd] = {
+                    letter: results[i].phrase[j],
+                    node: newNode,
+                    hintNumNode: hintNum
+                };
                 newNode.setAttribute("row", row);
                 newNode.setAttribute("col", col);
                 newNode.setAttribute("vertical", results[i].vertical);
@@ -250,36 +260,34 @@ function respondWithCrossword(crossword, req, res) {
                 newNodeContainer.id = null;
                 grid.appendChild(newNodeContainer);
             }
-            if(j == 0) {
+            if (j == 0) {
                 letters[arrInd].node.setAttribute("startingVert", letters[arrInd].node.getAttribute("vertical", vert));
-                if(letters[arrInd].legendNum == null) {
+                if (letters[arrInd].legendNum == null) {
                     letters[arrInd].legendNum = ++legendNum;
                 }
                 let hint = dom.window.document.createElement("div");
                 hint.classList.add("hint");
                 hint.setAttribute("wordId", results[i].word_id);
                 hint.innerHTML = legendNum + ". " + results[i].meaning;
-                if(vert == 1) {
+                if (vert == 1) {
                     letters[arrInd].node.setAttribute("wordLenVert", results[i].phrase.length);
                     legendDown.appendChild(hint);
-                }
-                else {
+                } else {
                     letters[arrInd].node.setAttribute("wordLenHoriz", results[i].phrase.length);
                     legendAcross.appendChild(hint);
                 }
                 letters[arrInd].hintNumNode.classList.remove("hintNumInvis");
                 letters[arrInd].hintNumNode.innerHTML = legendNum;
             }
-            if(vert == 1) {
+            if (vert == 1) {
                 letters[arrInd].node.setAttribute("wordIdVert", results[i].word_id);
                 letters[arrInd].node.setAttribute("wordCoordVert", j);
-            }
-            else {
+            } else {
                 letters[arrInd].node.setAttribute("wordIdHoriz", results[i].word_id);
                 letters[arrInd].node.setAttribute("wordCoordHoriz", j);
             }
-            if(results[i].vertical == 1) {
-                row++;    
+            if (results[i].vertical == 1) {
+                row++;
             } else {
                 col++;
             }
@@ -296,7 +304,7 @@ function sanitizeWord(phrase) {
     return phrase.replace(/[\s`'-]/g, "").toUpperCase();
 }
 
-app.get("/crossword", function(req, res) {
+app.get("/crossword", function (req, res) {
     if (req.session.loggedIn) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
@@ -306,18 +314,20 @@ app.get("/crossword", function(req, res) {
     }
 })
 
-app.post("/try_crossword", function(req, res) {
+app.post("/try_crossword", function (req, res) {
     let word = req.body.word.toUpperCase();
     let word_id = parseInt(req.body.wordId);
     let correctWord = crossword.words[crossword.wordRecs[word_id]].phrase;
-    let result = { match: word === correctWord };
+    let result = {
+        match: word === correctWord
+    };
     res.send(result);
 })
 
-app.post("/try_word", function(req, res) {
+app.post("/try_word", function (req, res) {
     let hardCodedWord = guessWord.phrase;
     let tempEnteredWord = req.body.word.toUpperCase();
-    let checkResult = Array.apply(null, Array(hardCodedWord.length)).map(function(x, i) {
+    let checkResult = Array.apply(null, Array(hardCodedWord.length)).map(function (x, i) {
         let temp = tempEnteredWord[i];
         let result = 0;
         for (let j = 0; j < hardCodedWord.length; j++) {
@@ -333,13 +343,16 @@ app.post("/try_word", function(req, res) {
     for (let i = 0; i < checkResult.length; ++i)
         if (checkResult[i] == 2)
             strictMatches++;
-    let result = { matches: checkResult, word: guessWord };
+    let result = {
+        matches: checkResult,
+        word: guessWord
+    };
     if (strictMatches == hardCodedWord.length)
         result.meaning = guessWord.meaning;
     res.send(result);
 })
 
-app.get("/main", function(req, res) {
+app.get("/main", function (req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
         let mainDOM = wrap("./app/html/main.html", req.session);
@@ -353,13 +366,13 @@ app.get("/main", function(req, res) {
 
 });
 
-app.get("/admin", function(req, res) {
+app.get("/admin", function (req, res) {
     // check for a session first!
     if (req.session.loggedIn && req.session.isAdmin) {
         let main = fs.readFileSync("./app/html/admin.html", "utf8");
         let mainDOM = new JSDOM(main);
 
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function(error, results) {
+        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function (error, results) {
             if (error) console.log(error);
             // great time to get the user's data and put it into the page!
             mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
@@ -372,24 +385,25 @@ app.get("/admin", function(req, res) {
     } else {
         // not admin - no session and no access, redirect to home!
         res.redirect("/");
-        //res.send({ status: "fail", msg: "Access is denied." });
     }
 });
 
 app.use(express.json());
 app.use(
-  express.urlencoded({
-    extended: true,
-  })
+    express.urlencoded({
+        extended: true,
+    })
 );
 
-// Notice that this is a "POST"
-app.post("/login", function(req, res) {
+app.post("/login", function (req, res) {
     res.setHeader("Content-Type", "application/json");
-    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
+    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
         if (error || !results || !results.length) {
             if (error) console.log(error);
-            res.send({ status: "fail", msg: "User account not found." });
+            res.send({
+                status: "fail",
+                msg: "User account not found."
+            });
         } else {
             // user authenticated, create a session
             req.session.loggedIn = true;
@@ -406,19 +420,18 @@ app.post("/login", function(req, res) {
                 if (error) console.log(error);
             });
 
-        // all we are doing as a server is telling the client that they
-        // are logged in, it is up to them to switch to the profile page
-        res.send({
-          status: "success",
-          msg: "Logged in.",
-        });
-      }
-    }
-  );
+            // all we are doing as a server is telling the client that they
+            // are logged in, it is up to them to switch to the profile page
+            res.send({
+                status: "success",
+                msg: "Logged in.",
+            });
+        }
+    });
 });
 
 let guest = 10;
-app.post("/guest_login", function(req, res) {
+app.post("/guest_login", function (req, res) {
     req.session.loggedIn = true;
     req.session.isGuest = true;
     req.session.username = "Guest_" + (guest++);
@@ -427,15 +440,21 @@ app.post("/guest_login", function(req, res) {
     })
     res.send({});
 });
-// Notice that this is a "POST"
-app.post("/loginAsAdmin", function(req, res) {
+
+app.post("/loginAsAdmin", function (req, res) {
     res.setHeader("Content-Type", "application/json");
-    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function(error, results) {
+    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
         if (error || !results || !results.length) {
             console.log(error);
-            res.send({ status: "fail", msg: "User account not found." });
+            res.send({
+                status: "fail",
+                msg: "User account not found."
+            });
         } else if (!results[0].is_admin) {
-            res.send({ status: "fail", msg: "User is not admin." });
+            res.send({
+                status: "fail",
+                msg: "User is not admin."
+            });
         } else {
             // user authenticated, create a session
             req.session.loggedIn = true;
@@ -451,61 +470,51 @@ app.post("/loginAsAdmin", function(req, res) {
                 if (error) console.log(error);
             });
 
-        // all we are doing as a server is telling the client that they
-        // are logged in, it is up to them to switch to the profile page
-        res.send({
-          status: "success",
-          msg: "Logged in.",
-        });
-      }
-    }
-  );
+            // all we are doing as a server is telling the client that they
+            // are logged in, it is up to them to switch to the profile page
+            res.send({
+                status: "success",
+                msg: "Logged in.",
+            });
+        }
+    });
 });
 
-app.post('/upload', upload.single("image"), function(req, res) {
-    if (!req.file) {
-        console.log("No file uploaded");
-    } else {
-        console.log(req.file.filename);
+app.post('/upload', upload.single("image"), function (req, res) {
+    if (req.file) {
         var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename;
         var insertData = `UPDATE ${userTable} SET user_image = ? WHERE ${userTable}.ID = '${req.session.userID}'`;
         connection.query(insertData, [imgsrc], (err, result) => {
             if (err) throw err;
-            console.log("File uploaded");
-            console.log(result);
         });
         req.session.userImage = imgsrc;
         res.redirect("/profile");
     }
 });
 
-app.get("/profile", function(req, res) {
+app.get("/profile", function (req, res) {
     // check for a session first!
     if (req.session.loggedIn && !req.session.isGuest) {
 
-        let profileDOM = wrap("./app/html/profile.html",req.session);
-        // let profile = fs.readFileSync("./app/html/profile.html", "utf8");
-        // let profileDOM = new JSDOM(profile);
-        console.log(profileDOM.window.document.getElementById("profile_name").innerHTML);
+        let profileDOM = wrap("./app/html/profile.html", req.session);
 
         profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
-        // profileDOM.window.document.getElementById("profile_name").innerHTML = "Welcome " + req.session.username;
-            if (req.session.name== "adult" && req.session.pass== "sk8terboi") {
-                profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
-                profileDOM.window.document.querySelector(".banner").style.display = "block";
-            } else if(req.session.userImage == "NULL") {
-                profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
-            } else {
-                profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
-            }
-        
+        if (req.session.name == "adult" && req.session.pass == "sk8terboi") {
+            profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
+            profileDOM.window.document.querySelector(".banner").style.display = "block";
+        } else if (req.session.userImage == null) {
+            profileDOM.window.document.getElementById("picture_src").src = "/imgs/my-app-dummy.jpg";
+        } else {
+            profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
+        }
+
         profileDOM.window.document.getElementById("user_name").innerHTML = req.session.name;
         profileDOM.window.document.getElementById("password").innerHTML = req.session.pass;
 
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(profileDOM.serialize());
-        
+
     } else {
         // not logged in - no session and no access, redirect to home!
         res.redirect("/");
@@ -513,133 +522,159 @@ app.get("/profile", function(req, res) {
 });
 
 // we are changing stuff on the server!!!
-app.post('/update-username', function(req, res) {
+app.post('/update-username', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
 
-    console.log("username", req.body.user_name);
-    console.log("user ID", req.session.userID);
     connection.query(`UPDATE ${userTable} SET user_name = ? WHERE ID = ?`, [req.body.user_name, req.session.userID],
-        function(error, results, fields) {
+        function (error, results, fields) {
             if (error) console.log(error);
-            res.send({ status: "success", msg: "Record updated." });
+            res.send({
+                status: "success",
+                msg: "Record updated."
+            });
 
         });
 });
 
-app.post('/update-password', function(req, res) {
+app.post('/update-password', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`UPDATE ${userTable} SET password = ? WHERE ID = ?`, [req.body.password, req.session.userID],
-        function(error, results, fields) {
+        function (error, results, fields) {
             if (error) console.log(error);
-            res.send({ status: "success", msg: "Record updated." });
+            res.send({
+                status: "success",
+                msg: "Record updated."
+            });
 
         });
-    
+
 });
 
-app.post('/delete-image', function(req, res) {
+app.post('/delete-image', function (req, res) {
     // res.setHeader('Content-Type', 'application/json');
     connection.query(`UPDATE  ${userTable} SET user_image = "NULL" WHERE ID = ?`, [req.session.userID],
-        function(error, results, fields) {
+        function (error, results, fields) {
             if (error) console.log(error);
             req.session.userImage = null;
-            res.send({ status: "success", msg: "Record updated." });
+            res.send({
+                status: "success",
+                msg: "Record updated."
+            });
 
         });
 
 });
 
-app.get('/get-username', function(req, res) {
+app.get('/get-username', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`SELECT user_name FROM ${userTable} WHERE ID = ? `, [req.session.userID],
-        function(error, results, field) {
+        function (error, results, field) {
             if (error) console.log(error);
             req.session.name = results[0].user_name;
-            res.send({ status: "success", username: results[0].user_name });
+            res.send({
+                status: "success",
+                username: results[0].user_name
+            });
         }
     )
 });
 
-app.get('/get-password', function(req, res) {
+app.get('/get-password', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`SELECT password FROM ${userTable} WHERE ID = ? `, [req.session.userID],
-        function(error, results, field) {
+        function (error, results, field) {
             if (error) console.log(error);
             req.session.pass = results[0].password;
 
-            res.send({ status: "success", password: results[0].password });
+            res.send({
+                status: "success",
+                password: results[0].password
+            });
         }
     )
 });
 
-app.get('/get-users', function(req, res) {
+app.get('/get-users', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`SELECT * FROM ${userTable} `,
-        function(error, results, field) {
+        function (error, results, field) {
             if (error) console.log(error);
-            res.send({ status: "success", rows: results });
+            res.send({
+                status: "success",
+                rows: results
+            });
         }
     )
 });
 
-app.post('/add-user', function(req, res) {
+app.post('/add-user', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`INSERT INTO ${userTable} (user_name, first_name, last_name, password, is_admin) values (?, ?, ?, ?, ?)`, [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin],
-        function(error, results, fields) {
+        function (error, results, fields) {
             if (error) console.log(error);
-            res.send({ status: "success", msg: "Record added." });
+            res.send({
+                status: "success",
+                msg: "Record added."
+            });
         }
     )
 });
 
-app.post('/edit-user', function(req, res) {
+app.post('/edit-user', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`UPDATE ${userTable} SET user_name = ?, first_name = ?, last_name = ?, password = ?, is_admin = ? WHERE ID = ?`, [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin, req.body.id],
-        function(error, results, fields) {
+        function (error, results, fields) {
             if (error) console.log(error);
-            console.log('Rows returned are: ', results);
-            res.send({ status: "success", msg: "Record edited." });
+            res.send({
+                status: "success",
+                msg: "Record edited."
+            });
         }
     )
 });
 
-app.post('/delete-users', function(req, res) {
+app.post('/delete-users', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     connection.query(`DELETE FROM ${userTable} WHERE (user_name) = ? `, [req.body.user_name],
-        function(error, results, fields) {
+        function (error, results, fields) {
             if (error) console.log(error);
-            res.send({ status: "success", msg: "Record deleted." });
+            res.send({
+                status: "success",
+                msg: "Record deleted."
+            });
         }
     )
 
 });
 
 app.get("/logout", function (req, res) {
-  if (req.session) {
-    req.session.destroy(function (error) {
-      if (error) {
-        res.status(400).send("Unable to log out");
-      } else {
-        // session deleted, redirect to home
-        res.redirect("/");
-      }
-    });
-  }
+    if (req.session) {
+        req.session.destroy(function (error) {
+            if (error) {
+                res.status(400).send("Unable to log out");
+            } else {
+                // session deleted, redirect to home
+                res.redirect("/");
+            }
+        });
+    }
 });
 
 app.get("/createLobby", (req, res) => {
     if (req.session.loggedIn) {
         res.setHeader("Content-Type", "application/json");
         let newCode = Math.floor((Math.random() * 900)) + 100;
-        while (rooms.some(r => r.code == newCode && rooms[i].users.length > 0)) {
+        while (rooms.some(r => r.code == newCode && r.users.length > 0)) {
             newCode = Math.floor((Math.random() * 900)) + 100;
         }
         // delete all chat record from that room and remove the room
         connection.query(`DELETE FROM BBY_5_chat WHERE room = ?`,
-        [newCode], (error) => {
-            if (error) console.log(error);
+            [newCode], (error) => {
+                if (error) console.log(error);
+            });
+        res.send({
+            code: newCode
         });
-        res.send({ code: newCode });
     } else {
         res.redirect("/");
     }
@@ -654,56 +689,62 @@ app.post("/joinLobby", (req, res) => {
                 isInGame = r.inGame;
                 return r.code == req.body.code;
             })) {
-                if (!isInGame) {
-                    res.send({ approved: true, game: gameType })
-                } else {
-                    res.send({ approved: false, errorMessage: "The game is in progress" })
-                }
+            if (!isInGame) {
+                res.send({
+                    approved: true,
+                    game: gameType
+                })
+            } else {
+                res.send({
+                    approved: false,
+                    errorMessage: "The game is in progress"
+                })
+            }
         } else {
-            res.send({ approved: false, errorMessage: "Room not found" });
+            res.send({
+                approved: false,
+                errorMessage: "Room not found"
+            });
         }
-  } else {
-    res.redirect("/");
-  }
+    } else {
+        res.redirect("/");
+    }
 });
 
 app.get("/wordmatch", function (req, res) {
-  if (req.session.loggedIn) {
-    let dom = wrap("./app/html/wordmatch.html", req.session);
-    res.set("Server", "Wazubi Engine");
-    res.set("X-Powered-By", "Wazubi");
-    res.send(dom.serialize());
-  } else {
-    // not logged in - no session and no access, redirect to home!
-    res.redirect("/");
-  }
+    if (req.session.loggedIn) {
+        let dom = wrap("./app/html/wordmatch.html", req.session);
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(dom.serialize());
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
 });
 
 app.get("/startWordMatch", function (req, res) {
     connection.query(
-      "SELECT * FROM BBY_5_master ORDER BY rand() LIMIT 5;",
-      function (error, results, fields) {
-        if (error) {
-          console.log(error);
+        "SELECT * FROM BBY_5_master ORDER BY rand() LIMIT 5;",
+        function (error, results, fields) {
+            if (error) console.log(error);
+            res.send({
+                status: "success",
+                rows: results //data or rows?
+            });
         }
-        console.log("Rows returned are: ", results);
-        res.send({
-          status: "success",
-          rows: results //data or rows?
-        });
-      }
     );
-  });
-  
-app.post("/addUserPoints", function(req, res) {
-    connection.query(`UPDATE BBY_5_user SET bbscore = bbscore + ?, xscore = xscore + ?, yscore = yscore + ?,
-     zscore = zscore + ? WHERE ID = ?`,
-    [req.body.bb, req.body.x, req.body.y, req.body.z, req.session.userID], (error, results) => {
-        if (error) console.log(error);
-    });
 });
 
-app.get("/shop", function(req, res) {
+app.post("/addUserPoints", function (req, res) {
+    connection.query(`UPDATE BBY_5_user SET bbscore = bbscore + ?, xscore = xscore + ?, yscore = yscore + ?,
+     zscore = zscore + ? WHERE ID = ?`,
+        [req.body.bb, req.body.x, req.body.y, req.body.z, req.session.userID], (error, results) => {
+            if (error) console.log(error);
+        });
+});
+
+app.get("/shop", function (req, res) {
     if (req.session.loggedIn && !req.session.isGuest) {
         let dom = wrap("./app/html/shop.html", req.session);
         res.set("Server", "Wazubi Engine");
@@ -716,16 +757,20 @@ app.get("/shop", function(req, res) {
 
 app.get("/getUserPoints", (req, res) => {
     connection.query(`SELECT bbscore, xscore, yscore, zscore FROM BBY_5_user WHERE ID = ?`,
-    [req.session.userID], (error, results) => {
-        if (error) console.log(error);
-        res.send({ points: results[0] });
-    });
+        [req.session.userID], (error, results) => {
+            if (error) console.log(error);
+            res.send({
+                points: results[0]
+            });
+        });
 });
 
 app.get("/getShopItems", (req, res) => {
     connection.query(`SELECT * FROM ${itemTable}`, (error, results) => {
         if (error) console.log(error);
-        res.send({ itemList: results });
+        res.send({
+            itemList: results
+        });
     });
 });
 
@@ -733,26 +778,28 @@ app.get("/getCartItems", (req, res) => {
     connection.query(`SELECT * FROM BBY_5_cart_item
     LEFT JOIN BBY_5_item ON BBY_5_item.ID = BBY_5_cart_item.item_ID
     WHERE BBY_5_cart_item.user_ID = ?;`,
-    [req.session.userID], (error, results) => {
-        if (error) console.log(error);
-        res.send({ cartList: results });
-    });
+        [req.session.userID], (error, results) => {
+            if (error) console.log(error);
+            res.send({
+                cartList: results
+            });
+        });
 });
 
 app.post("/addToCart", (req, res) => {
     connection.query(`INSERT INTO bby_5_cart_item VALUES (?, ?, ?)
     ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
-    [req.session.userID, req.body.itemID, req.body.quantity, req.body.quantity], (error, results) => {
-        if (error) console.log(error);
-    });
+        [req.session.userID, req.body.itemID, req.body.quantity, req.body.quantity], (error, results) => {
+            if (error) console.log(error);
+        });
     res.send();
 });
 
 app.post("/removeFromCart", (req, res) => {
     connection.query(`DELETE FROM BBY_5_cart_item WHERE user_ID = ? AND item_ID = ?`,
-    [req.session.userID, req.body.itemID], (error, results) => {
-        if (error) console.log(error);
-    });
+        [req.session.userID, req.body.itemID], (error, results) => {
+            if (error) console.log(error);
+        });
     res.send();
 });
 
@@ -765,49 +812,66 @@ app.post("/emptyCart", (req, res) => {
 
 app.post("/purchaseCart", (req, res) => {
     connection.query(`SELECT bbscore, xscore, yscore, zscore FROM BBY_5_user WHERE ID = ?`,
-    [req.session.userID], (error, results) => {
-        if (error) console.log(error);
-        if (results[0].bbscore < req.body.total.B) {
-            res.send({ approved: false, errorMessage: "Not enough B-points!" });
-        } else if (results[0].xscore < req.body.total.X) {
-            res.send({ approved: false, errorMessage: "Not enough X-points!" });
-        } else if (results[0].yscore < req.body.total.Y) {
-            res.send({ approved: false, errorMessage: "Not enough Y-points!" });
-        } else if (results[0].zscore < req.body.total.Z) {
-            res.send({ approved: false, errorMessage: "Not enough Z-points!" });
-        } else {
-            connection.query(`SELECT * FROM bby_5_cart_item WHERE user_ID = ?`,
-            [req.session.userID], (error, results) => {
-                if (error) {
-                    console.log(error);
-                } else {
-                    if (results.length > 0) {
-                        results.forEach(cartItem => {
-                            connection.query(`INSERT INTO bby_5_has_item VALUES (?, ?, ?)
+        [req.session.userID], (error, results) => {
+            if (error) console.log(error);
+            if (results[0].bbscore < req.body.total.B) {
+                res.send({
+                    approved: false,
+                    errorMessage: "Not enough B-points!"
+                });
+            } else if (results[0].xscore < req.body.total.X) {
+                res.send({
+                    approved: false,
+                    errorMessage: "Not enough X-points!"
+                });
+            } else if (results[0].yscore < req.body.total.Y) {
+                res.send({
+                    approved: false,
+                    errorMessage: "Not enough Y-points!"
+                });
+            } else if (results[0].zscore < req.body.total.Z) {
+                res.send({
+                    approved: false,
+                    errorMessage: "Not enough Z-points!"
+                });
+            } else {
+                connection.query(`SELECT * FROM bby_5_cart_item WHERE user_ID = ?`,
+                    [req.session.userID], (error, results) => {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            if (results.length > 0) {
+                                results.forEach(cartItem => {
+                                    connection.query(`INSERT INTO bby_5_has_item VALUES (?, ?, ?)
                             ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
-                            [req.session.userID, cartItem.item_ID, cartItem.quantity, cartItem.quantity], (error, results) => {
-                                if (error) console.log(error);
-                            });
-                        });
-                        connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ?, xscore = xscore - ?, yscore = yscore - ?, zscore = zscore - ? WHERE ID = ?`,
-                            [req.body.total.B, req.body.total.X, req.body.total.Y, req.body.total.Z, req.session.userID], (error, results) => {
-                                if (error) console.log(error);
-                            });
-                        res.send({ approved: true });
-                    } else {
-                        res.send({ approved: false, errorMessage: "Cart is empty!" });
-                    }
-                }
-            });
-        }
-    });
+                                        [req.session.userID, cartItem.item_ID, cartItem.quantity, cartItem.quantity], (error, results) => {
+                                            if (error) console.log(error);
+                                        });
+                                });
+                                connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ?, xscore = xscore - ?, yscore = yscore - ?, zscore = zscore - ? WHERE ID = ?`,
+                                    [req.body.total.B, req.body.total.X, req.body.total.Y, req.body.total.Z, req.session.userID], (error, results) => {
+                                        if (error) console.log(error);
+                                    });
+                                res.send({
+                                    approved: true
+                                });
+                            } else {
+                                res.send({
+                                    approved: false,
+                                    errorMessage: "Cart is empty!"
+                                });
+                            }
+                        }
+                    });
+            }
+        });
 });
 
 app.post("/shopCheat", (req, res) => {
     connection.query(`UPDATE bby_5_user SET bbscore = ?, xscore = ?, yscore = ?, zscore = ? WHERE ID = ?`,
-    [10000, 10000, 10000, 10000, req.session.userID], (error) => {
-        if (error) console.log(error);
-    });
+        [10000, 10000, 10000, 10000, req.session.userID], (error) => {
+            if (error) console.log(error);
+        });
     res.send();
 });
 
@@ -815,10 +879,12 @@ app.get("/getInventoryItems", (req, res) => {
     connection.query(`SELECT * FROM BBY_5_has_item
     LEFT JOIN BBY_5_item ON BBY_5_item.ID = BBY_5_has_item.item_ID
     WHERE BBY_5_has_item.user_ID = ?;`,
-    [req.session.userID], (error, results) => {
-        if (error) console.log(error);
-        res.send({ itemList: results });
-    });
+        [req.session.userID], (error, results) => {
+            if (error) console.log(error);
+            res.send({
+                itemList: results
+            });
+        });
 });
 
 app.post("/useItem", (req, res) => {
@@ -845,45 +911,47 @@ app.post("/useItem", (req, res) => {
             console.log("Item ID not found: " + req.body.item.ID);
     }
     connection.query(`UPDATE bby_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
-    [req.session.userID], (error) => {
-        if (error) {
-            console.log(error);
-        }
-        if (req.session.title.includes(baseTitle)) {
-            let newTitle = `Lv. ${parseInt(req.session.title.substring(4)) + 1} ${baseTitle}`;
-            connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
-            [newTitle, req.session.userID], (error) => {
-                    if (error) console.log(error);
-                }
-            );
-            req.session.title = newTitle;
-            req.session.save();
-        }
-    });
+        [req.session.userID], (error) => {
+            if (error) {
+                console.log(error);
+            }
+            if (req.session.title.includes(baseTitle)) {
+                let newTitle = `Lv. ${parseInt(req.session.title.substring(4)) + 1} ${baseTitle}`;
+                connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
+                    [newTitle, req.session.userID], (error) => {
+                        if (error) console.log(error);
+                    }
+                );
+                req.session.title = newTitle;
+                req.session.save();
+            }
+        });
     connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
-    [req.session.userID, req.body.item.ID], (error) => {
-        if (error) console.log(error);
-    });
+        [req.session.userID, req.body.item.ID], (error) => {
+            if (error) console.log(error);
+        });
     connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
-    [req.session.userID, req.body.item.ID], (error) => {
-        if (error) console.log(error);
-    });
+        [req.session.userID, req.body.item.ID], (error) => {
+            if (error) console.log(error);
+        });
     res.send();
 });
 
 app.get("/getUserLevels", (req, res) => {
     connection.query(`SELECT bblevel, xlevel, ylevel, zlevel, title FROM BBY_5_user WHERE ID = ?;`,
-    [req.session.userID], (error, results) => {
-        if (error) console.log(error);
-        res.send({ levels: results[0] });
-    });
+        [req.session.userID], (error, results) => {
+            if (error) console.log(error);
+            res.send({
+                levels: results[0]
+            });
+        });
 });
 
 app.post("/setTitle", (req, res) => {
     connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
-    [req.body.title, req.session.userID], (error) => {
-        if (error) console.log(error);
-    });
+        [req.body.title, req.session.userID], (error) => {
+            if (error) console.log(error);
+        });
     req.session.title = req.body.title;
     res.send();
 });
@@ -893,8 +961,8 @@ app.post("/setTitle", (req, res) => {
 let port = process.env.PORT || 8000;
 
 function wordguessExpiry(prep, word_id, callback) {
-    return function() {
-      return callback(prep, word_id);
+    return function () {
+        return callback(prep, word_id);
     }
 }
 
@@ -911,32 +979,36 @@ class Preparation extends EventEmitter {
                 res.send(dom.serialize());
 
             } else {
-                for(let i = 0; i < results.length; ++i) {
+                for (let i = 0; i < results.length; ++i) {
                     results[i].phrase = sanitizeWord(results[i].phrase);
                 }
                 let w = 0;
                 let h = 0;
-                for(let i = 0; i < results.length; ++i) {
+                for (let i = 0; i < results.length; ++i) {
                     let minw = results[i].col + (results[i].vertical === 1 ? 1 : results[i].phrase.length);
-                    if(minw > w)
+                    if (minw > w)
                         w = minw;
                     let minh = results[i].row_num + (results[i].vertical === 0 ? 1 : results[i].phrase.length);
-                    if(minh > h)
+                    if (minh > h)
                         h = minh;
                 }
-                
-                results.sort(function(a, b) {
-                    if(a.row_num == b.row_num)
+
+                results.sort(function (a, b) {
+                    if (a.row_num == b.row_num)
                         return a.col - b.col;
                     return a.row_num - b.row_num;
                 })
                 let wordRecsById = {};
-                for(let i = 0; i < results.length; ++i) {
+                for (let i = 0; i < results.length; ++i) {
                     wordRecsById[parseInt(results[i].word_id)] = i;
                 }
 
-                crossword = {words: results, wordRecs: wordRecsById, width: w, height: h};
-                console.log("Crossword prepared")
+                crossword = {
+                    words: results,
+                    wordRecs: wordRecsById,
+                    width: w,
+                    height: h
+                };
                 this.emit("crosswordPrepared");
             }
         });
@@ -954,7 +1026,7 @@ class Preparation extends EventEmitter {
                 let expiry = expiryMoment.toDate();
                 let nowMoment = moment(new Date());
                 let now = nowMoment.toDate();
-                if(now.getTime() >= expiry.getTime()) {
+                if (now.getTime() >= expiry.getTime()) {
                     this.emit("wordguessCreateAndLaunch", results[0].word_id);
                 } else {
                     this.beforeReady(results[0]);
@@ -969,7 +1041,6 @@ class Preparation extends EventEmitter {
     beforeReady(result) {
         result.phrase = sanitizeWord(result.phrase);
         guessWord = result;
-        console.log("Wordguess today: " + guessWord.phrase);
         this.launchScheduler(result);
     }
 
@@ -977,11 +1048,8 @@ class Preparation extends EventEmitter {
         let expiryMoment = moment(result.start_date).add(wordguessExpiryPeriod, wordguessExpiryUnit);
         let expiry = expiryMoment.toDate();
         let nowMoment = moment(new Date());
-        // let now = nowMoment.toDate();
         let diff = expiryMoment.diff(nowMoment, 'seconds');
-        console.log("Planning wordguess expiry later in " + diff + " seconds at " + expiry);
-        var schJob = schedule.scheduleJob(expiry, wordguessExpiry(this, result.word_id, function(prep, word_id){
-            console.log("Scheduled wordguess expiry was triggered");
+        var schJob = schedule.scheduleJob(expiry, wordguessExpiry(this, result.word_id, function (prep, word_id) {
             prep.emit("wordguessUpdate", word_id);
         }));
     }
@@ -990,8 +1058,7 @@ class Preparation extends EventEmitter {
         connection.query(`SELECT word_id, phrase, meaning FROM BBY_5_master WHERE word_id > ${word_id} order by word_id asc limit 1`, (error, results) => {
             if (error || !results || !results.length) {
                 console.log("Failed to update wordguess");
-                if (error)
-                    console.log(error);
+                if (error) console.log(error);
             } else {
                 this.emit("selectedNewGuessWord", results[0], launchAfter);
             }
@@ -1001,17 +1068,13 @@ class Preparation extends EventEmitter {
     insertWordguess(result, launchAfter) {
         let thisDate = new Date();
         let thisMoment = moment(thisDate).format("YYYY-MM-DD HH:mm:ss");
-        console.log("Selected new guessWord, passing result " + result.phrase);
-        console.log("launchAfter: " + launchAfter);
         result.start_date = thisDate;
         connection.query(`INSERT into BBY_5_wordguess (word_id, start_time) values (${result.word_id}, "${thisMoment}")`, (error, results, fields) => {
             if (error) {
                 console.log("Failed to insert new wordguess into the DB: " + error);
             } else {
                 this.beforeReady(result);
-                if(launchAfter) {
-                    this.emit("ready", result);
-                }
+                if (launchAfter) this.emit("ready", result);
             }
         });
     }
@@ -1021,21 +1084,18 @@ let prep = new Preparation();
 prep.on("crosswordPrepared", () => {
     prep.performWordguess();
 });
-prep.on("ready", function(result) {
-    server.listen(port, function() {
+prep.on("ready", function (result) {
+    server.listen(port, function () {
         console.log("Listening on port " + port + "!");
     });
 });
-prep.on("wordguessCreateAndLaunch", function(word_id) {
-    console.log("wordguessCreateAndLaunch");
+prep.on("wordguessCreateAndLaunch", function (word_id) {
     prep.updateWordguess(word_id, true);
 });
-prep.on("wordguessUpdate", function(word_id) {
-    console.log("wordguessUpdate");
+prep.on("wordguessUpdate", function (word_id) {
     prep.updateWordguess(word_id, false);
 });
-prep.on("selectedNewGuessWord", function(result, launchAfter) {
-    console.log("wordguessUpdate");
+prep.on("selectedNewGuessWord", function (result, launchAfter) {
     prep.insertWordguess(result, launchAfter);
 });
 prep.performCrossword();

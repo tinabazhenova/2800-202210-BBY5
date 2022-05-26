@@ -3,10 +3,8 @@ let gWords = {}
 function ready(callback) {
     if (document.readyState != "loading") {
         callback();
-        console.log("ready state is 'complete'");
     } else {
         document.addEventListener("DOMContentLoaded", callback);
-        console.log("Listener was invoked");
     }
 }
 
@@ -14,16 +12,16 @@ function getNewCoord(coord, inputType) {
     if (inputType == "insertText" || inputType == "insertCompositionText") {
         return coord + 1;
     } else if (inputType == "deleteContentBackward") {
-        if(coord > 0)
+        if (coord > 0)
             return coord - 1;
-        return coord;    
+        return coord;
     }
 }
 
 function moveToCoord(row, col, vert) {
     let str = 'input[row="' + row + '"][col="' + col + '"]';
     let newFocus = $(str);
-    if(newFocus.length == 1) {
+    if (newFocus.length == 1) {
         newFocus[0].setAttribute("vertical", vert);
         newFocus[0].focus();
         newFocus[0].select();
@@ -40,8 +38,11 @@ function ingestWordInfo(letterBox, dir) {
     }
 }
 
-async function guess(wordId, word) {    
-    let contents = { wordId: wordId, word: word };
+async function guess(wordId, word) {
+    let contents = {
+        wordId: wordId,
+        word: word
+    };
     let check = await fetch('/try_crossword', {
         method: 'POST',
         headers: {
@@ -52,14 +53,11 @@ async function guess(wordId, word) {
     });
     let parsed = await check.json();
     let match = parsed.match;
-    if(match) {
-        console.log("MATCH");
+    if (match) {
         let str = `.hint[wordId="${wordId}"]`;
         let hint = $(str)[0];
         hint.classList.add("match");
     }
-    else 
-        console.log("MISMATCH");
 }
 
 function editWord(dir, ev) {
@@ -74,21 +72,21 @@ function editWord(dir, ev) {
         let wordArr = gWords[wordId];
         wordArr[wordCoord] = ev.data;
         let filledCount = 0;
-        for(let i = 0; i < wordArr.length && wordArr[i] != null; ++i) {
+        for (let i = 0; i < wordArr.length && wordArr[i] != null; ++i) {
             filledCount++;
         }
         if (filledCount == wordArr.length) {
             let word = "";
-            for(let i = 0; i < wordArr.length; ++i)
+            for (let i = 0; i < wordArr.length; ++i)
                 word += wordArr[i];
             guess(wordId, word);
         }
     }
 }
 
-ready(function() {
+ready(function () {
     let rects = document.getElementsByClassName("letterContainer");
-    for(let i = 0; i < rects.length; i++) {
+    for (let i = 0; i < rects.length; i++) {
         let letterBox = rects[i].getElementsByTagName("input")[0];
         ingestWordInfo(letterBox, "Horiz");
         ingestWordInfo(letterBox, "Vert");
@@ -96,22 +94,22 @@ ready(function() {
             let self = ev.srcElement;
             self.select();
             let starting = self.getAttribute("startingvert");
-            if(starting != null) {
+            if (starting != null) {
                 self.setAttribute("vertical", starting);
             }
         })
-        letterBox.addEventListener("input", function(ev) {
+        letterBox.addEventListener("input", function (ev) {
             let row = parseInt(ev.srcElement.getAttribute("row"));
             let col = parseInt(ev.srcElement.getAttribute("col"));
             editWord("Horiz", ev);
             editWord("Vert", ev);
             let vert = ev.srcElement.getAttribute("vertical");
-            if(vert == 0) {
+            if (vert == 0) {
                 col = getNewCoord(col, ev.inputType);
             } else {
                 row = getNewCoord(row, ev.inputType);
             }
-            if(ev.inputType == "deleteContentBackward") {
+            if (ev.inputType == "deleteContentBackward") {
                 ev.srcElement.value = " ";
             }
             if (!moveToCoord(row, col, vert))

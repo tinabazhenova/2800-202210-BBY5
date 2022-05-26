@@ -25,6 +25,7 @@ socket.on("sendWordmatchCorrect", (btnDiv, history) => {
 });
 
 document.getElementById("continueGame").onclick = () => {
+  document.getElementById("explanationButton").classList.add("hide");
   if (gameCount < gamePlays) {
     startWordMatch();
   } else {
@@ -78,8 +79,6 @@ function startWordMatch() {
       } else {
         console.log(this.status);
       }
-    } else {
-      console.log("error", this.status);
     }
   };
   xhr.open("GET", "/startWordMatch");
@@ -133,6 +132,8 @@ socket.on("wordmatchFetched", (results) => {
 socket.on("wordmatchCorrect", (btnDiv, values) => {
     document.getElementById("btn" + btnDiv).classList.add("correct"); //add css for correct answer to change div background color to green
     document.getElementById("btn" + btnDiv).classList.remove("incorrect");
+    document.getElementById("explanationButton").classList.remove("hide");
+    document.getElementById("explanationText").innerHTML = values.history;
   
     document.getElementById("bbPoints").classList.remove("hide");
     document.getElementById("xPoints").classList.remove("hide");
@@ -189,7 +190,7 @@ function wrongAnswer(e) {
 }
 
 function toggleExplanation() {
-  var popup = document.getElementById("explanation");
+  var popup = document.getElementById("explanationText");
   popup.classList.toggle("show");
 }
 
