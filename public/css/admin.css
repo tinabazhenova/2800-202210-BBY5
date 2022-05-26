@@ -102,3 +102,8 @@ table, th, td {
   th, td {
     padding: 10px ;
   }
+
+  input:required {
+    border-color: red;
+    border-width: 3px;
+  }

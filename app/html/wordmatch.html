@@ -1,37 +1,34 @@
+<div id="parent">
+  <div id="roomInfo"></div>
+  <div id="userList" style="border: 1px solid black"></div>
+  <div id="div2"><button id="startGame" class="defaultButton">START</button></div>
+  <div id="div3" class="hide">NEXT QUESTION</div>
+  <div id="div4" class="hide"><p>GUESS THIS PHRASE: <br></p></div>
+  <div id="div5"><button id="btn1" class="hide defaultButton">Answer:</button></div>
+  <div id="div6"><button id="btn2" class="hide defaultButton">Answer:</button></div>
+  <div id="div7"><button id="btn3" class="hide defaultButton">Answer:</button></div>
+  <div id="div8"><button id="btn4" class="hide defaultButton">Answer:</button></div>
+  <div id="div9" class="hide">Current BB Points:</div>
+  <div id="div10" class="hide">Current X Points:</div>
+  <div id="div11" class="hide">Current Y Points:</div>
+  <div id="div12" class="hide">Current Z Points:</div>
 
-<body>
-  <div id="parent">
-    <div id="roomInfo"></div>
-    <div id="userList" style="border: 1px solid black"></div>
-    <div id="div2"><button id="start" class="defaultButton">START</button></div>
-    <div id="div3" class="hide">NEXT QUESTION</div>
-    <div id="div4" class="hide"><p>GUESS THIS PHRASE: <br></p></div>
-    <div id="div5"><button id="btn1" class="hide defaultButton">Answer:</button></div>
-    <div id="div6"><button id="btn2" class="hide defaultButton">Answer:</button></div>
-    <div id="div7"><button id="btn3" class="hide defaultButton">Answer:</button></div>
-    <div id="div8"><button id="btn4" class="hide defaultButton">Answer:</button></div>
-    <div id="div9" class="hide">Current BB Points:</div>
-    <div id="div10" class="hide">Current X Points:</div>
-    <div id="div11" class="hide">Current Y Points:</div>
-    <div id="div12" class="hide">Current Z Points:</div>
-
-    <div id="div13">
-      <button onclick="showDetails('chat-dialog', 'chatForm')" class="chatButton">Chat</button>
-      <div id="chat-dialog"></div>
-      <form id="chatForm">
-        <input type="text" id="chatInput" />
-        <button type="submit" id="send" class="chatButton">Send</button>
-      </form>
-      <button type="button" id="leaveRoom" class="chatButton">Leave</button>
-    </div>
+  <div id="div13">
+    <button onclick="showDetails('chatDialog', 'chatForm')" class="chatButton">Chat</button>
+    <div id="chatDialog"></div>
+    <form id="chatForm">
+      <input type="text" id="chatInput" />
+      <button type="submit" id="send" class="chatButton">Send</button>
+    </form>
+    <button type="button" id="leaveRoom" class="chatButton">Leave</button>
   </div>
-  <link rel="stylesheet" href="/css/wordmatch.css">
-  <script src="/js/wordmatch.js"></script>
-  <script
-    src="/socket.io/socket.io.js"
-    integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
-  <script src="/js/room.js"></script>
-</body>
+</div>
+<link rel="stylesheet" href="/css/wordmatch.css">
+<script src="/js/wordmatch.js"></script>
+<script
+  src="/socket.io/socket.io.js"
+  integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="/js/room.js"></script>

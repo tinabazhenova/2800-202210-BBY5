@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/css/admin.css" rel="stylesheet" />
+    <link href="/css/modal.css" rel="stylesheet" />
     <link href="/imgs/favicon.ico" rel="icon" type="image/x-icon" />
 </head>
 
@@ -23,29 +24,34 @@
     </div>
     <fieldset id="admins_table_add">
         <legend>Add a User</legend>
-        <input type="text" placeholder="firstname" id="addfirstname" />
-        <input type="text" placeholder="lastname" id="addlastname" />
-        <input type="text" placeholder="username" id="addusername" required/>
-        <input type="text" placeholder="password" id="addpassword" required/>
-        <input type="text" placeholder="isAdmin" id="addisAdmin" required/>
-        <input type="button" id="add-submit" value="Submit"/>
+        <input class="req-add" type="text" placeholder="firstname" id="addfirstname" required/>
+        <input class="req-add" type="text" placeholder="lastname" id="addlastname" required/>
+        <input class="req-add" type="text" placeholder="username" id="addusername" required/>
+        <input class="req-add" type="text" placeholder="password" id="addpassword" required/>
+        <input class="req-add" type="text" placeholder="isAdmin" id="addisAdmin" required/>
+        <input type="submit" id="add-submit" value="Submit"/>
     </fieldset>
     <fieldset id="admins_table_edit">
         <legend>Edit a User (except ID)</legend>
-        <input type="number" placeholder="ID" id="id" required/>
-        <input type="text" placeholder="firstname" id="editfirstname" required/>
-        <input type="text" placeholder="lastname" id="editlastname" required/>
-        <input type="text" placeholder="username" id="editusername" required/>
-        <input type="text" placeholder="password" id="editpassword" required/>
-        <input type="text" placeholder="isAdmin" id="editisAdmin" required/>
-        <input type="button" id="edit-submit" value="Submit"/>
+        <input class="req-edit" type="number" placeholder="ID" id="id" required/>
+        <input class="req-edit" type="text" placeholder="firstname" id="editfirstname" required/>
+        <input class="req-edit" type="text" placeholder="lastname" id="editlastname" required/>
+        <input class="req-edit" type="text" placeholder="username" id="editusername" required/>
+        <input class="req-edit" type="text" placeholder="password" id="editpassword" required/>
+        <input class="req-edit" type="text" placeholder="isAdmin" id="editisAdmin" required/>
+        <input type="submit" id="edit-submit" value="Submit"/>
     </fieldset>
     <fieldset id="admins_table_delete">
         <legend>Delete a User by Username</legend>
-        <input type="text" placeholder="username" id="delusername" required/>
-        <input type="button" id="delete-submit" value="Submit"/>
+        <input class="req-delete" type="text" placeholder="username" id="delusername" required/>
+        <input type="submit" id="delete-submit" value="Submit"/>
+        <div id="modalBackground">
+            <div id="modalContainer">
+                <span>Fill All Required Fields</span>
+                <button type="button" id="okay">OK</button>
+            </div>
+        </div>
     </fieldset>
-
 
     <div id="logout">
         <form action="/logout" method="get">
