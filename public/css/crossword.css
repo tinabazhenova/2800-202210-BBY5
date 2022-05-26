@@ -52,6 +52,7 @@ h3{
     justify-content: center;
     text-transform: uppercase; 
     background-color: transparent;
+    height: min-content;
     /* margin-left: 20%; */
 }
 
@@ -109,12 +110,7 @@ h3{
 
     .letterBox {
         width: 4vw;
-        height: 2vh;
         text-align: center;
-    }
-
-    .hintNum{
-        height:40%;
     }
 
     .crossword_board_grid{
