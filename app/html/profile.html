@@ -1,93 +1,91 @@
 <body>
-  <div class="container">
-    <div id="profile_name">
-      <h1 class="title"></h1>
+    <div class="container">
+        <div id="profile_name">
+            <h1 class="title"></h1>
+        </div>
+        <div id="profile-picture">
+            <img id="picture_src" src="..." alt="...">
+        </div>
+        <form id="upload-images-form" enctype="multipart/form-data" action="/upload" method="POST">
+            <input id="image-upload" type="file" name="image" accept="image/png, image/gif, image/jpeg"
+                multiple="multiple" /><br>
+            <input id="submit" class="defaultButton" type="submit" value="Submit" />
+        </form>
+        <input id="remove" class="defaultButton" type="submit" value="Remove" />
+        <div id="tables">
+            <table id="user_info">
+                <tr>
+                    <th><span>username</span></th>
+                    <th><span>password</span></th>
+                </tr>
+                <tr>
+                    <td><span id="user_name"></span></td>
+                    <td><span id="password"></span></td>
+                </tr>
+                <tr>
+                    <th>B level</th>
+                    <th>B points</th>
+                </tr>
+                <tr>
+                    <td><span id="BLevel"></span></td>
+                    <td><span id="BPoint"></span></td>
+                </tr>
+                <tr>
+                    <th>X level</th>
+                    <th>X points</th>
+                </tr>
+                <tr>
+                    <td><span id="XLevel"></span></td>
+                    <td><span id="XPoint"></span></td>
+                </tr>
+                <tr>
+                    <th>Y level</th>
+                    <th>Y points</th>
+                </tr>
+                <tr>
+                    <td><span id="YLevel"></span></td>
+                    <td><span id="YPoint"></span></td>
+                </tr>
+                <tr>
+                    <th>Z level</th>
+                    <th>Z points</th>
+                </tr>
+                <tr>
+                    <td><span id="ZLevel"></span></td>
+                    <td><span id="ZPoint"></span></td>
+                </tr>
+            </table>
+        </div>
+        <div id="banner-scroll" class="banner">
+            <h1>HOW DO YOU DO, FELLOW KIDS? THIS IS ADULT SK8ERBOI! WANNA HANG?! </h1>
+        </div>
+        <select id="selectTitle">
+            <option id="defaultTitle">None</option>
+            <option id="BTitle">B</option>
+            <option id="XTitle">X</option>
+            <option id="YTitle">Y</option>
+            <option id="ZTitle">Z</option>
+        </select>
+        <button id="saveTitle" class="defaultButton">Save Title</button>
+        <div id="inventory">
+            <div id="itemList">
+            </div>
+        </div>
     </div>
-    <div id="profile-picture">
-      <img id="picture_src" src="..." alt="...">
-    </div>
-    <form id="upload-images-form" enctype="multipart/form-data" action="/upload" method="POST">
-      <span>Edit profile picture</span><br>
-      <input id="image-upload" type="file" name="image" accept="image/png, image/gif, image/jpeg"
-        multiple="multiple" /><br>
-      <input id="submit" class="profileButton" type="submit" value="Submit" />
-    </form>
-    <input id="remove" class="profileButton" type="submit" value="Remove" />
-    <div id="tables">
-      <table id="user_info">
-        <tr>          
-          <th><span>username</span></th>
-          <th><span>password</span></th>         
-        </tr>
-        <tr>
-          <td><span id="user_name"></span></td>
-          <td><span id="password"></span></td>          
-        </tr>
-        <tr>
-          <th>B level</th>
-          <th>B points</th>
-        </tr>
-        <tr>
-          <td><span id="BLevel"></span></td>
-          <td><span id="BPoint"></span></td>          
-        </tr>
-        <tr>
-          <th>X level</th>
-          <th>X points</th>
-        </tr>
-        <tr>
-          <td><span id="XLevel"></span></td>
-          <td><span id="XPoint"></span></td>          
-        </tr>
-        <tr>
-          <th>Y level</th>
-          <th>Y points</th>
-        </tr>
-        <tr>
-          <td><span id="YLevel"></span></td>
-          <td><span id="YPoint"></span></td>          
-        </tr>
-        <tr>
-          <th>Z level</th>
-          <th>Z points</th>
-        </tr>
-        <tr>
-          <td><span id="ZLevel"></span></td>
-          <td><span id="ZPoint"></span></td>          
-        </tr>
-      </table>
-    </div>
-    <div id="banner-scroll" class="banner">
-      <h1>HOW DO YOU DO, FELLOW KIDS? THIS IS ADULT SK8ERBOI! WANNA HANG?! </h1>
-    </div>
-    <select id="selectTitle">
-      <option id="defaultTitle">None</option>
-      <option id="BTitle">B</option>
-      <option id="XTitle">X</option>
-      <option id="YTitle">Y</option>
-      <option id="ZTitle">Z</option>
-    </select>
-    <button id="saveTitle" class="profileButton">Save Title</button>
-    <div id="inventory">
-      <span>Inventory</span>
-      <div id="itemList">
-      </div>
-    </div>
-  </div>
 
-  <template id="itemTemplate">
-    <div class="itemContainer">
-      <img class="itemImage" src="..." alt="...">
-      <span class="itemName"></span>
-      <button type="button" class="itemUse">Use</button>
-    </div>
-  </template>
+    <template id="itemTemplate">
+        <div class="itemContainer">
+            <img class="itemImage" src="..." alt="...">
+            <span class="itemName"></span>
+            <button type="button" class="itemUse">Use</button>
+        </div>
+    </template>
 
-  <link href="/css/profile.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
-  <script src="/js/editProfile.js"></script>
-  <script src="/js/inventory.js"></script>
+    <link href="/css/profile.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
+    <script src="/js/editProfile.js"></script>
+    <script src="/js/inventory.js"></script>
 
 </body>

@@ -30,7 +30,6 @@ addEventListeners();
 
 function getUsers() {
   const xhr = new XMLHttpRequest();
-  console.log("get username called");
   xhr.onload = function () {
 
     if (this.readyState == XMLHttpRequest.DONE) {
@@ -40,9 +39,6 @@ function getUsers() {
 
         let data = JSON.parse(this.responseText);
         if (data.status == "success") {
-          console.log("get username success");
-
-          // document.getElementById("user_name").innerHTML = data.username;
           let str = `<tr>
                       <th class="IDHeader"><span>ID</span></th>
                       <th class="FNHeader"><span>First Name</span></th>
@@ -53,38 +49,26 @@ function getUsers() {
                     </tr>`;
           for (let i = 0; i < data.rows.length; i++) {
             let row = data.rows[i];
-            //console.log("row", row);
-            str += ("<tr><td class='id'>"
-              + row.ID
-              + "<td class='FirstName'><span>"
-              + row.first_name
-              + "<span></td><td class='LastName'><span>"
-              + row.last_name
-              + "<span></td><td class='UserName'><span>"
-              + row.user_name
-              + "<span></td><td class='Password'><span>"
-              + row.password
-              + "<span></td><td class='IsAdmin'><span>"
-              + row.is_admin
-              + "</span></td></tr>");
+            str += ("<tr><td class='id'>" +
+              row.ID +
+              "<td class='FirstName'><span>" +
+              row.first_name +
+              "<span></td><td class='LastName'><span>" +
+              row.last_name +
+              "<span></td><td class='UserName'><span>" +
+              row.user_name +
+              "<span></td><td class='Password'><span>" +
+              row.password +
+              "<span></td><td class='IsAdmin'><span>" +
+              row.is_admin +
+              "</span></td></tr>");
           }
-
           document.getElementById("users_table").innerHTML = str;
-
-        } else {
-          console.log("Error!");
         }
-
       } else {
-
-        // not a 200, could be anything (404, 500, etc.)
         console.log(this.status);
       }
-
-    } else {
-      console.log("ERROR", this.status);
     }
-
   }
   xhr.open("GET", "/get-users");
   xhr.send();
@@ -104,52 +88,39 @@ document.getElementById("add-submit").addEventListener("click", function (e) {
   let modal = document.getElementById("modalBackground");
   const addElements = document.querySelectorAll(".req-add");
   let isAnyEmpty = false;
-  addElements.forEach (function (element) {
+  addElements.forEach(function (element) {
     if (!element.value) isAnyEmpty = true;
   })
-   if (isAnyEmpty) {
-      modal.style.display = "block"
-      // window.onclick = (event) => {if (event.target == modal) modal.style.display = "none"};
-      document.getElementById("okay").onclick = () => modal.style.display = "none";
-    } else {
+  if (isAnyEmpty) {
+    modal.style.display = "block";
+    document.getElementById("okay").onclick = () => modal.style.display = "none";
+  } else {
 
-      document.getElementById("addfirstname").value = "";
-      document.getElementById("addlastname").value = "";
-      document.getElementById("addusername").value = "";
-      document.getElementById("addpassword").value = "";
-      document.getElementById("addisAdmin").value = "";
+    document.getElementById("addfirstname").value = "";
+    document.getElementById("addlastname").value = "";
+    document.getElementById("addusername").value = "";
+    document.getElementById("addpassword").value = "";
+    document.getElementById("addisAdmin").value = "";
 
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        if (this.readyState == XMLHttpRequest.DONE) {
-    
-          // 200 means everthing worked
-          if (xhr.status === 200) {
-    
-    
-            getUsers();
-            console.log("DB updated.");
-    
-          } else {
-    
-            // not a 200, could be anything (404, 500, etc.)
-            console.log(this.status);
-    
-          }
-    
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      if (this.readyState == XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          getUsers();
         } else {
-          console.log("ERROR", this.status);
+          console.log(this.status);
         }
       }
-      xhr.open("POST", "/add-user");
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.send("first_name=" + formData.first_name + "&last_name=" + formData.last_name +
-        "&user_name=" + formData.user_name + "&password=" + formData.password +
-        "&is_admin=" + formData.is_admin);
-    
     }
-      
+    xhr.open("POST", "/add-user");
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send("first_name=" + formData.first_name + "&last_name=" + formData.last_name +
+      "&user_name=" + formData.user_name + "&password=" + formData.password +
+      "&is_admin=" + formData.is_admin);
+
+  }
+
 
 });
 
@@ -168,92 +139,77 @@ document.getElementById("edit-submit").addEventListener("click", function (e) {
   let modal = document.getElementById("modalBackground");
   const editElements = document.querySelectorAll(".req-edit");
   let isAnyEmpty = false;
-  editElements.forEach (function (element) {
+  editElements.forEach(function (element) {
     if (!element.value) isAnyEmpty = true;
   })
-   if (isAnyEmpty) {
-      modal.style.display = "block"
-      // window.onclick = (event) => {if (event.target == modal) modal.style.display = "none"};
-      document.getElementById("okay").onclick = () => modal.style.display = "none";
-    } else {
+  if (isAnyEmpty) {
+    modal.style.display = "block";
+    document.getElementById("okay").onclick = () => modal.style.display = "none";
+  } else {
 
-      document.getElementById("id").value = "";
-      document.getElementById("editfirstname").value = "";
-      document.getElementById("editlastname").value = "";
-      document.getElementById("editusername").value = "";
-      document.getElementById("editpassword").value = "";
-      document.getElementById("editisAdmin").value = "";
+    document.getElementById("id").value = "";
+    document.getElementById("editfirstname").value = "";
+    document.getElementById("editlastname").value = "";
+    document.getElementById("editusername").value = "";
+    document.getElementById("editpassword").value = "";
+    document.getElementById("editisAdmin").value = "";
 
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        if (this.readyState == XMLHttpRequest.DONE) {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      if (this.readyState == XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
 
-          // 200 means everthing worked
-          if (xhr.status === 200) {
-
-            getUsers();
-            console.log("DB edited.");
-
-          } else {
-
-            // not a 200, could be anything (404, 500, etc.)
-            console.log(this.status);
-
-          }
+          getUsers();
 
         } else {
-          console.log("ERROR", this.status);
+          console.log(this.status);
         }
+
       }
-      xhr.open("POST", "/edit-user");
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.send("id=" + editData.id + "&first_name=" + editData.first_name + "&last_name=" + editData.last_name +
-        "&user_name=" + editData.user_name + "&password=" + editData.password +
-        "&is_admin=" + editData.is_admin);
     }
+    xhr.open("POST", "/edit-user");
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send("id=" + editData.id + "&first_name=" + editData.first_name + "&last_name=" + editData.last_name +
+      "&user_name=" + editData.user_name + "&password=" + editData.password +
+      "&is_admin=" + editData.is_admin);
+  }
 
 });
 
 document.getElementById("delete-submit").addEventListener("click", function (e) {
   e.preventDefault();
-  let deleteData = { user_name: document.getElementById("delusername").value };
+  let deleteData = {
+    user_name: document.getElementById("delusername").value
+  };
   let modal = document.getElementById("modalBackground");
   const deleteElements = document.getElementById("delusername");
   let isAnyEmpty = false;
   if (!deleteElements.value) isAnyEmpty = true;
-  
+
   if (isAnyEmpty) {
-    modal.style.display = "block"
-    // window.onclick = (event) => {if (event.target == modal) modal.style.display = "none"};
+    modal.style.display = "block";
     document.getElementById("okay").onclick = () => modal.style.display = "none";
   } else {
-  
-  document.getElementById("delusername").value = "";
-  const xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    if (this.readyState == XMLHttpRequest.DONE) {
 
-      // 200 means everthing worked
-      if (xhr.status === 200) {
+    document.getElementById("delusername").value = "";
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      if (this.readyState == XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
 
-        getUsers();
-        console.log("All records deleted.");
+          getUsers();
 
-      } else {
+        } else {
+          console.log(this.status);
 
-        // not a 200, could be anything (404, 500, etc.)
-        console.log(this.status);
+        }
 
       }
-
-    } else {
-      console.log("ERROR", this.status);
     }
-  }
-  xhr.open("POST", "/delete-users");
-  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.send("user_name=" + deleteData.user_name);
+    xhr.open("POST", "/delete-users");
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send("user_name=" + deleteData.user_name);
   }
 });

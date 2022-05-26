@@ -197,13 +197,14 @@ document.getElementById("closeCart").onclick = () => {
 }
 document.getElementById("purchaseCart").onclick = () => purchaseCart();
 
-document.getElementById("cencelOrder").onclick = () => {
+document.getElementById("backButton").onclick = () => {
   if (document.getElementById("cartItemList").innerHTML == "") {
     window.location.href = "/main";
   } else {
     modal.style.display = "block"
   }
 };
+
 window.onclick = (event) => {if (event.target == modal) modal.style.display = "none"};
 
 document.getElementById("saveCart").onclick = () => window.location.href = "/main";
@@ -216,5 +217,3 @@ document.getElementById("cancelCancel").onclick = () => modal.style.display = "n
 refreshUserPoints();
 refreshShop();
 refreshCart();
-
-document.getElementById("back").style.visibility = "hidden";

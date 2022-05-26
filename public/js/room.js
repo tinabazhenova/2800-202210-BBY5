@@ -16,6 +16,8 @@ form.addEventListener("submit", e => {
   const message = input.value.trim();
   if (message) socket.emit("sendMessage", message, code);
   input.value = "";
+  const dialog = document.getElementById("chatDialog");
+  dialog.scrollTop = dialog.scrollHeight;
 });
 
 //server can send messages to its clients too - use socket.on() to respond
@@ -23,17 +25,21 @@ socket.on("postMessage", (message, title) => {
   displayMessage(message, title);
 });
 
-socket.on("updateUserlist", members => {
+socket.on("announceMessage", message => {
+  displayMessage(message, "System");
+});
+
+socket.on("updateUserlist", (members, host) => {
   const list = document.getElementById("userList");
   list.innerHTML = "Users in this room:";
   members.forEach(m => {
-    list.innerHTML += "<br>" + m;
+    if (m == host) {
+      list.innerHTML += "<br>" + m + " (host)";
+    } else {
+      list.innerHTML += "<br>" + m;
+    }
   });
 })
-
-socket.on("announceMessage", message => {
-  displayMessage(message);
-});
 
 socket.on("forceDisconnect", (message, username) => {
   if (!username || (username && username.toUpperCase() == document.getElementById("name").innerHTML.substring(7))) {
@@ -72,10 +78,7 @@ async function addUserPoints(bb, x, y, z) {
       body: JSON.stringify({ bb, x, y, z }),
     });
     let parsed = await response.json();
-    if (parsed.approved) {
-      console.log("User scores added!");
-      console.log("body: " + body);
-    } else {
+    if (!parsed.approved) {
       console.log("Error: " + error);
     }
   } catch (error) {
