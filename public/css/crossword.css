@@ -3,26 +3,6 @@
     --backColor: #E0CBA8;
     --gridWidth: 3;
 }
-#startGame:hover {
-    background-color: var(--color7);
-}
-
-#leaveRoom:hover {
-    background-color: var(--color5);
-}
-
-button {
-    font-family: 'atwriter';
-    padding: 12px;
-    font-size: 1em;
-    background-color: var(--color1);
-    border-radius: 20%;
-    width: auto;
-    color: var(--color2);
-    cursor: pointer;
-    min-width: 5%;
-    margin-bottom: 2%;
-}
 
 h3{
     color: var(--color1);
@@ -47,7 +27,7 @@ h3{
 #crosswordLegend{
     display: flex;
     color: var(--color4);
-    padding-top: 5%;
+    padding-top: 3%;
 
 }
 
@@ -55,7 +35,7 @@ h3{
 #legendDown{
     background-color: rgba(224, 203, 168, .7);
     text-align:left;
-    border-radius: 20px;
+    border-radius: 40px;
     height: min-content;
     width: 50%;
     margin: 5%;
@@ -90,7 +70,7 @@ h3{
     grid-template-columns: repeat(7, 1fr);
     width: min-content;
     height: min-content;
-    margin: 10%
+    margin: 5%
 }
 
 #box0 {
@@ -144,5 +124,13 @@ h3{
     #crosswordLegend{
 
         flex-direction: column;
+    }
+
+    #legendAcross,
+    #legendDown{
+        height: min-content;
+        width: 70%;
+        margin: auto;
+        margin-bottom: 2%;
     }
 }
