@@ -88,7 +88,7 @@ input[type='submit'] {
     font-size: 1em;
     background-color: rgb(224, 103, 3);
     border: 3px solid #f2f2f8;
-    border-radius: 3px;
+    border-radius: 25px;
     color: #f2f2f8;
     cursor: pointer;
 }
@@ -101,4 +101,9 @@ table, th, td {
 
   th, td {
     padding: 10px ;
+  }
+
+  input:required {
+    border-color: red;
+    border-width: 3px;
   }
