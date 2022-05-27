@@ -60,7 +60,7 @@ class Matcher {
     async guess() {
         try {
             let contents = { word: this.tempEnteredWord };
-            let check = await fetch('/try_word', {
+            let check = await fetch('/tryWord', {
                 method: 'POST',
                 headers: {
                     "Accept": 'application/json',

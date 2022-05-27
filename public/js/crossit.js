@@ -43,7 +43,7 @@ async function guess(wordId, word) {
         wordId: wordId,
         word: word
     };
-    let check = await fetch('/try_crossword', {
+    let check = await fetch('/tryCrossword', {
         method: 'POST',
         headers: {
             "Accept": 'application/json',

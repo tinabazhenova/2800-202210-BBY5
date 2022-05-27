@@ -179,8 +179,8 @@ app.get("/", function (req, res) {
     } else {
 
         let doc = fs.readFileSync("./app/html/index.html", "utf8");
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
+        res.set("Server", "GenWe Engine");
+        res.set("X-Powered-By", "GenWe");
         res.send(doc);
     }
 });
@@ -198,8 +198,8 @@ app.get("/main", function (req, res) {
     // check for a session first!
     if (req.session.loggedIn) {
         let mainDOM = wrap("./app/html/main.html", req.session);
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
+        res.set("Server", "GenWe Engine");
+        res.set("X-Powered-By", "GenWe");
         res.send(mainDOM.serialize());
     } else {
         // not logged in - no session and no access, redirect to home!
@@ -219,8 +219,8 @@ app.get("/admin", function (req, res) {
             mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
             mainDOM.window.document.getElementById("profile_name").innerHTML = "Welcome Admin " + req.session.username;
 
-            res.set("Server", "Wazubi Engine");
-            res.set("X-Powered-By", "Wazubi");
+            res.set("Server", "GenWe Engine");
+            res.set("X-Powered-By", "GenWe");
             res.send(mainDOM.serialize());
         });
     } else {
@@ -320,8 +320,8 @@ app.get("/profile", function (req, res) {
         profileDOM.window.document.getElementById("user_name").innerHTML = req.session.name;
         profileDOM.window.document.getElementById("password").innerHTML = req.session.pass;
 
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
+        res.set("Server", "GenWe Engine");
+        res.set("X-Powered-By", "GenWe");
         res.send(profileDOM.serialize());
 
     } else {
@@ -612,8 +612,8 @@ let crossword = null;
 
 app.get("/guessit", async function (req, res) {
     if (req.session.loggedIn) {
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
+        res.set("Server", "GenWe Engine");
+        res.set("X-Powered-By", "GenWe");
 
         respondWithWord(guessWord.phrase, req, res);
     } else {
@@ -623,8 +623,8 @@ app.get("/guessit", async function (req, res) {
 
 app.get("/crossit", function (req, res) {
     if (req.session.loggedIn) {
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
+        res.set("Server", "GenWe Engine");
+        res.set("X-Powered-By", "GenWe");
         respondWithCrossword(crossword, req, res);
     } else {
         res.redirect("/");
@@ -722,7 +722,7 @@ function sanitizeWord(phrase) {
     return phrase.replace(/[\s`'-]/g, "").toUpperCase();
 }
 
-app.post("/try_word", function (req, res) {
+app.post("/tryWord", function (req, res) {
     let hardCodedWord = guessWord.phrase;
     let tempEnteredWord = req.body.word.toUpperCase();
     let checkResult = Array.apply(null, Array(hardCodedWord.length)).map(function (x, i) {
@@ -751,7 +751,7 @@ app.post("/try_word", function (req, res) {
 });
 
 
-app.post("/try_crossword", function (req, res) {
+app.post("/tryCrossword", function (req, res) {
     let word = req.body.word.toUpperCase();
     let word_id = parseInt(req.body.wordId);
     let correctWord = crossword.words[crossword.wordRecs[word_id]].phrase;
@@ -765,8 +765,8 @@ app.post("/try_crossword", function (req, res) {
 app.get("/matchit", function (req, res) {
     if (req.session.loggedIn) {
         let dom = wrap("./app/html/matchit.html", req.session);
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
+        res.set("Server", "GenWe Engine");
+        res.set("X-Powered-By", "GenWe");
         res.send(dom.serialize());
     } else {
         res.redirect("/");
@@ -808,8 +808,8 @@ app.post("/addUserPoints", function (req, res) {
 app.get("/shop", function (req, res) {
     if (req.session.loggedIn && !req.session.isGuest) {
         let dom = wrap("./app/html/shop.html", req.session);
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
+        res.set("Server", "GenWe Engine");
+        res.set("X-Powered-By", "GenWe");
         res.send(dom.serialize());
     } else {
         if (req.session.isGuest) req.session.destroy((error) => {

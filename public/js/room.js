@@ -4,7 +4,7 @@ let code = sessionStorage.getItem("code");
 let game = sessionStorage.getItem("game");
 document.getElementById("roomInfo").innerHTML = game + " " + code;
 
-socket.emit("preventDuplicates", code);
+//socket.emit("preventDuplicates", code);
 socket.emit("joinRoom", code, game);
 
 const form = document.getElementById("chatForm");
