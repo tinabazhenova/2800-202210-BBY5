@@ -459,8 +459,8 @@ app.get("/profile", function (req, res) {
         let profileDOM = wrap("./app/html/profile.html", req.session);
 
         profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
-        if (req.session.name == "adult" && req.session.pass == "sk8terboi") {
-            profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
+        if (req.session.name == "adult" && req.session.pass == "sk8erboi") {
+            profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8erboi.jpg";
             profileDOM.window.document.querySelector(".banner").style.display = "block";
         } else if (req.session.userImage == null) {
             profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
