@@ -314,7 +314,7 @@ app.get("/profile", function (req, res) {
         } else if (req.session.userImage == null) {
             profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
         } else {
-            profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
+            profileDOM.window.document.getElementById("picture_src").src = "/imgs/" + req.session.userImage;
         }
 
         profileDOM.window.document.getElementById("user_name").innerHTML = req.session.name;
@@ -335,7 +335,7 @@ app.get("/profile", function (req, res) {
 
 app.post('/upload', upload.single("image"), function (req, res) {
     if (req.file) {
-        var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename;
+        var imgsrc = req.file.filename;
         var insertData = `UPDATE BBY_5_user SET user_image = ? WHERE BBY_5_user.ID = ?`;
         connection.query(insertData, [imgsrc, req.session.userID], (err, result) => {
             if (err) throw err;
