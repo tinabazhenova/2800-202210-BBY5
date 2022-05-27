@@ -38,9 +38,13 @@ h3 {
     text-align:left;
     border-radius: 40px;
     height: min-content;
-    width: 50%;
-    margin: 1%;
+    width: 40%;
+    margin: 2%;
     padding: 1%;
+}
+
+.hint{
+    margin-top: 1.5%;
 }
 
 .letterBox {
@@ -53,8 +57,7 @@ h3 {
     text-transform: uppercase;
     background-color: transparent;
     height: min-content;
-    /* margin-left: 20%; */
-}
+ }
 
 .letterBox:focus {
     outline: none;
@@ -71,7 +74,7 @@ h3 {
     grid-template-columns: repeat(7, 1fr);
     width: min-content;
     height: min-content;
-    margin: 5%
+    margin: 3%
 }
 
 #box0 {
