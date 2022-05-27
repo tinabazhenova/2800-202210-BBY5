@@ -24,8 +24,8 @@
 
 #itemList {
     width: 100%;
-    height: 90%;
-    overflow-y: scroll;
+    height: 80%;
+    overflow-y: auto;
     margin-bottom: 2%;
 }
 

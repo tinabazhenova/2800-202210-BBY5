@@ -4,15 +4,6 @@
   --color3: rgb(217, 241, 250);
   --color4: #564154;
   --color5: rgb(139, 0, 105);
-  --color6: #779FA1;
-}
-
-#startGame:hover {
-  background-color: var(--color6);
-}
-
-#leaveRoom:hover {
-  background-color: var(--color5);
 }
 
 .popup {
@@ -29,7 +20,8 @@
 /* The actual popup */
 .popup .popuptext {
   visibility: hidden;
-  width: 60%;
+  width: 100%;
+  max-width: 550px;
   background-color: var(--color5);
   color: var(--color2);
   text-align: center;
@@ -37,8 +29,11 @@
   padding: 8px 0;
   position: absolute;
   z-index: 1;
-  left: 20%;
   bottom: 125%;
+  display: inline-block;
+  left: 0%;
+  right: 0%;
+  margin: 0 auto;
 }
 
 /* popup animation */

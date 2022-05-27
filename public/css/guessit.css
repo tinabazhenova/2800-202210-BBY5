@@ -47,14 +47,6 @@ button {
     text-transform: capitalize;
 }
 
-#startGame:hover {
-    background-color: var(--color7);
-}
-
-#leaveRoom:hover {
-    background-color: var(--color5);
-}
-
 .yellow {
     background-color: yellow;
     color: var(--color4);
@@ -129,7 +121,8 @@ button {
 .popup .popuptext {
     position: absolute;
     visibility: hidden;
-    width: 60%;
+    width: 100%;
+    max-width: 550px;
     background-color: var(--color5);
     color: var(--color2);
     text-align: center;
@@ -137,7 +130,10 @@ button {
     padding: 8px 0;
     z-index: 1;
     bottom: 125%;
-    left: 20%;
+    display: inline-block;
+    left: 0%;
+    right: 0%;
+    margin: 0 auto;
 }
 
 

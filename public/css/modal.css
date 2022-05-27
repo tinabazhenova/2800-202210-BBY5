@@ -15,8 +15,11 @@
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    max-width: 600px;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: inline-block;
+    top: 40%;
+    left: 0%;
+    right: 0%;
+    margin: 0 auto;
 }
