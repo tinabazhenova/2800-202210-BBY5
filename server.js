@@ -56,7 +56,7 @@ app.use(bodyparser.urlencoded({
 
 app.use(session);
 
-//Socket part
+/* ----- socket.io ----- */
 let rooms = [];
 const sharedsession = require("express-socket.io-session");
 io.use(sharedsession(session));
@@ -137,7 +137,6 @@ io.on("connection", socket => {
                 or the last user in that room, remove it from the list */
                 if (rooms[i].host == session.username || rooms[i].users.length == 0) {
                     io.to(rooms[i].code).emit("forceDisconnect", "The host has left the room");
-                    console.log(`room ${rooms[i].code} destroyed.`);
                     rooms.splice(i--, 1);
                 }
             }
@@ -184,7 +183,7 @@ app.get("/", function (req, res) {
         res.set("X-Powered-By", "Wazubi");
         res.send(doc);
     }
-}); 
+});
 
 function wrap(filename, session) {
     let template = fs.readFileSync("./app/html/template.html", "utf8");
@@ -195,14 +194,419 @@ function wrap(filename, session) {
     return dom;
 }
 
-function respondWithWord(guessWord, req, res) {
-    let dom = wrap("./app/html/guessit.html", req.session);
-    let grid = dom.window.document.querySelector(".wordguess_grid");
-    grid.setAttribute("word_length", guessWord.length);
-    grid.setAttribute("guess_attempts", 5);
-    res.send(dom.serialize());
-}
+app.get("/main", function (req, res) {
+    // check for a session first!
+    if (req.session.loggedIn) {
+        let mainDOM = wrap("./app/html/main.html", req.session);
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(mainDOM.serialize());
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        res.redirect("/");
+    }
 
+});
+
+app.get("/admin", function (req, res) {
+    if (req.session.loggedIn && req.session.isAdmin) {
+        let main = fs.readFileSync("./app/html/admin.html", "utf8");
+        let mainDOM = new JSDOM(main);
+
+        connection.query(`SELECT * FROM BBY_5_user WHERE BBY_5_user.first_name = ?`, [req.session.username], function (error, results) {
+            if (error) console.log(error);
+            // great time to get the user's data and put it into the page!
+            mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
+            mainDOM.window.document.getElementById("profile_name").innerHTML = "Welcome Admin " + req.session.username;
+
+            res.set("Server", "Wazubi Engine");
+            res.set("X-Powered-By", "Wazubi");
+            res.send(mainDOM.serialize());
+        });
+    } else {
+        res.redirect("/");
+    }
+});
+
+app.use(express.json());
+app.use(
+    express.urlencoded({
+        extended: true,
+    })
+);
+
+/* ----- login ----- */
+app.post("/login", function (req, res) {
+    res.setHeader("Content-Type", "application/json");
+    connection.query(`SELECT * FROM BBY_5_user WHERE user_name = ? AND password = ?`,
+        [req.body.username, req.body.password],
+        function (error, results) {
+            if (error || !results || !results.length) {
+                if (error) console.log(error);
+                res.send({
+                    status: "fail",
+                    msg: "User account not found."
+                });
+            } else {
+                // user authenticated, create a session
+                req.session.loggedIn = true;
+                req.session.lastname = results[0].last_name;
+                req.session.name = results[0].user_name;
+                req.session.userID = results[0].ID;
+                req.session.username = results[0].first_name;
+                req.session.isAdmin = results[0].is_admin;
+                req.session.userImage = results[0].user_image;
+                req.session.pass = results[0].password;
+                req.session.title = results[0].title;
+                req.session.isGuest = false;
+
+                req.session.save((error) => {
+                    if (error) console.log(error);
+                });
+
+                // all we are doing as a server is telling the client that they
+                // are logged in, it is up to them to switch to the profile page
+                res.send({
+                    status: "success",
+                    msg: "Logged in.",
+                    isAdmin: (results[0].is_admin == 1)
+                });
+            }
+        });
+});
+
+let guest = 10;
+app.post("/guest_login", function (req, res) {
+    req.session.loggedIn = true;
+    req.session.isGuest = true;
+    req.session.username = "Guest_" + (guest++);
+    req.session.save((error) => {
+        if (error) console.log(error);
+    })
+    res.send({});
+});
+
+
+app.get("/logout", function (req, res) {
+    if (req.session) {
+        req.session.destroy(function (error) {
+            if (error) {
+                res.status(400).send("Unable to log out");
+            } else {
+                // session deleted, redirect to home
+                res.redirect("/");
+            }
+        });
+    }
+});
+
+/* ----- profile ----- */
+app.get("/profile", function (req, res) {
+    // check for a session first!
+    if (req.session.loggedIn && !req.session.isGuest) {
+
+        let profileDOM = wrap("./app/html/profile.html", req.session);
+
+        profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
+        if (req.session.name == "adult" && req.session.pass == "sk8erboi") {
+            profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8erboi.jpg";
+            profileDOM.window.document.querySelector(".banner").style.display = "block";
+        } else if (req.session.userImage == null) {
+            profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
+        } else {
+            profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
+        }
+
+        profileDOM.window.document.getElementById("user_name").innerHTML = req.session.name;
+        profileDOM.window.document.getElementById("password").innerHTML = req.session.pass;
+
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        res.send(profileDOM.serialize());
+
+    } else {
+        // not logged in - no session and no access, redirect to home!
+        if (req.session.isGuest) req.session.destroy((error) => {
+            if (error) res.status(400).send("Unable to log out");
+        });
+        res.redirect("/");
+    }
+});
+
+app.post('/upload', upload.single("image"), function (req, res) {
+    if (req.file) {
+        var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename;
+        var insertData = `UPDATE BBY_5_user SET user_image = ? WHERE BBY_5_user.ID = ?`;
+        connection.query(insertData, [imgsrc, req.session.userID], (err, result) => {
+            if (err) throw err;
+        });
+        req.session.userImage = imgsrc;
+        res.redirect("/profile");
+    }
+});
+
+// we are changing stuff on the server!!!
+app.post('/update-username', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+
+    connection.query(`UPDATE BBY_5_user SET user_name = ? WHERE ID = ?`, [req.body.user_name, req.session.userID],
+        function (error, results, fields) {
+            if (error) console.log(error);
+            res.send({
+                status: "success",
+                msg: "Record updated."
+            });
+
+        });
+});
+
+app.post('/update-password', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`UPDATE BBY_5_user SET password = ? WHERE ID = ?`, [req.body.password, req.session.userID],
+        function (error, results, fields) {
+            if (error) console.log(error);
+            res.send({
+                status: "success",
+                msg: "Record updated."
+            });
+
+        });
+
+});
+
+app.post('/delete-image', function (req, res) {
+    // res.setHeader('Content-Type', 'application/json');
+    connection.query(`UPDATE  BBY_5_user SET user_image = "NULL" WHERE ID = ?`, [req.session.userID],
+        function (error, results, fields) {
+            if (error) console.log(error);
+            req.session.userImage = null;
+            res.send({
+                status: "success",
+                msg: "Record updated."
+            });
+
+        });
+
+});
+
+app.get('/get-username', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT user_name FROM BBY_5_user WHERE ID = ?`, [req.session.userID],
+        function (error, results, field) {
+            if (error) console.log(error);
+            req.session.name = results[0].user_name;
+            res.send({
+                status: "success",
+                username: results[0].user_name
+            });
+        }
+    );
+});
+
+app.get('/get-password', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT password FROM BBY_5_user WHERE ID = ?`, [req.session.userID],
+        function (error, results, field) {
+            if (error) console.log(error);
+            req.session.pass = results[0].password;
+
+            res.send({
+                status: "success",
+                password: results[0].password
+            });
+        }
+    );
+});
+
+app.get('/get-users', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`SELECT * FROM BBY_5_user`,
+        function (error, results, field) {
+            if (error) console.log(error);
+            res.send({
+                status: "success",
+                rows: results
+            });
+        }
+    );
+});
+
+app.post('/add-user', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`INSERT INTO BBY_5_user (user_name, first_name, last_name, password, is_admin) values (?, ?, ?, ?, ?)`,
+        [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin],
+        function (error, results, fields) {
+            if (error) console.log(error);
+            res.send({
+                status: "success",
+                msg: "Record added."
+            });
+        }
+    );
+});
+
+app.post('/edit-user', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`UPDATE BBY_5_user SET user_name = ?, first_name = ?, last_name = ?, password = ?, is_admin = ? WHERE ID = ?`,
+        [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin, req.body.id],
+        function (error, results, fields) {
+            if (error) console.log(error);
+            res.send({
+                status: "success",
+                msg: "Record edited."
+            });
+        }
+    );
+});
+
+app.post('/delete-users', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    connection.query(`DELETE FROM BBY_5_user WHERE (user_name) = ? `, [req.body.user_name],
+        function (error, results, fields) {
+            if (error) console.log(error);
+            res.send({
+                status: "success",
+                msg: "Record deleted."
+            });
+        }
+    );
+});
+
+/* ----- profile - inventory ----- */
+app.get("/getInventoryItems", (req, res) => {
+    connection.query(`SELECT * FROM BBY_5_has_item
+    LEFT JOIN BBY_5_item ON BBY_5_item.ID = BBY_5_has_item.item_ID
+    WHERE BBY_5_has_item.user_ID = ?;`,
+        [req.session.userID], (error, results) => {
+            if (error) console.log(error);
+            res.send({
+                itemList: results
+            });
+        });
+});
+
+app.post("/useItem", (req, res) => {
+    let baseTitle;
+    let baseLevel;
+    switch (req.body.item.ID) {
+        case 1:
+            baseTitle = "Boomer";
+            baseLevel = "bblevel";
+            break;
+        case 2:
+            baseTitle = "Gen X";
+            baseLevel = "xlevel";
+            break;
+        case 3:
+            baseTitle = "Millennial";
+            baseLevel = "ylevel";
+            break;
+        case 4:
+            baseTitle = "Zoomer";
+            baseLevel = "zlevel";
+            break;
+        default:
+            console.log("Item ID not found: " + req.body.item.ID);
+    }
+    connection.query(`UPDATE BBY_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
+        [req.session.userID], (error) => {
+            if (error) {
+                console.log(error);
+            }
+            if (req.session.title.includes(baseTitle)) {
+                let newTitle = `Lv. ${parseInt(req.session.title.substring(4)) + 1} ${baseTitle}`;
+                connection.query(`UPDATE BBY_5_user SET title = ? WHERE ID = ?`,
+                    [newTitle, req.session.userID], (error) => {
+                        if (error) console.log(error);
+                    }
+                );
+                req.session.title = newTitle;
+                req.session.save();
+            }
+        });
+    connection.query(`UPDATE BBY_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
+        [req.session.userID, req.body.item.ID], (error) => {
+            if (error) console.log(error);
+        });
+    connection.query(`DELETE FROM BBY_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
+        [req.session.userID, req.body.item.ID], (error) => {
+            if (error) console.log(error);
+        });
+    res.send();
+});
+
+app.get("/getUserLevels", (req, res) => {
+    connection.query(`SELECT bblevel, xlevel, ylevel, zlevel, title FROM BBY_5_user WHERE ID = ?;`,
+        [req.session.userID], (error, results) => {
+            if (error) console.log(error);
+            res.send({
+                levels: results[0]
+            });
+        });
+});
+
+app.post("/setTitle", (req, res) => {
+    connection.query(`UPDATE BBY_5_user SET title = ? WHERE ID = ?`,
+        [req.body.title, req.session.userID], (error) => {
+            if (error) console.log(error);
+        });
+    req.session.title = req.body.title;
+    res.send();
+});
+
+/* ----- lobbies ----- */
+app.get("/createLobby", (req, res) => {
+    if (req.session.loggedIn) {
+        res.setHeader("Content-Type", "application/json");
+        let newCode = Math.floor((Math.random() * 900)) + 100;
+        while (rooms.some(r => r.code == newCode && r.users.length > 0)) {
+            newCode = Math.floor((Math.random() * 900)) + 100;
+        }
+        // delete all chat record from that room and remove the room
+        connection.query(`DELETE FROM BBY_5_chat WHERE room = ?`,
+            [newCode], (error) => {
+                if (error) console.log(error);
+            });
+        res.send({
+            code: newCode
+        });
+    } else {
+        res.redirect("/");
+    }
+});
+
+app.post("/joinLobby", (req, res) => {
+    if (req.session.loggedIn) {
+        let gameType = "";
+        let isInGame = false;
+        if (rooms.some(r => {
+                gameType = r.game;
+                isInGame = r.inGame;
+                return r.code == req.body.code;
+            })) {
+            if (!isInGame) {
+                res.send({
+                    approved: true,
+                    game: gameType
+                })
+            } else {
+                res.send({
+                    approved: false,
+                    errorMessage: "The game is in progress"
+                })
+            }
+        } else {
+            res.send({
+                approved: false,
+                errorMessage: "Room not found"
+            });
+        }
+    } else {
+        res.redirect("/");
+    }
+});
+
+/* ----- guessit & crossit ----- */
 let guessWord = null;
 let crossword = null;
 
@@ -216,6 +620,24 @@ app.get("/guessit", async function (req, res) {
         res.redirect("/");
     }
 });
+
+app.get("/crossit", function (req, res) {
+    if (req.session.loggedIn) {
+        res.set("Server", "Wazubi Engine");
+        res.set("X-Powered-By", "Wazubi");
+        respondWithCrossword(crossword, req, res);
+    } else {
+        res.redirect("/");
+    }
+});
+
+function respondWithWord(guessWord, req, res) {
+    let dom = wrap("./app/html/guessit.html", req.session);
+    let grid = dom.window.document.querySelector(".wordguess_grid");
+    grid.setAttribute("word_length", guessWord.length);
+    grid.setAttribute("guess_attempts", 5);
+    res.send(dom.serialize());
+}
 
 function respondWithCrossword(crossword, req, res) {
     let dom = wrap("./app/html/crossit.html", req.session);
@@ -300,26 +722,6 @@ function sanitizeWord(phrase) {
     return phrase.replace(/[\s`'-]/g, "").toUpperCase();
 }
 
-app.get("/crossit", function (req, res) {
-    if (req.session.loggedIn) {
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
-        respondWithCrossword(crossword, req, res);
-    } else {
-        res.redirect("/");
-    }
-})
-
-app.post("/try_crossword", function (req, res) {
-    let word = req.body.word.toUpperCase();
-    let word_id = parseInt(req.body.wordId);
-    let correctWord = crossword.words[crossword.wordRecs[word_id]].phrase;
-    let result = {
-        match: word === correctWord
-    };
-    res.send(result);
-})
-
 app.post("/try_word", function (req, res) {
     let hardCodedWord = guessWord.phrase;
     let tempEnteredWord = req.body.word.toUpperCase();
@@ -346,336 +748,20 @@ app.post("/try_word", function (req, res) {
     if (strictMatches == hardCodedWord.length)
         result.meaning = guessWord.meaning;
     res.send(result);
-})
-
-app.get("/main", function (req, res) {
-    // check for a session first!
-    if (req.session.loggedIn) {
-        let mainDOM = wrap("./app/html/main.html", req.session);
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
-        res.send(mainDOM.serialize());
-    } else {
-        // not logged in - no session and no access, redirect to home!
-        res.redirect("/");
-    }
-
 });
 
-app.get("/admin", function (req, res) {
-    // check for a session first!
-    if (req.session.loggedIn && req.session.isAdmin) {
-        let main = fs.readFileSync("./app/html/admin.html", "utf8");
-        let mainDOM = new JSDOM(main);
 
-        connection.query(`SELECT * FROM BBY_5_user WHERE BBY_5_user.first_name = ?`, [req.session.username], function (error, results) {
-            if (error) console.log(error);
-            // great time to get the user's data and put it into the page!
-            mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
-            mainDOM.window.document.getElementById("profile_name").innerHTML = "Welcome Admin " + req.session.username;
-
-            res.set("Server", "Wazubi Engine");
-            res.set("X-Powered-By", "Wazubi");
-            res.send(mainDOM.serialize());
-        });
-    } else {
-        // not admin - no session and no access, redirect to home!
-        res.redirect("/");
-    }
+app.post("/try_crossword", function (req, res) {
+    let word = req.body.word.toUpperCase();
+    let word_id = parseInt(req.body.wordId);
+    let correctWord = crossword.words[crossword.wordRecs[word_id]].phrase;
+    let result = {
+        match: word === correctWord
+    };
+    res.send(result);
 });
 
-app.use(express.json());
-app.use(
-    express.urlencoded({
-        extended: true,
-    })
-);
-
-app.post("/login", function (req, res) {
-    res.setHeader("Content-Type", "application/json");
-    connection.query(`SELECT * FROM BBY_5_user WHERE user_name = ? AND password = ?`,
-    [req.body.username, req.body.password], function (error, results) {
-        if (error || !results || !results.length) {
-            if (error) console.log(error);
-            res.send({
-                status: "fail",
-                msg: "User account not found."
-            });
-        } else {
-            // user authenticated, create a session
-            req.session.loggedIn = true;
-            req.session.lastname = results[0].last_name;
-            req.session.name = results[0].user_name;
-            req.session.userID = results[0].ID;
-            req.session.username = results[0].first_name;
-            req.session.isAdmin = results[0].is_admin;
-            req.session.userImage = results[0].user_image;
-            req.session.pass = results[0].password;
-            req.session.title = results[0].title;
-            req.session.isGuest = false;
-           
-            req.session.save((error) => {
-                if (error) console.log(error);
-            });
-
-            // all we are doing as a server is telling the client that they
-            // are logged in, it is up to them to switch to the profile page
-            res.send({
-                status: "success",
-                msg: "Logged in.",
-                isAdmin: (results[0].is_admin == 1)
-            });
-        }
-    });
-});
-
-let guest = 10;
-app.post("/guest_login", function (req, res) {
-    req.session.loggedIn = true;
-    req.session.isGuest = true;
-    req.session.username = "Guest_" + (guest++);
-    req.session.save((error) => {
-        if (error) console.log(error);
-    })
-    res.send({});
-});
-
-app.post('/upload', upload.single("image"), function (req, res) {
-    if (req.file) {
-        var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename;
-        var insertData = `UPDATE BBY_5_user SET user_image = ? WHERE BBY_5_user.ID = ?`;
-        connection.query(insertData, [imgsrc, req.session.userID], (err, result) => {
-            if (err) throw err;
-        });
-        req.session.userImage = imgsrc;
-        res.redirect("/profile");
-    }
-});
-
-app.get("/profile", function (req, res) {
-    // check for a session first!
-    if (req.session.loggedIn && !req.session.isGuest) {
-
-        let profileDOM = wrap("./app/html/profile.html", req.session);
-
-        profileDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Profile";
-        if (req.session.name == "adult" && req.session.pass == "sk8erboi") {
-            profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8erboi.jpg";
-            profileDOM.window.document.querySelector(".banner").style.display = "block";
-        } else if (req.session.userImage == null) {
-            profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
-        } else {
-            profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
-        }
-
-        profileDOM.window.document.getElementById("user_name").innerHTML = req.session.name;
-        profileDOM.window.document.getElementById("password").innerHTML = req.session.pass;
-
-        res.set("Server", "Wazubi Engine");
-        res.set("X-Powered-By", "Wazubi");
-        res.send(profileDOM.serialize());
-
-    } else {
-        // not logged in - no session and no access, redirect to home!
-        if (req.session.isGuest) req.session.destroy((error) => {
-            if (error) res.status(400).send("Unable to log out");
-        });
-        res.redirect("/");
-    }
-});
-
-// we are changing stuff on the server!!!
-app.post('/update-username', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-
-    connection.query(`UPDATE BBY_5_user SET user_name = ? WHERE ID = ?`, [req.body.user_name, req.session.userID],
-        function (error, results, fields) {
-            if (error) console.log(error);
-            res.send({
-                status: "success",
-                msg: "Record updated."
-            });
-
-        });
-});
-
-app.post('/update-password', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    connection.query(`UPDATE BBY_5_user SET password = ? WHERE ID = ?`, [req.body.password, req.session.userID],
-        function (error, results, fields) {
-            if (error) console.log(error);
-            res.send({
-                status: "success",
-                msg: "Record updated."
-            });
-
-        });
-
-});
-
-app.post('/delete-image', function (req, res) {
-    // res.setHeader('Content-Type', 'application/json');
-    connection.query(`UPDATE  BBY_5_user SET user_image = "NULL" WHERE ID = ?`, [req.session.userID],
-        function (error, results, fields) {
-            if (error) console.log(error);
-            req.session.userImage = null;
-            res.send({
-                status: "success",
-                msg: "Record updated."
-            });
-
-        });
-
-});
-
-app.get('/get-username', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    connection.query(`SELECT user_name FROM BBY_5_user WHERE ID = ?`, [req.session.userID],
-        function (error, results, field) {
-            if (error) console.log(error);
-            req.session.name = results[0].user_name;
-            res.send({
-                status: "success",
-                username: results[0].user_name
-            });
-        }
-    )
-});
-
-app.get('/get-password', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    connection.query(`SELECT password FROM BBY_5_user WHERE ID = ?`, [req.session.userID],
-        function (error, results, field) {
-            if (error) console.log(error);
-            req.session.pass = results[0].password;
-
-            res.send({
-                status: "success",
-                password: results[0].password
-            });
-        }
-    )
-});
-
-app.get('/get-users', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    connection.query(`SELECT * FROM BBY_5_user`,
-        function (error, results, field) {
-            if (error) console.log(error);
-            res.send({
-                status: "success",
-                rows: results
-            });
-        }
-    )
-});
-
-app.post('/add-user', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    connection.query(`INSERT INTO BBY_5_user (user_name, first_name, last_name, password, is_admin) values (?, ?, ?, ?, ?)`,
-    [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin],
-        function (error, results, fields) {
-            if (error) console.log(error);
-            res.send({
-                status: "success",
-                msg: "Record added."
-            });
-        }
-    )
-});
-
-app.post('/edit-user', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    connection.query(`UPDATE BBY_5_user SET user_name = ?, first_name = ?, last_name = ?, password = ?, is_admin = ? WHERE ID = ?`,
-    [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin, req.body.id],
-        function (error, results, fields) {
-            if (error) console.log(error);
-            res.send({
-                status: "success",
-                msg: "Record edited."
-            });
-        }
-    )
-});
-
-app.post('/delete-users', function (req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    connection.query(`DELETE FROM BBY_5_user WHERE (user_name) = ? `, [req.body.user_name],
-        function (error, results, fields) {
-            if (error) console.log(error);
-            res.send({
-                status: "success",
-                msg: "Record deleted."
-            });
-        }
-    )
-
-});
-
-app.get("/logout", function (req, res) {
-    if (req.session) {
-        req.session.destroy(function (error) {
-            if (error) {
-                res.status(400).send("Unable to log out");
-            } else {
-                // session deleted, redirect to home
-                res.redirect("/");
-            }
-        });
-    }
-});
-
-app.get("/createLobby", (req, res) => {
-    if (req.session.loggedIn) {
-        res.setHeader("Content-Type", "application/json");
-        let newCode = Math.floor((Math.random() * 900)) + 100;
-        while (rooms.some(r => r.code == newCode && r.users.length > 0)) {
-            newCode = Math.floor((Math.random() * 900)) + 100;
-        }
-        // delete all chat record from that room and remove the room
-        connection.query(`DELETE FROM BBY_5_chat WHERE room = ?`,
-            [newCode], (error) => {
-                if (error) console.log(error);
-            });
-        res.send({
-            code: newCode
-        });
-    } else {
-        res.redirect("/");
-    }
-});
-
-app.post("/joinLobby", (req, res) => {
-    if (req.session.loggedIn) {
-        let gameType = "";
-        let isInGame = false;
-        if (rooms.some(r => {
-                gameType = r.game;
-                isInGame = r.inGame;
-                return r.code == req.body.code;
-            })) {
-            if (!isInGame) {
-                res.send({
-                    approved: true,
-                    game: gameType
-                })
-            } else {
-                res.send({
-                    approved: false,
-                    errorMessage: "The game is in progress"
-                })
-            }
-        } else {
-            res.send({
-                approved: false,
-                errorMessage: "Room not found"
-            });
-        }
-    } else {
-        res.redirect("/");
-    }
-});
-
+/* ----- matchit ----- */
 app.get("/matchit", function (req, res) {
     if (req.session.loggedIn) {
         let dom = wrap("./app/html/matchit.html", req.session);
@@ -683,7 +769,6 @@ app.get("/matchit", function (req, res) {
         res.set("X-Powered-By", "Wazubi");
         res.send(dom.serialize());
     } else {
-        // not logged in - no session and no access, redirect to home!
         res.redirect("/");
     }
 });
@@ -695,10 +780,21 @@ app.get("/startWordMatch", function (req, res) {
             if (error) console.log(error);
             res.send({
                 status: "success",
-                rows: results //data or rows?
+                rows: results
             });
         }
     );
+});
+
+/* ----- shop related ----- */
+app.get("/getUserPoints", (req, res) => {
+    connection.query(`SELECT bbscore, xscore, yscore, zscore FROM BBY_5_user WHERE ID = ?`,
+        [req.session.userID], (error, results) => {
+            if (error) console.log(error);
+            res.send({
+                points: results[0]
+            });
+        });
 });
 
 app.post("/addUserPoints", function (req, res) {
@@ -721,16 +817,6 @@ app.get("/shop", function (req, res) {
         });
         res.redirect("/");
     }
-});
-
-app.get("/getUserPoints", (req, res) => {
-    connection.query(`SELECT bbscore, xscore, yscore, zscore FROM BBY_5_user WHERE ID = ?`,
-        [req.session.userID], (error, results) => {
-            if (error) console.log(error);
-            res.send({
-                points: results[0]
-            });
-        });
 });
 
 app.get("/getShopItems", (req, res) => {
@@ -843,89 +929,7 @@ app.post("/shopCheat", (req, res) => {
     res.send();
 });
 
-app.get("/getInventoryItems", (req, res) => {
-    connection.query(`SELECT * FROM BBY_5_has_item
-    LEFT JOIN BBY_5_item ON BBY_5_item.ID = BBY_5_has_item.item_ID
-    WHERE BBY_5_has_item.user_ID = ?;`,
-        [req.session.userID], (error, results) => {
-            if (error) console.log(error);
-            res.send({
-                itemList: results
-            });
-        });
-});
-
-app.post("/useItem", (req, res) => {
-    let baseTitle;
-    let baseLevel;
-    switch (req.body.item.ID) {
-        case 1:
-            baseTitle = "Boomer";
-            baseLevel = "bblevel";
-            break;
-        case 2:
-            baseTitle = "Gen X";
-            baseLevel = "xlevel";
-            break;
-        case 3:
-            baseTitle = "Millennial";
-            baseLevel = "ylevel";
-            break;
-        case 4:
-            baseTitle = "Zoomer";
-            baseLevel = "zlevel";
-            break;
-        default:
-            console.log("Item ID not found: " + req.body.item.ID);
-    }
-    connection.query(`UPDATE BBY_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
-        [req.session.userID], (error) => {
-            if (error) {
-                console.log(error);
-            }
-            if (req.session.title.includes(baseTitle)) {
-                let newTitle = `Lv. ${parseInt(req.session.title.substring(4)) + 1} ${baseTitle}`;
-                connection.query(`UPDATE BBY_5_user SET title = ? WHERE ID = ?`,
-                    [newTitle, req.session.userID], (error) => {
-                        if (error) console.log(error);
-                    }
-                );
-                req.session.title = newTitle;
-                req.session.save();
-            }
-        });
-    connection.query(`UPDATE BBY_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
-        [req.session.userID, req.body.item.ID], (error) => {
-            if (error) console.log(error);
-        });
-    connection.query(`DELETE FROM BBY_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
-        [req.session.userID, req.body.item.ID], (error) => {
-            if (error) console.log(error);
-        });
-    res.send();
-});
-
-app.get("/getUserLevels", (req, res) => {
-    connection.query(`SELECT bblevel, xlevel, ylevel, zlevel, title FROM BBY_5_user WHERE ID = ?;`,
-        [req.session.userID], (error, results) => {
-            if (error) console.log(error);
-            res.send({
-                levels: results[0]
-            });
-        });
-});
-
-app.post("/setTitle", (req, res) => {
-    connection.query(`UPDATE BBY_5_user SET title = ? WHERE ID = ?`,
-        [req.body.title, req.session.userID], (error) => {
-            if (error) console.log(error);
-        });
-    req.session.title = req.body.title;
-    res.send();
-});
-
-// RUN SERVER
-
+/* ----- server initialization as well as dailty word selection ----- */
 let port = process.env.PORT || 8000;
 
 function wordguessExpiry(prep, word_id, callback) {

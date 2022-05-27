@@ -1,287 +1,287 @@
 :root {
-  --color1: #ff6542;
-  --color2: #f2f2f8;
-  --color3: rgb(217, 241, 250);
-  --color4: #564154;
-  --color5: rgb(139, 0, 105);
+    --color1: #ff6542;
+    --color2: #f2f2f8;
+    --color3: rgb(217, 241, 250);
+    --color4: #564154;
+    --color5: rgb(139, 0, 105);
 }
 
 .popup {
-  position: relative;
-  display: grid;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  color: var(--color3);
+    position: relative;
+    display: grid;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: var(--color3);
 }
 
 /* The actual popup */
 .popup .popuptext {
-  visibility: hidden;
-  width: 100%;
-  max-width: 550px;
-  background-color: var(--color5);
-  color: var(--color2);
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  display: inline-block;
-  left: 0%;
-  right: 0%;
-  margin: 0 auto;
+    visibility: hidden;
+    width: 100%;
+    max-width: 550px;
+    background-color: var(--color5);
+    color: var(--color2);
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    display: inline-block;
+    left: 0%;
+    right: 0%;
+    margin: 0 auto;
 }
 
 /* popup animation */
 .popup .show {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
 }
 
 .popup .popuptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: var(--color5) transparent transparent transparent;
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--color5) transparent transparent transparent;
 }
 
 @-webkit-keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
+    from {
+        opacity: 0;
+    }
 
-  to {
-    opacity: 1;
-  }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
+    from {
+        opacity: 0;
+    }
 
-  to {
-    opacity: 1;
-  }
+    to {
+        opacity: 1;
+    }
 }
 
 .answerBtn {
-  width: 80%;
-  overflow-wrap: break-word;
+    width: 80%;
+    overflow-wrap: break-word;
 }
 
 /*Room number*/
 #roomInfo {
-  grid-area: 1 / 1 / 2 / 3;
-  color: var(--color4);
+    grid-area: 1 / 1 / 2 / 3;
+    color: var(--color4);
 }
 
 /*start*/
 #mainButton {
-  grid-area: 3 / 1 / 4 / 3;
+    grid-area: 3 / 1 / 4 / 3;
 }
 
 #resultsContainer {
-  grid-area: 5 / 1 / 6 / 3;
+    grid-area: 5 / 1 / 6 / 3;
 }
 
 #gameContainer {
-  grid-area: 4 / 1 / 5 / 3;
-  grid-row-gap: 5px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: auto;
+    grid-area: 4 / 1 / 5 / 3;
+    grid-row-gap: 5px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
 }
 
 /*next question - inside game container*/
 #questionButton {
-  grid-area: 1 / 1 / 2 / 3;
-  color:var(--color4);
-  margin: 2%;
+    grid-area: 1 / 1 / 2 / 3;
+    color: var(--color4);
+    margin: 2%;
 }
 
 /*Guess this phrase*/
 #phrase {
-  font-size: 28pt;
-  grid-area: 2 / 1 / 3 / 3;
-  padding-bottom: 5vh;
+    font-size: 28pt;
+    grid-area: 2 / 1 / 3 / 3;
+    padding-bottom: 5vh;
 }
 
 /*Answer 1*/
 #answer1 {
-  grid-area: 2 / 1 / 3 / 2;
+    grid-area: 2 / 1 / 3 / 2;
 }
 
 /*Answer 2*/
 #answer2 {
-  grid-area: 2 / 2 / 3 / 3;
+    grid-area: 2 / 2 / 3 / 3;
 }
 
 /*Answer 3*/
 #answer3 {
-  grid-area: 3 / 1 / 4 / 2;
+    grid-area: 3 / 1 / 4 / 2;
 }
 
 /*Answer 4*/
 #answer4 {
-  grid-area: 3 / 2 / 4 / 3;
+    grid-area: 3 / 2 / 4 / 3;
 }
 
 /*History popup info*/
 .popup {
-  grid-area: 4 / 1 / 5 / 3;
-  text-align: center;
+    grid-area: 4 / 1 / 5 / 3;
+    text-align: center;
 }
 
 /*z score*/
 #bbPoints {
-  grid-area: 5 / 1 / 6 / 3;
+    grid-area: 5 / 1 / 6 / 3;
 }
 
 /*x score*/
 #xPoints {
-  grid-area: 6 / 1 / 7 / 3;
+    grid-area: 6 / 1 / 7 / 3;
 }
 
 /*y score*/
 #yPoints {
-  grid-area: 7 / 1 / 8 / 3;
+    grid-area: 7 / 1 / 8 / 3;
 }
 
 /*bb score*/
 #zPoints {
-  grid-area: 8 / 1 / 9 / 3;
+    grid-area: 8 / 1 / 9 / 3;
 }
 
 .hide {
-  display: none;
+    display: none;
 }
 
 button {
-  font-family: 'atwriter';
-  padding: 12px;
-  font-size: 1em;
-  background-color: var(--color1);
-  border-radius: 20%;
-  width: auto;
-  color: var(--color2);
-  cursor: pointer;
-  min-width: 5%;
-  margin-bottom: 2%;
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color1);
+    border-radius: 20%;
+    width: auto;
+    color: var(--color2);
+    cursor: pointer;
+    min-width: 5%;
+    margin-bottom: 2%;
 }
 
 .chatButton {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 
 .correct {
-  background-color: green;
+    background-color: green;
 }
 
 .incorrect {
-  background-color: red;
+    background-color: red;
 }
 
 #resultsText {
-  font-size: 200%;
+    font-size: 200%;
 }
 
 @media screen and (max-width: 750px) {
-  #parent {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(2, .5fr) repeat(4, 1fr) repeat(5, .3fr);
-    grid-column-gap: 0px;
-    grid-row-gap: 0px;
-    height: 80vh;
-  }
-  
-  /*Room number*/
-  #roomInfo {
-    grid-area: 1 / 1 / 2 / 3;
-  }
-  
-  /*start*/
-  #mainButton {
-    grid-area: 2 / 1 / 3 / 3;
-  }
-  
-  #resultsContainer {
-    grid-area: 5 / 1 / 6 / 3;
-  }
-  
-  #gameContainer {
-    grid-area: 3 / 1 / 4 / 3;
-    display: grid;
-    grid-row-gap: 5px;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto;
-  }
-  
-  /*next question - inside game container*/
-  #questionButton {
-    grid-area: 1 / 1 / 2 / 3;
-  }
-  
-  /*Guess this phrase*/
-  #phrase {
-    font-size: 28pt;
-    grid-area: 2 / 1 / 3 / 3;
-    padding-bottom: 5vh;
-  }
-  
-  /*Answer 1*/
-  #answer1 {
-    grid-area: 2 / 1 / 3 / 3;
-  }
-  
-  /*Answer 2*/
-  #answer2 {
-    grid-area: 3 / 1 / 4 / 3;
-  }
-  
-  /*Answer 3*/
-  #answer3 {
-    grid-area: 4 / 1 / 5 / 3;
-  }
-  
-  /*Answer 4*/
-  #answer4 {
-    grid-area: 5 / 1 / 6 / 3;
-  }
-  
-  /*History popup info*/
-  .popup {
-    grid-area: 6 / 1 / 7 / 3;
-    text-align: center;
-  }
-  
-  /*z score*/
-  #bbPoints {
-    grid-area: 7 / 1 / 8 / 3;
-  }
-  
-  /*x score*/
-  #xPoints {
-    grid-area: 8 / 1 / 9 / 3;
-  }
-  
-  /*y score*/
-  #yPoints {
-    grid-area: 9 / 1 / 10 / 3;
-  }
-  
-  /*bb score*/
-  #zPoints {
-    grid-area: 10 / 1 / 11 / 3;
-  }
+    #parent {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(2, .5fr) repeat(4, 1fr) repeat(5, .3fr);
+        grid-column-gap: 0px;
+        grid-row-gap: 0px;
+        height: 80vh;
+    }
+
+    /*Room number*/
+    #roomInfo {
+        grid-area: 1 / 1 / 2 / 3;
+    }
+
+    /*start*/
+    #mainButton {
+        grid-area: 2 / 1 / 3 / 3;
+    }
+
+    #resultsContainer {
+        grid-area: 5 / 1 / 6 / 3;
+    }
+
+    #gameContainer {
+        grid-area: 3 / 1 / 4 / 3;
+        display: grid;
+        grid-row-gap: 5px;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+    }
+
+    /*next question - inside game container*/
+    #questionButton {
+        grid-area: 1 / 1 / 2 / 3;
+    }
+
+    /*Guess this phrase*/
+    #phrase {
+        font-size: 28pt;
+        grid-area: 2 / 1 / 3 / 3;
+        padding-bottom: 5vh;
+    }
+
+    /*Answer 1*/
+    #answer1 {
+        grid-area: 2 / 1 / 3 / 3;
+    }
+
+    /*Answer 2*/
+    #answer2 {
+        grid-area: 3 / 1 / 4 / 3;
+    }
+
+    /*Answer 3*/
+    #answer3 {
+        grid-area: 4 / 1 / 5 / 3;
+    }
+
+    /*Answer 4*/
+    #answer4 {
+        grid-area: 5 / 1 / 6 / 3;
+    }
+
+    /*History popup info*/
+    .popup {
+        grid-area: 6 / 1 / 7 / 3;
+        text-align: center;
+    }
+
+    /*z score*/
+    #bbPoints {
+        grid-area: 7 / 1 / 8 / 3;
+    }
+
+    /*x score*/
+    #xPoints {
+        grid-area: 8 / 1 / 9 / 3;
+    }
+
+    /*y score*/
+    #yPoints {
+        grid-area: 9 / 1 / 10 / 3;
+    }
+
+    /*bb score*/
+    #zPoints {
+        grid-area: 10 / 1 / 11 / 3;
+    }
 }
