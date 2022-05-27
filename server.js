@@ -90,7 +90,7 @@ io.on("connection", socket => {
     });
     socket.on("preventDuplicates", (code) => {
         rooms.forEach(r => {
-            if (r.code == code) io.to(r.code).emit("forceDisconnect", "You joined a room in another tab", session.username);
+            if (r.code != code) io.to(r.code).emit("forceDisconnect", "You joined a room in another tab", session.username);
         });
     });
     socket.on("updateGameStatus", (code, isInGame) => {
@@ -137,7 +137,8 @@ io.on("connection", socket => {
                 or the last user in that room, remove it from the list */
                 if (rooms[i].host == session.username || rooms[i].users.length == 0) {
                     io.to(rooms[i].code).emit("forceDisconnect", "The host has left the room");
-                    rooms.slice(i--, 1);
+                    console.log(`room ${rooms[i].code} destroyed.`);
+                    rooms.splice(i--, 1);
                 }
             }
         }
@@ -183,10 +184,7 @@ app.get("/", function (req, res) {
         res.set("X-Powered-By", "Wazubi");
         res.send(doc);
     }
-});
-
-const userTable = 'BBY_5_user';
-const itemTable = 'BBY_5_item';
+}); 
 
 function wrap(filename, session) {
     let template = fs.readFileSync("./app/html/template.html", "utf8");
@@ -370,7 +368,7 @@ app.get("/admin", function (req, res) {
         let main = fs.readFileSync("./app/html/admin.html", "utf8");
         let mainDOM = new JSDOM(main);
 
-        connection.query(`SELECT * FROM ${userTable} WHERE ${userTable}.first_name = '${req.session.username}'`, function (error, results) {
+        connection.query(`SELECT * FROM BBY_5_user WHERE BBY_5_user.first_name = ?`, [req.session.username], function (error, results) {
             if (error) console.log(error);
             // great time to get the user's data and put it into the page!
             mainDOM.window.document.getElementsByTagName("title")[0].innerHTML = req.session.username + "'s Admin Page";
@@ -395,7 +393,8 @@ app.use(
 
 app.post("/login", function (req, res) {
     res.setHeader("Content-Type", "application/json");
-    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
+    connection.query(`SELECT * FROM BBY_5_user WHERE user_name = ? AND password = ?`,
+    [req.body.username, req.body.password], function (error, results) {
         if (error || !results || !results.length) {
             if (error) console.log(error);
             res.send({
@@ -424,7 +423,7 @@ app.post("/login", function (req, res) {
             res.send({
                 status: "success",
                 msg: "Logged in.",
-                isAdmin: (results[0].isAdmin == 1)
+                isAdmin: (results[0].is_admin == 1)
             });
         }
     });
@@ -444,8 +443,8 @@ app.post("/guest_login", function (req, res) {
 app.post('/upload', upload.single("image"), function (req, res) {
     if (req.file) {
         var imgsrc = 'http://127.0.0.1:8000/imgs/' + req.file.filename;
-        var insertData = `UPDATE ${userTable} SET user_image = ? WHERE ${userTable}.ID = '${req.session.userID}'`;
-        connection.query(insertData, [imgsrc], (err, result) => {
+        var insertData = `UPDATE BBY_5_user SET user_image = ? WHERE BBY_5_user.ID = ?`;
+        connection.query(insertData, [imgsrc, req.session.userID], (err, result) => {
             if (err) throw err;
         });
         req.session.userImage = imgsrc;
@@ -478,6 +477,9 @@ app.get("/profile", function (req, res) {
 
     } else {
         // not logged in - no session and no access, redirect to home!
+        if (req.session.isGuest) req.session.destroy((error) => {
+            if (error) res.status(400).send("Unable to log out");
+        });
         res.redirect("/");
     }
 });
@@ -486,7 +488,7 @@ app.get("/profile", function (req, res) {
 app.post('/update-username', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
 
-    connection.query(`UPDATE ${userTable} SET user_name = ? WHERE ID = ?`, [req.body.user_name, req.session.userID],
+    connection.query(`UPDATE BBY_5_user SET user_name = ? WHERE ID = ?`, [req.body.user_name, req.session.userID],
         function (error, results, fields) {
             if (error) console.log(error);
             res.send({
@@ -499,7 +501,7 @@ app.post('/update-username', function (req, res) {
 
 app.post('/update-password', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.query(`UPDATE ${userTable} SET password = ? WHERE ID = ?`, [req.body.password, req.session.userID],
+    connection.query(`UPDATE BBY_5_user SET password = ? WHERE ID = ?`, [req.body.password, req.session.userID],
         function (error, results, fields) {
             if (error) console.log(error);
             res.send({
@@ -513,7 +515,7 @@ app.post('/update-password', function (req, res) {
 
 app.post('/delete-image', function (req, res) {
     // res.setHeader('Content-Type', 'application/json');
-    connection.query(`UPDATE  ${userTable} SET user_image = "NULL" WHERE ID = ?`, [req.session.userID],
+    connection.query(`UPDATE  BBY_5_user SET user_image = "NULL" WHERE ID = ?`, [req.session.userID],
         function (error, results, fields) {
             if (error) console.log(error);
             req.session.userImage = null;
@@ -528,7 +530,7 @@ app.post('/delete-image', function (req, res) {
 
 app.get('/get-username', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.query(`SELECT user_name FROM ${userTable} WHERE ID = ? `, [req.session.userID],
+    connection.query(`SELECT user_name FROM BBY_5_user WHERE ID = ?`, [req.session.userID],
         function (error, results, field) {
             if (error) console.log(error);
             req.session.name = results[0].user_name;
@@ -542,7 +544,7 @@ app.get('/get-username', function (req, res) {
 
 app.get('/get-password', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.query(`SELECT password FROM ${userTable} WHERE ID = ? `, [req.session.userID],
+    connection.query(`SELECT password FROM BBY_5_user WHERE ID = ?`, [req.session.userID],
         function (error, results, field) {
             if (error) console.log(error);
             req.session.pass = results[0].password;
@@ -557,7 +559,7 @@ app.get('/get-password', function (req, res) {
 
 app.get('/get-users', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.query(`SELECT * FROM ${userTable} `,
+    connection.query(`SELECT * FROM BBY_5_user`,
         function (error, results, field) {
             if (error) console.log(error);
             res.send({
@@ -570,7 +572,8 @@ app.get('/get-users', function (req, res) {
 
 app.post('/add-user', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.query(`INSERT INTO ${userTable} (user_name, first_name, last_name, password, is_admin) values (?, ?, ?, ?, ?)`, [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin],
+    connection.query(`INSERT INTO BBY_5_user (user_name, first_name, last_name, password, is_admin) values (?, ?, ?, ?, ?)`,
+    [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin],
         function (error, results, fields) {
             if (error) console.log(error);
             res.send({
@@ -583,7 +586,8 @@ app.post('/add-user', function (req, res) {
 
 app.post('/edit-user', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.query(`UPDATE ${userTable} SET user_name = ?, first_name = ?, last_name = ?, password = ?, is_admin = ? WHERE ID = ?`, [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin, req.body.id],
+    connection.query(`UPDATE BBY_5_user SET user_name = ?, first_name = ?, last_name = ?, password = ?, is_admin = ? WHERE ID = ?`,
+    [req.body.user_name, req.body.first_name, req.body.last_name, req.body.password, req.body.is_admin, req.body.id],
         function (error, results, fields) {
             if (error) console.log(error);
             res.send({
@@ -596,7 +600,7 @@ app.post('/edit-user', function (req, res) {
 
 app.post('/delete-users', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    connection.query(`DELETE FROM ${userTable} WHERE (user_name) = ? `, [req.body.user_name],
+    connection.query(`DELETE FROM BBY_5_user WHERE (user_name) = ? `, [req.body.user_name],
         function (error, results, fields) {
             if (error) console.log(error);
             res.send({
@@ -712,6 +716,9 @@ app.get("/shop", function (req, res) {
         res.set("X-Powered-By", "Wazubi");
         res.send(dom.serialize());
     } else {
+        if (req.session.isGuest) req.session.destroy((error) => {
+            if (error) res.status(400).send("Unable to log out");
+        });
         res.redirect("/");
     }
 });
@@ -727,7 +734,7 @@ app.get("/getUserPoints", (req, res) => {
 });
 
 app.get("/getShopItems", (req, res) => {
-    connection.query(`SELECT * FROM ${itemTable}`, (error, results) => {
+    connection.query(`SELECT * FROM BBY_5_item`, (error, results) => {
         if (error) console.log(error);
         res.send({
             itemList: results
@@ -748,7 +755,7 @@ app.get("/getCartItems", (req, res) => {
 });
 
 app.post("/addToCart", (req, res) => {
-    connection.query(`INSERT INTO bby_5_cart_item VALUES (?, ?, ?)
+    connection.query(`INSERT INTO BBY_5_cart_item VALUES (?, ?, ?)
     ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
         [req.session.userID, req.body.itemID, req.body.quantity, req.body.quantity], (error, results) => {
             if (error) console.log(error);
@@ -796,20 +803,20 @@ app.post("/purchaseCart", (req, res) => {
                     errorMessage: "Not enough Z-points!"
                 });
             } else {
-                connection.query(`SELECT * FROM bby_5_cart_item WHERE user_ID = ?`,
+                connection.query(`SELECT * FROM BBY_5_cart_item WHERE user_ID = ?`,
                     [req.session.userID], (error, results) => {
                         if (error) {
                             console.log(error);
                         } else {
                             if (results.length > 0) {
                                 results.forEach(cartItem => {
-                                    connection.query(`INSERT INTO bby_5_has_item VALUES (?, ?, ?)
+                                    connection.query(`INSERT INTO BBY_5_has_item VALUES (?, ?, ?)
                             ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
                                         [req.session.userID, cartItem.item_ID, cartItem.quantity, cartItem.quantity], (error, results) => {
                                             if (error) console.log(error);
                                         });
                                 });
-                                connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ?, xscore = xscore - ?, yscore = yscore - ?, zscore = zscore - ? WHERE ID = ?`,
+                                connection.query(`UPDATE BBY_5_user SET bbscore = bbscore - ?, xscore = xscore - ?, yscore = yscore - ?, zscore = zscore - ? WHERE ID = ?`,
                                     [req.body.total.B, req.body.total.X, req.body.total.Y, req.body.total.Z, req.session.userID], (error, results) => {
                                         if (error) console.log(error);
                                     });
@@ -829,7 +836,7 @@ app.post("/purchaseCart", (req, res) => {
 });
 
 app.post("/shopCheat", (req, res) => {
-    connection.query(`UPDATE bby_5_user SET bbscore = ?, xscore = ?, yscore = ?, zscore = ? WHERE ID = ?`,
+    connection.query(`UPDATE BBY_5_user SET bbscore = ?, xscore = ?, yscore = ?, zscore = ? WHERE ID = ?`,
         [10000, 10000, 10000, 10000, req.session.userID], (error) => {
             if (error) console.log(error);
         });
@@ -871,14 +878,14 @@ app.post("/useItem", (req, res) => {
         default:
             console.log("Item ID not found: " + req.body.item.ID);
     }
-    connection.query(`UPDATE bby_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
+    connection.query(`UPDATE BBY_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
         [req.session.userID], (error) => {
             if (error) {
                 console.log(error);
             }
             if (req.session.title.includes(baseTitle)) {
                 let newTitle = `Lv. ${parseInt(req.session.title.substring(4)) + 1} ${baseTitle}`;
-                connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
+                connection.query(`UPDATE BBY_5_user SET title = ? WHERE ID = ?`,
                     [newTitle, req.session.userID], (error) => {
                         if (error) console.log(error);
                     }
@@ -887,11 +894,11 @@ app.post("/useItem", (req, res) => {
                 req.session.save();
             }
         });
-    connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
+    connection.query(`UPDATE BBY_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
         [req.session.userID, req.body.item.ID], (error) => {
             if (error) console.log(error);
         });
-    connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
+    connection.query(`DELETE FROM BBY_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
         [req.session.userID, req.body.item.ID], (error) => {
             if (error) console.log(error);
         });
@@ -909,7 +916,7 @@ app.get("/getUserLevels", (req, res) => {
 });
 
 app.post("/setTitle", (req, res) => {
-    connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
+    connection.query(`UPDATE BBY_5_user SET title = ? WHERE ID = ?`,
         [req.body.title, req.session.userID], (error) => {
             if (error) console.log(error);
         });

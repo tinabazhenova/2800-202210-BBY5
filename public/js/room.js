@@ -42,7 +42,7 @@ socket.on("updateUserlist", (members, host) => {
 })
 
 socket.on("forceDisconnect", (message, username) => {
-  if (!username || (username && username.toUpperCase() == document.getElementById("name").innerHTML.substring(7))) {
+  if (!username || (username && username.toUpperCase() == document.getElementById("name").innerHTML.substring(8))) {
     socket.disconnect();
     document.getElementById("modalBackground").style.display = "block";
     document.getElementById("modalText").innerHTML = message;

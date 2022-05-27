@@ -50,12 +50,9 @@ function appendToShop(item) {
 }
 
 function setQuantity(selector, quantity) {
-  let num = Math.min(Math.max((selector.value*1 + quantity), 0), 100); // *1 so that it adds numbers instead of concatenating
+  // set 1 <= quantity <= 100
+  let num = Math.min(Math.max((selector.value*1 + quantity), 1), 100); // *1 so that it adds numbers instead of concatenating
   selector.value = num;
-}
-
-function cramp(num) {
-  return ;  // set num >= 0 && num <= 100
 }
 
 async function addToCart(item, quantity) {

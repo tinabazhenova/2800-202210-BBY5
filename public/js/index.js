@@ -33,15 +33,10 @@ ready(function () {
         ajaxPOST("/login", function (data) {
             if (data) {
                 let dataParsed = JSON.parse(data);
-                console.log(dataParsed);
                 if (dataParsed.status == "fail") {
                     document.getElementById("errorMsg").innerHTML = dataParsed.msg;
                 } else {
-                    if (dataParsed.isAdmin) {
-                        sessionStorage.setItem("isAdmin", true);
-                    } else {
-                        sessionStorage.setItem("isAdmin", false);
-                    }
+                    sessionStorage.setItem("isAdmin", dataParsed.isAdmin);
                     window.location.replace("/main");
                 }
             }

@@ -20,7 +20,7 @@ class Matcher {
     }
 
     onInput(event) {
-        if (document.getElementById("gameContainer").style.display == "block" && sessionStorage.getItem("isHost")) {
+        if (document.getElementById("gameContainer").style.display == "block" && sessionStorage.getItem("isHost") == "true") {
             if (this.position < this.word_length || event.keyCode == 8) {
                 if (event.keyCode >= 65 && event.keyCode <= 90) { //checks if the user entered a letter
                     this.letters[this.word * this.word_length + this.position].innerHTML = event.key; // fill array in a line

@@ -167,7 +167,7 @@ socket.on("wordmatchCorrect", (btnDiv, values) => {
     document.getElementById("btn3").disabled = true;
     document.getElementById("btn4").disabled = true;
   
-    if (sessionStorage.getItem("isHost")) document.getElementById("continueGame").classList.remove("hide");
+    if (sessionStorage.getItem("isHost") == "true") document.getElementById("continueGame").classList.remove("hide");
 });
 
 socket.on("wordmatchWrong", (e) => {
@@ -178,15 +178,15 @@ socket.on("wordmatchWrong", (e) => {
   document.getElementById("btn3").disabled = true;
   document.getElementById("btn4").disabled = true;
 
-  if (sessionStorage.getItem("isHost")) document.getElementById("continueGame").classList.remove("hide");
+  if (sessionStorage.getItem("isHost") == "true") document.getElementById("continueGame").classList.remove("hide");
 });
 
 function correctAnswer(btnDiv, values) {
-  if (sessionStorage.getItem("isHost")) socket.emit("sendWordmatchCorrect", btnDiv, values, code);
+  if (sessionStorage.getItem("isHost") == "true") socket.emit("sendWordmatchCorrect", btnDiv, values, code);
 }
 
 function wrongAnswer(e) {
-  if (sessionStorage.getItem("isHost")) socket.emit("sendWordmatchWrong", e, code);
+  if (sessionStorage.getItem("isHost") == "true") socket.emit("sendWordmatchWrong", e, code);
 }
 
 function toggleExplanation() {

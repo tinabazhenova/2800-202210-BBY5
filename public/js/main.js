@@ -1,9 +1,3 @@
-if (sessionStorage.getItem("isAdmin")) {
-    document.getElementById("div7").style.display = "block";
-} else {
-    document.getElementById("div7").style.display = "none";
-}
-
 async function createLobby(game) {
     try {
         let response = await fetch("/createLobby", {
@@ -78,5 +72,8 @@ document.getElementById("findLobbyForm").addEventListener("submit", (e) => {
 document.getElementById("shop").addEventListener("click", (e) => {
     window.location.href = "/shop";
 });
+
+document.getElementById("div7").style.display = "none";
+if (sessionStorage.getItem("isAdmin") == "true") document.getElementById("div7").style.display = "block";
 
 document.getElementById("back").style.visibility = "hidden";

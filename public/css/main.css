@@ -70,6 +70,10 @@
     background-color: var(--color6);
 }
 
+.defaultButton:hover {
+    background-color: var(--color7);
+}
+
 @media screen and (max-width: 750px) {
     #menu {
         display: grid;

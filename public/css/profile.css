@@ -75,27 +75,12 @@ input[value='LOGOUT'] {
     font-size: 125%;
 }
 
+#saveTitle:hover {
+    background-color: var(--color7);
+}
+
 option {
     font-size: 50%;
-}
-
-
-#title {
-  border: 1px solid grey;
-  background-color: white;
-  padding: 5px;
-  font-size: 125%;
-}
-
-#selectTitle {
-  width: 250px;
-  height: 50px;
-  margin-top: 10px;
-  font-size: 125%;
-}
-
-option {
-  font-size: 50%;
 }
 
 /* INVENTORY */
@@ -140,10 +125,6 @@ option {
     height: 30px;
     margin-top: 5px;
     margin-right: 5px;
-}
-
-.addToCart:hover {
-    background-color: grey;
 }
 
 #profile-picture {
