@@ -11,6 +11,7 @@
     --color3: rgb(217, 241, 250);
     --color4: #564154;
     --color5: #88498F;
+    --color7: #779FA1;
 }
 
 body {
@@ -34,7 +35,6 @@ body {
     font-size: 1em;
     background-color: var(--color1);
     border-radius: 10px;
-    min-width: 40%;
     width: auto;
     color: var(--color2);
     cursor: pointer;
@@ -69,10 +69,14 @@ input[type='submit'] {
 
 #back {
     grid-area: 1 / 1 / 2 / 2;
-    width: 10%;
+    width: auto;
     margin-left: 1%;
     margin-top: 1%;
     z-index: 5;
+}
+
+input[type="submit"]:hover, button:hover {
+    background-color: var(--color7);
 }
 
 #templateContent {
