@@ -62,7 +62,7 @@ h3 {
 
 .letterContainer {
     background-color: var(--backColor);
-    border: solid 2px black;
+    border: solid 2px var(--color4);
     text-align: left;
 }
 
