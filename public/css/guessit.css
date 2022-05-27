@@ -33,6 +33,12 @@ button {
     margin-bottom: 2%;
 }
 
+#resultsText,
+#roomInfo{
+    margin:1%;
+    color: var(--color4);
+}
+
 .rectangle {
     background-color: var(--backColor);
     width: 50px;
@@ -107,7 +113,7 @@ button {
 /* Popup container - can be anything you want */
 
 .popup {
-    margin-top: 1%;
+    margin: 2%;
     position: relative;
     cursor: pointer;
     -webkit-user-select: none;
