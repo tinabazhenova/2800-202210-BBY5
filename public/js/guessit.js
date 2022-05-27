@@ -170,7 +170,6 @@ socket.on("wordguessAttempted", (results) => {
     for (let i = 0; i < matcher.word_length; i++) {
         document.getElementById("rec" + (results.attempt * matcher.word_length + i + 1)).classList.add(results.keyColors[i]);
         document.getElementById("rec" + (results.attempt * matcher.word_length + i + 1)).innerHTML = results.keyLetters[i];
-        console.log("letter" + results.keyLetters[i]);
         document.getElementById("letter" + results.keyLetters[i]).classList.remove("originalKey");
         document.getElementById("letter" + results.keyLetters[i]).classList.add(results.keyColors[i]);
     }

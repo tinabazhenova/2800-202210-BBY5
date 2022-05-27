@@ -1026,7 +1026,6 @@ class Preparation extends EventEmitter {
     updateWordguess(word_id, launchAfter) {
         connection.query(`SELECT word_id, phrase, meaning FROM BBY_5_master WHERE word_id > ${word_id} order by word_id asc limit 1`, (error, results) => {
             if (error || !results || !results.length) {
-                console.log("Failed to update wordguess");
                 if (error) console.log(error);
             } else {
                 this.emit("selectedNewGuessWord", results[0], launchAfter);

@@ -7,7 +7,6 @@ ready(function () {
                 return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
             }
         ).join('&');
-        console.log("params in ajaxPOST", params);
 
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
