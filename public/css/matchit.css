@@ -23,13 +23,13 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  color: var(--color4);
+  color: var(--color3);
 }
 
 /* The actual popup */
 .popup .popuptext {
   visibility: hidden;
-  width: 40%;
+  width: 60%;
   background-color: var(--color5);
   color: var(--color2);
   text-align: center;
@@ -37,9 +37,8 @@
   padding: 8px 0;
   position: absolute;
   z-index: 1;
+  left: 20%;
   bottom: 125%;
-  left: 50%;
-  margin-left: -80px;
 }
 
 /* popup animation */
@@ -104,7 +103,7 @@
   grid-row-gap: 5px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 0.5fr) repeat(2, 1fr) repeat(5, 0.3fr);
+  grid-template-rows: auto;
 }
 
 /*next question - inside game container*/
@@ -121,61 +120,53 @@
 
 /*Answer 1*/
 #answer1 {
-  grid-area: 3 / 1 / 4 / 2;
+  grid-area: 2 / 1 / 3 / 2;
 }
 
 /*Answer 2*/
 #answer2 {
-  grid-area: 3 / 2 / 4 / 3;
+  grid-area: 2 / 2 / 3 / 3;
 }
 
 /*Answer 3*/
 #answer3 {
-  grid-area: 4 / 1 / 5 / 2;
+  grid-area: 3 / 1 / 4 / 2;
 }
 
 /*Answer 4*/
 #answer4 {
-  grid-area: 4 / 2 / 5 / 3;
+  grid-area: 3 / 2 / 4 / 3;
 }
 
 /*History popup info*/
 .popup {
-  grid-area: 5 / 1 / 6 / 3;
+  grid-area: 4 / 1 / 5 / 3;
   text-align: center;
 }
 
 /*z score*/
 #bbPoints {
-  grid-area: 6 / 1 / 7 / 3;
+  grid-area: 5 / 1 / 6 / 3;
 }
 
 /*x score*/
 #xPoints {
-  grid-area: 7 / 1 / 8 / 3;
+  grid-area: 6 / 1 / 7 / 3;
 }
 
 /*y score*/
 #yPoints {
-  grid-area: 8 / 1 / 9 / 3;
+  grid-area: 7 / 1 / 8 / 3;
 }
 
 /*bb score*/
 #zPoints {
-  grid-area: 9 / 1 / 10 / 3;
+  grid-area: 8 / 1 / 9 / 3;
 }
 
 .hide {
   display: none;
 }
-
-/* button {
-  background-color: var(--color1);
-  color: var(--color2);
-  border-radius: 10px;
-  min-width: 40%;
-  width: auto;
-} */
 
 button {
   font-family: 'atwriter';
@@ -188,6 +179,10 @@ button {
   cursor: pointer;
   min-width: 5%;
   margin-bottom: 2%;
+}
+
+.chatButton {
+  margin-top: 10px;
 }
 
 .correct {
@@ -219,7 +214,7 @@ button {
   
   /*start*/
   #mainButton {
-    grid-area: 3 / 1 / 4 / 3;
+    grid-area: 2 / 1 / 3 / 3;
   }
   
   #resultsContainer {
@@ -227,11 +222,11 @@ button {
   }
   
   #gameContainer {
-    grid-area: 4 / 1 / 5 / 3;
+    grid-area: 3 / 1 / 4 / 3;
     display: grid;
     grid-row-gap: 5px;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 0.5fr) repeat(2, auto) repeat(5, 0.3fr);
+    grid-template-rows: auto;
   }
   
   /*next question - inside game container*/
@@ -248,47 +243,47 @@ button {
   
   /*Answer 1*/
   #answer1 {
-    grid-area: 3 / 1 / 4 / 3;
+    grid-area: 2 / 1 / 3 / 3;
   }
   
   /*Answer 2*/
   #answer2 {
-    grid-area: 4 / 1 / 5 / 3;
+    grid-area: 3 / 1 / 4 / 3;
   }
   
   /*Answer 3*/
   #answer3 {
-    grid-area: 5 / 1 / 6 / 3;
+    grid-area: 4 / 1 / 5 / 3;
   }
   
   /*Answer 4*/
   #answer4 {
-    grid-area: 6 / 1 / 7 / 3;
+    grid-area: 5 / 1 / 6 / 3;
   }
   
   /*History popup info*/
   .popup {
-    grid-area: 7 / 1 / 8 / 3;
+    grid-area: 6 / 1 / 7 / 3;
     text-align: center;
   }
   
   /*z score*/
   #bbPoints {
-    grid-area: 8 / 1 / 9 / 3;
+    grid-area: 7 / 1 / 8 / 3;
   }
   
   /*x score*/
   #xPoints {
-    grid-area: 9 / 1 / 10 / 3;
+    grid-area: 8 / 1 / 9 / 3;
   }
   
   /*y score*/
   #yPoints {
-    grid-area: 10 / 1 / 11 / 3;
+    grid-area: 9 / 1 / 10 / 3;
   }
   
   /*bb score*/
   #zPoints {
-    grid-area: 11 / 1 / 12 / 3;
+    grid-area: 10 / 1 / 11 / 3;
   }
 }

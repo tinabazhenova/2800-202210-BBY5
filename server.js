@@ -12,7 +12,6 @@ const app = express();
 const bodyparser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
-const ejs = require("ejs");
 const fs = require("fs");
 const {
     JSDOM
@@ -158,7 +157,6 @@ const upload = multer({
     storage: storage
 });
 
-app.set("view engine", "ejs");
 // static path mappings
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/css"));
@@ -200,7 +198,7 @@ function wrap(filename, session) {
 }
 
 function respondWithWord(guessWord, req, res) {
-    let dom = wrap("./app/html/wordguess.html", req.session);
+    let dom = wrap("./app/html/guessit.html", req.session);
     let grid = dom.window.document.querySelector(".wordguess_grid");
     grid.setAttribute("word_length", guessWord.length);
     grid.setAttribute("guess_attempts", 5);
@@ -210,7 +208,7 @@ function respondWithWord(guessWord, req, res) {
 let guessWord = null;
 let crossword = null;
 
-app.get("/wordguess", async function (req, res) {
+app.get("/guessit", async function (req, res) {
     if (req.session.loggedIn) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
@@ -222,7 +220,7 @@ app.get("/wordguess", async function (req, res) {
 });
 
 function respondWithCrossword(crossword, req, res) {
-    let dom = wrap("./app/html/crossword.html", req.session);
+    let dom = wrap("./app/html/crossit.html", req.session);
     let rect = dom.window.document.getElementById("box0");
     let grid = dom.window.document.getElementById("crossword0");
     let legendAcross = dom.window.document.getElementById("legendAcross");
@@ -304,7 +302,7 @@ function sanitizeWord(phrase) {
     return phrase.replace(/[\s`'-]/g, "").toUpperCase();
 }
 
-app.get("/crossword", function (req, res) {
+app.get("/crossit", function (req, res) {
     if (req.session.loggedIn) {
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
@@ -503,7 +501,7 @@ app.get("/profile", function (req, res) {
             profileDOM.window.document.getElementById("picture_src").src = "/imgs/sk8rboi.jpg";
             profileDOM.window.document.querySelector(".banner").style.display = "block";
         } else if (req.session.userImage == null) {
-            profileDOM.window.document.getElementById("picture_src").src = "/imgs/my-app-dummy.jpg";
+            profileDOM.window.document.getElementById("picture_src").src = "/imgs/dummy.jpg";
         } else {
             profileDOM.window.document.getElementById("picture_src").src = req.session.userImage;
         }
@@ -711,9 +709,9 @@ app.post("/joinLobby", (req, res) => {
     }
 });
 
-app.get("/wordmatch", function (req, res) {
+app.get("/matchit", function (req, res) {
     if (req.session.loggedIn) {
-        let dom = wrap("./app/html/wordmatch.html", req.session);
+        let dom = wrap("./app/html/matchit.html", req.session);
         res.set("Server", "Wazubi Engine");
         res.set("X-Powered-By", "Wazubi");
         res.send(dom.serialize());
@@ -974,10 +972,7 @@ class Preparation extends EventEmitter {
         connection.query(`SELECT cr.word_id, cr.row_num, cr.col, cr.vertical, ma.phrase, ma.meaning FROM BBY_5_crossword as cr, BBY_5_master ma WHERE cr.word_id = ma.word_ID and crossword_id = 2`, (error, results) => {
             if (error || !results || !results.length) {
                 console.log(error);
-                // Need to handle errors properly
-                let dom = wrap("./app/html/wordguess_wait.html", req.session);
                 res.send(dom.serialize());
-
             } else {
                 for (let i = 0; i < results.length; ++i) {
                     results[i].phrase = sanitizeWord(results[i].phrase);

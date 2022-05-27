@@ -42,15 +42,15 @@ async function joinLobby(code) {
 }
 
 document.getElementById("wordguess").addEventListener("click", (e) => {
-    createLobby("wordguess");
+    createLobby("GuessIt");
 });
 
 document.getElementById("wordmatch").addEventListener("click", (e) => {
-  createLobby("wordmatch");
+  createLobby("MatchIt");
 });
 
 document.getElementById("crossword").addEventListener("click", (e) => {
-    createLobby("crossword");
+    createLobby("CrossIt");
 });
 
 document.getElementById("logOut").addEventListener("click", (e) => {

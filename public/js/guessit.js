@@ -140,7 +140,7 @@ function ready(callback) {
 }
 
 function toggleExplanation() {
-    var popup = document.getElementById("explanation");
+    var popup = document.getElementById("explanationText");
     popup.classList.toggle("show");
 }
 
@@ -158,7 +158,7 @@ socket.on("displayGameContainer", (display) => {
       document.getElementById("startGame").style.display = "none";
       document.getElementById("gameContainer").style.display = "block";
       document.getElementById("resultsText").style.display = "none";
-      document.getElementById("explanation").innerHTML = "Guess first";
+      document.getElementById("explanationText").innerHTML = "Guess first";
       matcher.reset();
     } else {
       document.getElementById("startGame").style.display = "inline-block";
@@ -170,6 +170,7 @@ socket.on("wordguessAttempted", (results) => {
     for (let i = 0; i < matcher.word_length; i++) {
         document.getElementById("rec" + (results.attempt * matcher.word_length + i + 1)).classList.add(results.keyColors[i]);
         document.getElementById("rec" + (results.attempt * matcher.word_length + i + 1)).innerHTML = results.keyLetters[i];
+        console.log("letter" + results.keyLetters[i]);
         document.getElementById("letter" + results.keyLetters[i]).classList.remove("originalKey");
         document.getElementById("letter" + results.keyLetters[i]).classList.add(results.keyColors[i]);
     }
@@ -189,7 +190,7 @@ socket.on("wordguessCompleted", (guessed, word) => {
             z = word.value;
         }
         document.getElementById("resultsText").innerHTML = `You guessed right! You earned ${word.value} ${word.generation}-points.<br>Click the Meaning button to learn this word.`
-        document.getElementById("explanation").innerHTML = word.meaning;
+        document.getElementById("explanationText").innerHTML = word.meaning;
         addUserPoints(bb, x, y, z);
     } else {
         document.getElementById("resultsText").innerHTML = `You failed!<br>Better luck next time.`

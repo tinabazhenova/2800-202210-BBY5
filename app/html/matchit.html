@@ -8,19 +8,6 @@
         <button type="button" id="endGame" class="defaultButton">
             Submit Scores
         </button>
-        <div>
-            <button onclick="showDetails('chat')" class="chatButton">
-                Chat
-            </button>
-            <div id="chat">
-                <div id="userList"></div>
-                <div id="chatDialog"></div>
-                <form id="chatForm">
-                    <input type="text" id="chatInput" />
-                    <button type="submit" id="chatSend">Send</button>
-                </form>
-            </div>
-        </div>
     </div>
     <div id="gameContainer">
         <div id="questionButton" class="hide">NEXT QUESTION</div>
@@ -49,6 +36,20 @@
     <div id="resultsContainer" class="hide">
         <span id="resultsText"></span>
     </div>
+
+    <div>
+        <button onclick="showDetails('chat')" class="chatButton">
+            Chat
+        </button>
+        <div id="chat">
+            <div id="userList"></div>
+            <div id="chatDialog"></div>
+            <form id="chatForm">
+                <input type="text" id="chatInput" />
+                <button type="submit" id="chatSend">Send</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div id="modalBackground">
@@ -59,7 +60,7 @@
 </div>
 
 <link rel="stylesheet" href="/css/room.css" />
-<link rel="stylesheet" href="/css/wordmatch.css" />
+<link rel="stylesheet" href="/css/matchit.css" />
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/room.js"></script>
-<script src="/js/wordmatch.js"></script>
+<script src="/js/matchit.js"></script>

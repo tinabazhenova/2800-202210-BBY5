@@ -8,9 +8,9 @@
     <div class="wordguess_grid">
         <div class="rectangle" id="rec1"></div>
     </div>
-    <div class="popup" onclick="toggleExplanation()">
+    <div class="popup hide" id="explanationButton" onclick="toggleExplanation()">
         Meaning
-        <span class="popuptext" id="explanation">Guess first</span>
+        <span class="popuptext" id="explanationText" max-width="10vw">Guess first</span>
     </div>
     <div class="keyboard">
         <div class="row1">
@@ -73,8 +73,8 @@
 </div>
 
 <link rel="stylesheet" href="/css/room.css">
-<link rel="stylesheet" href="/css/wordguess.css">
+<link rel="stylesheet" href="/css/guessit.css">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/room.js"></script>
-<script src="/js/wordguess.js"></script>
+<script src="/js/guessit.js"></script>

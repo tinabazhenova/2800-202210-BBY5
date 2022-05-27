@@ -16,7 +16,8 @@ body {
     align-self: center;
     margin-left: auto;
     margin-right: auto;
-    overflow-x: auto;
+    padding: 5px;
+    overflow-y: hidden;
 }
 
 button {
@@ -113,15 +114,16 @@ button {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    color: var(--color4);
+    color: var(--color3);
 }
 
 
 /* The actual popup */
 
 .popup .popuptext {
+    position: absolute;
     visibility: hidden;
-    width: 300%;
+    width: 60%;
     background-color: var(--color5);
     color: var(--color2);
     text-align: center;
@@ -129,8 +131,7 @@ button {
     padding: 8px 0;
     z-index: 1;
     bottom: 125%;
-    left: 0%;
-    margin-left: -80px;
+    left: 20%;
 }
 
 
