@@ -31,34 +31,18 @@ ready(function () {
         let password = document.getElementById("password");
         let queryString = "username=" + username.value + "&password=" + password.value;
         ajaxPOST("/login", function (data) {
-
             if (data) {
                 let dataParsed = JSON.parse(data);
                 console.log(dataParsed);
                 if (dataParsed.status == "fail") {
                     document.getElementById("errorMsg").innerHTML = dataParsed.msg;
                 } else {
+                    if (dataParsed.isAdmin) {
+                        sessionStorage.setItem("isAdmin", true);
+                    } else {
+                        sessionStorage.setItem("isAdmin", false);
+                    }
                     window.location.replace("/main");
-                }
-            }
-
-        }, queryString);
-    });
-
-    document.querySelector("#admin-submit").addEventListener("click", function (e) {
-        e.preventDefault();
-        let username = document.getElementById("username");
-        let password = document.getElementById("password");
-        let queryString = "username=" + username.value + "&password=" + password.value;
-        ajaxPOST("/loginAsAdmin", function (data) {
-
-            if (data) {
-                let dataParsed = JSON.parse(data);
-                console.log(dataParsed);
-                if (dataParsed.status == "fail") {
-                    document.getElementById("errorMsg").innerHTML = dataParsed.msg;
-                } else {
-                    window.location.replace("/admin");
                 }
             }
 
@@ -71,9 +55,6 @@ ready(function () {
             window.location.replace("/main");
         }, "");
     });
-
-
-
 });
 
 function ready(callback) {

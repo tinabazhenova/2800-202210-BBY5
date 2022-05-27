@@ -1,3 +1,9 @@
+if (sessionStorage.getItem("isAdmin")) {
+    document.getElementById("div7").style.display = "block";
+} else {
+    document.getElementById("div7").style.display = "none";
+}
+
 async function createLobby(game) {
     try {
         let response = await fetch("/createLobby", {
@@ -41,25 +47,12 @@ async function joinLobby(code) {
     }
 }
 
-document.getElementById("wordguess").addEventListener("click", (e) => {
-    createLobby("GuessIt");
-});
-
-document.getElementById("wordmatch").addEventListener("click", (e) => {
-  createLobby("MatchIt");
-});
-
-document.getElementById("crossword").addEventListener("click", (e) => {
-    createLobby("CrossIt");
-});
-
-document.getElementById("logOut").addEventListener("click", (e) => {
-    createLobby("logOut");
-});
-
-document.getElementById("profile").addEventListener("click", (e) => {
-    createLobby("profile");
-})
+document.getElementById("wordguess").onclick = () => createLobby("GuessIt");
+document.getElementById("wordmatch").onclick = () => createLobby("MatchIt");
+document.getElementById("crossword").onclick = () => createLobby("CrossIt");
+document.getElementById("logOut").onclick = () => createLobby("logOut");
+document.getElementById("profile").onclick = () => window.location.href = "/profile";
+document.getElementById("admin").onclick = () => window.location.href = "/admin";
 
 let modal = document.getElementById("modalBackground");
 

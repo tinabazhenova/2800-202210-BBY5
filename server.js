@@ -414,6 +414,7 @@ app.post("/login", function (req, res) {
             req.session.pass = results[0].password;
             req.session.title = results[0].title;
             req.session.isGuest = false;
+           
             req.session.save((error) => {
                 if (error) console.log(error);
             });
@@ -423,6 +424,7 @@ app.post("/login", function (req, res) {
             res.send({
                 status: "success",
                 msg: "Logged in.",
+                isAdmin: (results[0].isAdmin == 1)
             });
         }
     });
@@ -437,45 +439,6 @@ app.post("/guest_login", function (req, res) {
         if (error) console.log(error);
     })
     res.send({});
-});
-
-app.post("/loginAsAdmin", function (req, res) {
-    res.setHeader("Content-Type", "application/json");
-    connection.query(` SELECT * FROM ${userTable} WHERE user_name = "${req.body.username}" AND password = "${req.body.password}" `, function (error, results) {
-        if (error || !results || !results.length) {
-            console.log(error);
-            res.send({
-                status: "fail",
-                msg: "User account not found."
-            });
-        } else if (!results[0].is_admin) {
-            res.send({
-                status: "fail",
-                msg: "User is not admin."
-            });
-        } else {
-            // user authenticated, create a session
-            req.session.loggedIn = true;
-            req.session.lastname = results[0].last_name;
-            req.session.name = results[0].user_name;
-            req.session.userID = results[0].ID;
-            req.session.username = results[0].first_name;
-            req.session.isAdmin = results[0].is_admin;
-            req.session.userImage = results[0].user_image;
-            req.session.pass = results[0].password;
-            req.session.title = results[0].title;
-            req.session.save((error) => {
-                if (error) console.log(error);
-            });
-
-            // all we are doing as a server is telling the client that they
-            // are logged in, it is up to them to switch to the profile page
-            res.send({
-                status: "success",
-                msg: "Logged in.",
-            });
-        }
-    });
 });
 
 app.post('/upload', upload.single("image"), function (req, res) {
