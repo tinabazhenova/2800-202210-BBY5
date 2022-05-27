@@ -87,6 +87,7 @@
 /*Room number*/
 #roomInfo {
   grid-area: 1 / 1 / 2 / 3;
+  color: var(--color4);
 }
 
 /*start*/
@@ -109,6 +110,8 @@
 /*next question - inside game container*/
 #questionButton {
   grid-area: 1 / 1 / 2 / 3;
+  color:var(--color4);
+  margin: 2%;
 }
 
 /*Guess this phrase*/

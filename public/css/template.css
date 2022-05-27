@@ -80,6 +80,7 @@ input[type='submit'] {
     flex-grow: 1;
     text-align: center;
     overflow: auto;
+    margin-top: 2%;
 }
 
 footer {
