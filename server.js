@@ -748,7 +748,7 @@ app.get("/getCartItems", (req, res) => {
 });
 
 app.post("/addToCart", (req, res) => {
-    connection.query(`INSERT INTO bby_5_cart_item VALUES (?, ?, ?)
+    connection.query(`INSERT INTO BBY_5_cart_item VALUES (?, ?, ?)
     ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
         [req.session.userID, req.body.itemID, req.body.quantity, req.body.quantity], (error, results) => {
             if (error) console.log(error);
@@ -796,20 +796,20 @@ app.post("/purchaseCart", (req, res) => {
                     errorMessage: "Not enough Z-points!"
                 });
             } else {
-                connection.query(`SELECT * FROM bby_5_cart_item WHERE user_ID = ?`,
+                connection.query(`SELECT * FROM BBY_5_cart_item WHERE user_ID = ?`,
                     [req.session.userID], (error, results) => {
                         if (error) {
                             console.log(error);
                         } else {
                             if (results.length > 0) {
                                 results.forEach(cartItem => {
-                                    connection.query(`INSERT INTO bby_5_has_item VALUES (?, ?, ?)
+                                    connection.query(`INSERT INTO BBY_5_has_item VALUES (?, ?, ?)
                             ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
                                         [req.session.userID, cartItem.item_ID, cartItem.quantity, cartItem.quantity], (error, results) => {
                                             if (error) console.log(error);
                                         });
                                 });
-                                connection.query(`UPDATE bby_5_user SET bbscore = bbscore - ?, xscore = xscore - ?, yscore = yscore - ?, zscore = zscore - ? WHERE ID = ?`,
+                                connection.query(`UPDATE BBY_5_user SET bbscore = bbscore - ?, xscore = xscore - ?, yscore = yscore - ?, zscore = zscore - ? WHERE ID = ?`,
                                     [req.body.total.B, req.body.total.X, req.body.total.Y, req.body.total.Z, req.session.userID], (error, results) => {
                                         if (error) console.log(error);
                                     });
@@ -829,7 +829,7 @@ app.post("/purchaseCart", (req, res) => {
 });
 
 app.post("/shopCheat", (req, res) => {
-    connection.query(`UPDATE bby_5_user SET bbscore = ?, xscore = ?, yscore = ?, zscore = ? WHERE ID = ?`,
+    connection.query(`UPDATE BBY_5_user SET bbscore = ?, xscore = ?, yscore = ?, zscore = ? WHERE ID = ?`,
         [10000, 10000, 10000, 10000, req.session.userID], (error) => {
             if (error) console.log(error);
         });
@@ -871,14 +871,14 @@ app.post("/useItem", (req, res) => {
         default:
             console.log("Item ID not found: " + req.body.item.ID);
     }
-    connection.query(`UPDATE bby_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
+    connection.query(`UPDATE BBY_5_user SET ${baseLevel} = ${baseLevel} + 1 WHERE ID = ?`,
         [req.session.userID], (error) => {
             if (error) {
                 console.log(error);
             }
             if (req.session.title.includes(baseTitle)) {
                 let newTitle = `Lv. ${parseInt(req.session.title.substring(4)) + 1} ${baseTitle}`;
-                connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
+                connection.query(`UPDATE BBY_5_user SET title = ? WHERE ID = ?`,
                     [newTitle, req.session.userID], (error) => {
                         if (error) console.log(error);
                     }
@@ -887,11 +887,11 @@ app.post("/useItem", (req, res) => {
                 req.session.save();
             }
         });
-    connection.query(`UPDATE bby_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
+    connection.query(`UPDATE BBY_5_has_item SET quantity = quantity - 1 WHERE user_ID = ? AND item_ID = ?`,
         [req.session.userID, req.body.item.ID], (error) => {
             if (error) console.log(error);
         });
-    connection.query(`DELETE FROM bby_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
+    connection.query(`DELETE FROM BBY_5_has_item WHERE user_ID = ? AND item_ID = ? AND quantity <= 0`,
         [req.session.userID, req.body.item.ID], (error) => {
             if (error) console.log(error);
         });
@@ -909,7 +909,7 @@ app.get("/getUserLevels", (req, res) => {
 });
 
 app.post("/setTitle", (req, res) => {
-    connection.query(`UPDATE bby_5_user SET title = ? WHERE ID = ?`,
+    connection.query(`UPDATE BBY_5_user SET title = ? WHERE ID = ?`,
         [req.body.title, req.session.userID], (error) => {
             if (error) console.log(error);
         });
