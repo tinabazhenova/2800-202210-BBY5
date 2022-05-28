@@ -13,7 +13,6 @@ Database: mySQL2
 
 ## List of Files
 
-C:.
 |   .gcloudignore
 |   .gitignore
 |   .profile
