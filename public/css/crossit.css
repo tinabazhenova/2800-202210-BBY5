@@ -1,0 +1,136 @@
+:root {
+    --color7: #779FA1;
+    --backColor: #E0CBA8;
+    --gridWidth: 3;
+}
+
+h3 {
+    color: var(--color1);
+    margin:1%;
+}
+
+#chatInput {
+    width: 15%;
+    padding: 0.5%;
+    box-sizing: border-box;
+    border: none;
+    background-color: var(--backColor);
+    color: var(--color4);
+    font-weight: bold;
+    font-size: 100%;
+    border: 5px solid var(--color4);
+}
+
+.match {
+    color: var(--color7);
+}
+
+#crosswordLegend {
+    display: flex;
+    color: var(--color4);
+    padding-top: 3%;
+
+}
+
+#legendAcross,
+#legendDown {
+    background-color: rgba(224, 203, 168, .7);
+    text-align:left;
+    border-radius: 40px;
+    height: min-content;
+    width: 40%;
+    margin: 2%;
+    padding: 1%;
+}
+
+.hint{
+    margin-top: 1.5%;
+}
+
+.letterBox {
+    box-sizing: border-box;
+    border: none;
+    color: var(--color4);
+    font-weight: bold;
+    font-size: 100%;
+    justify-content: center;
+    text-transform: uppercase;
+    background-color: transparent;
+    height: min-content;
+ }
+
+.letterBox:focus {
+    outline: none;
+}
+
+.letterContainer {
+    background-color: var(--backColor);
+    border: solid 2px var(--color4);
+    text-align: left;
+}
+
+.crossword_board_grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: min-content;
+    height: min-content;
+    margin: 3%
+}
+
+#box0 {
+    visibility: hidden;
+}
+
+.hintNum {
+    font-size: xx-small;
+    height: min-content;
+}
+
+.hintNumInvis {
+    visibility: hidden;
+}
+
+
+@media (min-width: 750px) {
+    .crossword {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .letterBox {
+        width: 40px;
+    }
+
+    #crosswordLegend {
+        flex-direction: row;
+
+    }
+}
+
+@media (max-width: 750px) {
+    .crossword_board_grid{
+        margin: 1%;
+    }
+
+    .letterBox {
+        width: 4vw;
+        text-align: center;
+    }
+
+    .crossword_board_grid{
+        margin-top: 1%;
+    }
+
+    #crosswordLegend {
+
+        flex-direction: column;
+    }
+
+    #legendAcross,
+    #legendDown{
+        height: min-content;
+        width: 70%;
+        margin: auto;
+        margin-bottom: 2%;
+    }
+}

@@ -1,0 +1,66 @@
+<div id="parent">
+    <div id="roomInfo"></div>
+    <div id="mainButton">
+        <button type="button" id="startGame" class="defaultButton">Start Game</button>
+        <button type="button" id="continueGame" class="defaultButton hide">
+            NEXT QUESTION
+        </button>
+        <button type="button" id="endGame" class="defaultButton">
+            Submit Scores
+        </button>
+    </div>
+    <div id="gameContainer">
+        <div id="questionButton" class="hide">NEXT QUESTION</div>
+        <div id="answer1">
+            <button id="btn1" class="hide defaultButton answerBtn">Answer:</button>
+        </div>
+        <div id="answer2">
+            <button id="btn2" class="hide defaultButton answerBtn">Answer:</button>
+        </div>
+        <div id="answer3">
+            <button id="btn3" class="hide defaultButton answerBtn">Answer:</button>
+        </div>
+        <div id="answer4">
+            <button id="btn4" class="hide defaultButton answerBtn">Answer:</button>
+        </div>
+        <div class="popup hide" id="explanationButton" onclick="toggleExplanation()">
+            History
+            <span class="popuptext" id="explanationText" max-width="10vw">Guess first</span>
+        </div>
+        <div id="bbPoints" class="hide">Current BB Points:</div>
+        <div id="xPoints" class="hide">Current X Points:</div>
+        <div id="yPoints" class="hide">Current Y Points:</div>
+        <div id="zPoints" class="hide">Current Z Points:</div>
+    </div>
+
+    <div id="resultsContainer" class="hide">
+        <span id="resultsText"></span>
+    </div>
+
+    <div>
+        <button onclick="showDetails('chat')" class="chatButton">
+            Chat
+        </button>
+        <div id="chat">
+            <div id="userList"></div>
+            <div id="chatDialog"></div>
+            <form id="chatForm">
+                <input type="text" id="chatInput" />
+                <button type="submit" id="chatSend">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modalBackground">
+    <div id="modalContainer">
+        <span id="modalText"></span>
+        <button onclick="window.location.href = '/main'">Leave</button>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/css/room.css" />
+<link rel="stylesheet" href="/css/matchit.css" />
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/room.js"></script>
+<script src="/js/matchit.js"></script>

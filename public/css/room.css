@@ -1,0 +1,63 @@
+#userList {
+    width: 250px;
+    margin: 10px auto;
+}
+
+#gameContainer {
+    display: none;
+}
+
+#startGame {
+    margin-top: 5%;
+}
+
+#startGame, .chatButton {
+    min-width: 0;
+    width: 200px;
+    border-radius: 10px;
+}
+
+#endGame {
+    display: none;
+}
+
+#chat {
+    display: none;
+    width: 90%;
+    margin: auto;
+    background-color: white;
+    border: 1px solid black;
+}
+
+#chatDialog {
+    width: 90%;
+    height: 400px;
+    margin: auto;
+    overflow-wrap: break-word;
+    overflow-y: scroll;
+    text-align: left;
+}
+
+#chatInput {
+    width: 50%;
+    padding: 0.5%;
+    box-sizing: border-box;
+    border: none;
+    background-color: var(--backColor);
+    color: var(--color4);
+    font-weight: bold;
+    font-size: 100%;
+    border: 5px solid var(--color4);
+}
+
+#chatSend {
+    font-family: 'atwriter';
+    padding: 12px;
+    font-size: 1em;
+    background-color: var(--color5);
+    border-radius: 25px;
+    min-width: 20%;
+    width: auto;
+    color: var(--color2);
+    cursor: pointer;
+}

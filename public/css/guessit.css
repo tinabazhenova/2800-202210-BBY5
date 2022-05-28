@@ -7,6 +7,7 @@
 body {
     height: 100vh;
 }
+
 .wordguess_grid {
     display: grid;
     grid-template-columns: repeat(var(--gridWidth), 1fr);
@@ -15,9 +16,11 @@ body {
     align-self: center;
     margin-left: auto;
     margin-right: auto;
+    padding: 5px;
+    overflow-y: hidden;
 }
 
-button{
+button {
     font-family: 'atwriter';
     padding: 12px;
     font-size: 1em;
@@ -30,32 +33,18 @@ button{
     margin-bottom: 2%;
 }
 
+#resultsText,
+#roomInfo{
+    margin:1%;
+    color: var(--color4);
+}
+
 .rectangle {
     background-color: var(--backColor);
     width: 50px;
     height: 50px;
     border: 5px solid var(--color4);
     text-transform: capitalize;
-}
-
-#startGame:hover {
-    background-color: var(--color7);
-}
-
-#leaveRoom:hover {
-    background-color: var(--color5);
-}
-
-input {
-    width: 15%;
-    padding: 0.5%;
-    box-sizing: border-box;
-    border: none;
-    background-color: var(--backColor);
-    color: var(--color4);
-    font-weight: bold;
-    font-size: 100%;
-    border: 5px solid var(--color4);
 }
 
 .yellow {
@@ -83,6 +72,7 @@ input {
 #backspace {
     margin-left: 1%;
     margin-bottom: 0.5%;
+    border-radius: 10px;
 }
 
 .letter {
@@ -115,33 +105,35 @@ input {
 /* Popup container - can be anything you want */
 
 .popup {
-    margin-top: 1%;
+    margin: 2%;
     position: relative;
-    display: inline-block;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    color: var(--color4);
+    color: var(--color3);
 }
 
 
 /* The actual popup */
 
 .popup .popuptext {
+    position: absolute;
     visibility: hidden;
-    width: 300%;
+    width: 100%;
+    max-width: 550px;
     background-color: var(--color5);
     color: var(--color2);
     text-align: center;
     border-radius: 6px;
     padding: 8px 0;
-    position: absolute;
     z-index: 1;
     bottom: 125%;
+    display: inline-block;
     left: 0%;
-    margin-left: -80px;
+    right: 0%;
+    margin: 0 auto;
 }
 
 
@@ -170,14 +162,11 @@ input {
 
 /* Add animation (fade in the popup) */
 
-#chat-dialog, #chatForm {
-    display: none;
-  }
-
 @-webkit-keyframes fadeIn {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -187,6 +176,7 @@ input {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }

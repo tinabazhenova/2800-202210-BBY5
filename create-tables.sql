@@ -19,7 +19,7 @@ CREATE TABLE BBY_5_user (
 );
 
 CREATE TABLE BBY_5_master (
-  word_ID int NOT NULL AUTO_INCREMENT,
+  word_ID int NOT NULL,
   phrase VARCHAR(50) NOT NULL,
   meaning VARCHAR(200),
   history VARCHAR(500),
@@ -37,13 +37,18 @@ CREATE TABLE BBY_5_crossword (
   primary key (crossword_id, word_id)
 );
 
+CREATE TABLE BBY_5_wordguess (
+  word_id int not null,
+  start_time datetime not null,
+  primary key (word_id)
+);
+
 CREATE TABLE BBY_5_item (
   ID int NOT NULL AUTO_INCREMENT,
   name VARCHAR(50),
   description VARCHAR(50),
   price int,
   type VARCHAR(1),
-  query VARCHAR(100),
   PRIMARY KEY (ID)
 );
 
@@ -61,5 +66,15 @@ CREATE TABLE BBY_5_has_item (
   PRIMARY KEY (user_ID, item_ID)
 );
 
+CREATE TABLE BBY_5_chat (
+  ID int NOT NULL AUTO_INCREMENT,
+  username VARCHAR(50),
+  title VARCHAR(20),
+  content VARCHAR(500),
+  room INT,
+  PRIMARY KEY (ID)
+);
+
 ALTER TABLE BBY_5_cart_item ADD FOREIGN KEY (user_ID) REFERENCES BBY_5_user (ID);
 ALTER TABLE BBY_5_cart_item ADD FOREIGN KEY (item_ID) REFERENCES BBY_5_item (ID);
+

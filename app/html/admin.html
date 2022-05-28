@@ -6,59 +6,62 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/css/admin.css" rel="stylesheet" />
+    <link href="/css/modal.css" rel="stylesheet" />
     <link href="/imgs/favicon.ico" rel="icon" type="image/x-icon" />
 </head>
 
 <body>
-    <div id="container">    
-    <div id="title">
-        <div id="profile_name">
-            <h1></h1>
+    <div id="container">
+        <div id="title">
+            <div id="profile_name">
+                <h1></h1>
+            </div>
+        </div>
+        <div class="div1">
+            <table id="users_table">
+
+            </table>
+        </div>
+        <fieldset id="admins_table_add">
+            <legend>Add a User</legend>
+            <input class="req-add" type="text" placeholder="firstname" id="addfirstname" required /><br>
+            <input class="req-add" type="text" placeholder="lastname" id="addlastname" required /><br>
+            <input class="req-add" type="text" placeholder="username" id="addusername" required /><br>
+            <input class="req-add" type="text" placeholder="password" id="addpassword" required /><br>
+            <input class="req-add" type="text" placeholder="isAdmin" id="addisAdmin" required /><br>
+            <input type="submit" id="add-submit" value="Submit" />
+        </fieldset>
+        <fieldset id="admins_table_edit">
+            <legend>Edit a User (except ID)</legend>
+            <input class="req-edit" type="number" placeholder="ID" id="id" required /><br>
+            <input class="req-edit" type="text" placeholder="firstname" id="editfirstname" required /><br>
+            <input class="req-edit" type="text" placeholder="lastname" id="editlastname" required /><br>
+            <input class="req-edit" type="text" placeholder="username" id="editusername" required /><br>
+            <input class="req-edit" type="text" placeholder="password" id="editpassword" required /><br>
+            <input class="req-edit" type="text" placeholder="isAdmin" id="editisAdmin" required /><br>
+            <input type="submit" id="edit-submit" value="Submit" />
+        </fieldset>
+        <fieldset id="admins_table_delete">
+            <legend>Delete a User by Username</legend>
+            <input class="req-delete" type="text" placeholder="username" id="delusername" required /><br>
+            <input type="submit" id="delete-submit" value="Submit" />
+            <div id="modalBackground">
+                <div id="modalContainer">
+                    <span>Fill All Required Fields</span>
+                    <button type="button" id="okay">OK</button>
+                </div>
+            </div>
+        </fieldset>
+
+        <div id="logout">
+            <input type="submit" value="Back" onclick="history.back()">
         </div>
     </div>
-    <div class="div1">
-        <table id="users_table">
-
-        </table>
-    </div>
-    <fieldset id="admins_table_add">
-        <legend>Add a User</legend>
-        <input type="text" placeholder="firstname" id="addfirstname"/>
-        <input type="text" placeholder="lastname" id="addlastname"/>
-        <input type="text" placeholder="username" id="addusername"/>
-        <input type="text" placeholder="password" id="addpassword"/>
-        <input type="text" placeholder="isAdmin" id="addisAdmin"/>
-        <input type="button" id="add-submit" value="Submit"/>
-    </fieldset>
-    <fieldset id="admins_table_edit">
-        <legend>Edit a User (except ID)</legend>
-        <input type="number" placeholder="ID" id="id"/>
-        <input type="text" placeholder="firstname" id="editfirstname"/>
-        <input type="text" placeholder="lastname" id="editlastname"/>
-        <input type="text" placeholder="username" id="editusername"/>
-        <input type="text" placeholder="password" id="editpassword"/>
-        <input type="text" placeholder="isAdmin" id="editisAdmin"/>
-        <input type="button" id="edit-submit" value="Submit"/>
-    </fieldset>
-    <fieldset id="admins_table_delete">
-        <legend>Delete a User by Username</legend>
-        <input type="text" placeholder="username" id="delusername"/>
-        <input type="button" id="delete-submit" value="Submit"/>
-    </fieldset>
-
-
-    <div id="logout">
-        <form action="/logout" method="get">
-          <input type="submit" value="LOGOUT">
-        </form>
-    </div>
-    </div>
     <footer id="footer">
-        GEN WE PROJECT &copy BCIT 2022
+        GEN WE PROJECT &amp;copy BCIT 2022
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js" integrity="sha512-/xb5+PNOA079FJkngKI2jvID5lyiqdHXaUUcfmzE0X0BdpkgzIWHC59LOG90a2jDcOyRsd1luOr24UCCAG8NNw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="/js/admin-dashboard.js"></script>
+    <script src="/js/admin.js"></script>
 </body>
 
 </html>

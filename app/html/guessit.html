@@ -1,0 +1,80 @@
+<span id="roomInfo"></span><br>
+
+<button type="button" id="startGame">Start Game</button>
+<button type="button" id="endGame" class="defatulButton">Confirm</button>
+
+<div id="gameContainer">
+    <span id="resultsText"></span><br>
+    <div class="wordguess_grid">
+        <div class="rectangle" id="rec1"></div>
+    </div>
+    <div class="popup hide" id="explanationButton" onclick="toggleExplanation()">
+        Meaning
+        <span class="popuptext" id="explanationText" max-width="10vw">Guess first</span>
+    </div>
+    <div class="keyboard">
+        <div class="row1">
+            <button class="letter">Q</button>
+            <button class="letter">W</button>
+            <button class="letter">E</button>
+            <button class="letter">R</button>
+            <button class="letter">T</button>
+            <button class="letter">Y</button>
+            <button class="letter">U</button>
+            <button class="letter">I</button>
+            <button class="letter">O</button>
+            <button class="letter">P</button>
+        </div>
+        <div class="row2">
+            <button class="letter">A</button>
+            <button class="letter">S</button>
+            <button class="letter">D</button>
+            <button class="letter">F</button>
+            <button class="letter">G</button>
+            <button class="letter">H</button>
+            <button class="letter">J</button>
+            <button class="letter">K</button>
+            <button class="letter">L</button>
+        </div>
+
+        <div class="row3">
+            <button id="enter">Enter</button>
+            <button class="letter">Z</button>
+            <button class="letter">X</button>
+            <button class="letter">C</button>
+            <button class="letter">V</button>
+            <button class="letter">B</button>
+            <button class="letter">N</button>
+            <button class="letter">M</button>
+            <button class="material-icons" id="backspace">backspace</button>
+        </div>
+    </div>
+</div>
+
+<div>
+    <button onclick="showDetails('chat')" class="chatButton">
+        Chat
+    </button>
+    <div id="chat">
+        <div id="userList"></div>
+        <div id="chatDialog"></div>
+        <form id="chatForm">
+            <input type="text" id="chatInput" />
+            <button type="submit" id="chatSend">Send</button>
+        </form>
+    </div>
+</div>
+
+<div id="modalBackground">
+    <div id="modalContainer">
+        <span id="modalText"></span>
+        <button onclick="window.location.href = '/main'">Leave</button>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/css/room.css">
+<link rel="stylesheet" href="/css/guessit.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/room.js"></script>
+<script src="/js/guessit.js"></script>

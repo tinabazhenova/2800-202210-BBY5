@@ -1,14 +1,14 @@
 <div id="menu">
     <div class="menuItem" id="div1">
-        <button id="wordguess" class="defaultButton">Wordguess</button>
+        <button id="wordguess" class="defaultButton">GuessIt</button>
     </div>
 
     <div class="menuItem" id="div2">
-        <button id="wordmatch" class="defaultButton">Wordmatch</button>
+        <button id="wordmatch" class="defaultButton">MatchIt</button>
     </div>
 
     <div class="menuItem" id="div3">
-        <button id="crossword" class="defaultButton">Crossword</button>
+        <button id="crossword" class="defaultButton">CrossIt</button>
     </div>
 
     <div class="menuItem" id="div4">
@@ -20,7 +20,11 @@
     </div>
 
     <div class="menuItem" id="div6">
-        <button id="profile" class="defaultButton">Edit Profile</button>
+        <button id="profile" class="defaultButton">Profile</button>
+    </div>
+
+    <div class="menuItem" id="div7">
+        <button id="admin" class="defaultButton">Admin</button>
     </div>
 
     <div id="logout">
@@ -32,12 +36,12 @@
     <div id="modalContainer">
         <form id="findLobbyForm">
             <label>Enter the code here:</label><br>
-            <input type="text" id="code-input">
+            <input type="text" id="codeInput">
+            <input type="submit" value="Join"><br>
             <span id="error"></span>
-            <input type="submit" id="btn-joinRoom" value="Join">
         </form>
     </div>
 </div>
 
 <link href="/css/main.css" rel="stylesheet" />
-<script src="/js/socket-connection.js"></script>
+<script src="/js/main.js"></script>
